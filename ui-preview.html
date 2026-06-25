@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FamilyGuard — UI Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:    #2DDAB6;
+  --cyan:    #00C3FF;
+  --teal2:   #22c4a3;
+  --cyan2:   #00a8e0;
+  --dark:    #0D1B2A;
+  --dark2:   #132235;
+  --dark3:   #1C3045;
+  --slate:   #253A50;
+  --text:    #0D1B2A;
+  --text2:   #4A6785;
+  --border:  #E4EDF5;
+  --bg:      #F4F9FC;
+  --white:   #FFFFFF;
+  --red:     #FF4D6D;
+  --orange:  #FF8C42;
+  --green:   #2DDAB6;
+  --radius:  14px;
+  --shadow:  0 4px 24px rgba(13,27,42,0.08);
+  --shadow2: 0 8px 40px rgba(13,27,42,0.14);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+/* ─── NAVIGATION ─── */
+.nav { display: flex; gap: 6px; flex-wrap: wrap; padding: 16px 24px; background: var(--dark); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.nav-btn { padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; transition: all .2s; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+.nav-btn.active, .nav-btn:hover { background: linear-gradient(135deg, var(--teal), var(--cyan)); color: white; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ─── GRAD ─── */
+.grad { background: linear-gradient(135deg, var(--teal), var(--cyan)); }
+.grad-text { background: linear-gradient(135deg, var(--teal), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* ─── SIDEBAR LAYOUT ─── */
+.app-layout { display: flex; height: calc(100vh - 53px); overflow: hidden; }
+.sidebar { width: 240px; background: var(--dark); display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,0.05); }
+.sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 12px; }
+.shield-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal), var(--cyan)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.sidebar-logo-text { font-size: 16px; font-weight: 700; color: white; line-height: 1.1; }
+.sidebar-logo-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; letter-spacing: .5px; }
+.sidebar-nav { flex: 1; padding: 0 10px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; margin-bottom: 2px; transition: all .2s; color: rgba(255,255,255,0.5); font-size: 13.5px; font-weight: 500; }
+.sidebar-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.sidebar-item.active { background: linear-gradient(135deg, rgba(45,218,182,0.18), rgba(0,195,255,0.12)); color: var(--teal); border: 1px solid rgba(45,218,182,0.25); }
+.sidebar-item .icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 14px; background: rgba(255,255,255,0.06); flex-shrink: 0; }
+.sidebar-item.active .icon { background: linear-gradient(135deg, var(--teal), var(--cyan)); }
+.sidebar-footer { padding: 16px 10px 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0 10px; }
+.user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.04); cursor: pointer; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+
+/* ─── PAGE HEADER ─── */
+.page-header { background: white; border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
+.page-title { font-size: 20px; font-weight: 700; color: var(--text); }
+.page-subtitle { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.page-content { padding: 24px 28px; }
+
+/* ─── CARDS ─── */
+.card { background: white; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.card-pad { padding: 20px; }
+.card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+/* ─── STAT CARDS ─── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 18px 20px; box-shadow: var(--shadow); }
+.stat-val { font-size: 28px; font-weight: 800; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 500; }
+.stat-change { font-size: 11px; margin-top: 6px; }
+.stat-change.up { color: var(--teal); }
+.stat-change.down { color: var(--red); }
+
+/* ─── BADGES ─── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-teal { background: rgba(45,218,182,0.12); color: var(--teal2); }
+.badge-cyan { background: rgba(0,195,255,0.12); color: var(--cyan2); }
+.badge-red { background: rgba(255,77,109,0.12); color: var(--red); }
+.badge-orange { background: rgba(255,140,66,0.12); color: var(--orange); }
+.badge-gray { background: rgba(74,103,133,0.1); color: var(--text2); }
+
+/* ─── BUTTONS ─── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 9px; font-family: inherit; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .2s; }
+.btn-primary { background: linear-gradient(135deg, var(--teal), var(--cyan)); color: white; box-shadow: 0 4px 14px rgba(0,195,255,0.3); }
+.btn-primary:hover { box-shadow: 0 6px 20px rgba(0,195,255,0.4); transform: translateY(-1px); }
+.btn-danger { background: linear-gradient(135deg, #ff4d6d, #ff6b8a); color: white; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ─── TABLE ─── */
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.table td { padding: 12px 16px; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: rgba(45,218,182,0.03); }
+
+/* ─── FORM ─── */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; letter-spacing: .3px; }
+.form-input { width: 100%; border: 1.5px solid var(--border); border-radius: 9px; padding: 10px 14px; font-family: inherit; font-size: 14px; color: var(--text); background: white; transition: border-color .2s; outline: none; }
+.form-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(45,218,182,0.12); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%234A6785' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* ─── TOGGLE ─── */
+.toggle { position: relative; width: 40px; height: 22px; background: var(--border); border-radius: 11px; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.toggle.on { background: linear-gradient(135deg, var(--teal), var(--cyan)); }
+.toggle::after { content:''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.toggle.on::after { left: 20px; }
+
+/* ─── PROGRESS BAR ─── */
+.progress { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--cyan)); }
+
+/* ─── MAP PLACEHOLDER ─── */
+.map-box { background: linear-gradient(135deg, #1a2f45 0%, #0d1b2a 100%); border-radius: 12px; height: 420px; position: relative; overflow: hidden; }
+.map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(45,218,182,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45,218,182,0.04) 1px, transparent 1px); background-size: 40px 40px; }
+.map-pin { position: absolute; transform: translate(-50%, -100%); }
+.map-pin-dot { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 3px solid white; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.map-pin-dot.parent { background: linear-gradient(135deg, var(--teal), var(--cyan)); }
+.map-pin-dot.child { background: linear-gradient(135deg, #FF8C42, #FF4D6D); }
+.map-pulse { position: absolute; width: 70px; height: 70px; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--teal); animation: pulse 2s infinite; opacity: .5; }
+@keyframes pulse { 0%{transform:translate(-50%,-50%) scale(.8);opacity:.6} 100%{transform:translate(-50%,-50%) scale(1.4);opacity:0} }
+.map-label { background: white; border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2); margin-top: 4px; text-align: center; }
+.map-tile { position: absolute; inset: 0; background: url('https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/69.24,41.30,12,0/900x420?access_token=placeholder') center/cover; opacity: .15; }
+.map-road { position: absolute; background: rgba(45,218,182,0.2); border-radius: 2px; }
+
+/* ─── SOS ─── */
+.sos-screen { background: linear-gradient(180deg, #0D1B2A 0%, #132235 100%); min-height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 40px; }
+.sos-btn-wrap { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+.sos-ring { position: absolute; border-radius: 50%; animation: sosRing 2s infinite; }
+.sos-ring-1 { width: 200px; height: 200px; background: rgba(255,77,109,0.08); animation-delay: 0s; }
+.sos-ring-2 { width: 160px; height: 160px; background: rgba(255,77,109,0.14); animation-delay: .4s; }
+@keyframes sosRing { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+.sos-btn { width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(135deg, #FF4D6D, #c9002c); border: none; color: white; font-size: 36px; font-weight: 900; letter-spacing: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; box-shadow: 0 0 0 4px rgba(255,77,109,0.25), 0 8px 40px rgba(255,77,109,0.5); }
+.status-pill { display: flex; align-items: center; gap: 8px; background: rgba(45,218,182,0.1); border: 1px solid rgba(45,218,182,0.25); border-radius: 30px; padding: 8px 18px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: blink 1.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ─── LOGIN ─── */
+.login-screen { min-height: 600px; background: linear-gradient(160deg, var(--dark) 0%, var(--dark3) 100%); display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.login-card { background: white; border-radius: 20px; width: 100%; max-width: 420px; overflow: hidden; box-shadow: var(--shadow2); }
+.login-header { padding: 36px 36px 24px; text-align: center; }
+.login-logo { width: 56px; height: 56px; background: linear-gradient(135deg, var(--teal), var(--cyan)); border-radius: 16px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+.login-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.login-tab { flex: 1; padding: 14px; text-align: center; font-size: 13.5px; font-weight: 600; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
+.login-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.login-body { padding: 28px 36px 36px; }
+
+/* ─── INVITE MODAL ─── */
+.invite-badge { background: linear-gradient(135deg, rgba(45,218,182,0.08), rgba(0,195,255,0.08)); border: 1.5px solid rgba(45,218,182,0.3); border-radius: 16px; padding: 24px; text-align: center; }
+.invite-code { font-size: 44px; font-weight: 800; letter-spacing: 10px; background: linear-gradient(135deg, var(--teal), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-variant-numeric: tabular-nums; }
+
+/* ─── MEMBER CARD ─── */
+.member-card { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: white; transition: all .2s; }
+.member-card:hover { border-color: rgba(45,218,182,0.3); box-shadow: 0 4px 16px rgba(45,218,182,0.08); }
+.member-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+
+/* ─── DNS ─── */
+.domain-pill { font-family: 'Courier New', monospace; font-size: 12.5px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; }
+
+/* ─── GRID HELPERS ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 20px; }
+.mt-2 { margin-top: 8px; }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 11px; }
+.text-muted { color: var(--text2); }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.w-full { width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <span style="color:rgba(255,255,255,0.3);font-size:12px;padding:8px 4px;font-weight:600;letter-spacing:.5px;align-self:center;">FamilyGuard UI</span>
+  <button class="nav-btn active" onclick="show('login')">🔐 Вход</button>
+  <button class="nav-btn" onclick="show('dashboard')">🗺 Карта</button>
+  <button class="nav-btn" onclick="show('family')">👨‍👩‍👧 Семья</button>
+  <button class="nav-btn" onclick="show('sos')">🚨 SOS</button>
+  <button class="nav-btn" onclick="show('dns')">🔒 DNS Фильтр</button>
+  <button class="nav-btn" onclick="show('apps')">📱 Приложения</button>
+  <button class="nav-btn" onclick="show('android')">📲 Android App</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: LOGIN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">🛡️</div>
+        <div style="font-size:22px;font-weight:800;color:var(--text)">Family Guard</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">Система родительского контроля</div>
+      </div>
+      <div class="login-tabs">
+        <div class="login-tab active">Войти</div>
+        <div class="login-tab">Регистрация</div>
+      </div>
+      <div class="login-body">
+        <div class="form-group">
+          <label class="form-label">EMAIL АДРЕС</label>
+          <input class="form-input" type="email" value="parent@familyguard.uz" placeholder="email@example.com">
+        </div>
+        <div class="form-group" style="margin-bottom:24px">
+          <label class="form-label">ПАРОЛЬ</label>
+          <input class="form-input" type="password" value="••••••••••">
+        </div>
+        <button class="btn btn-primary w-full" style="justify-content:center;padding:12px;font-size:14px;">
+          Войти в систему
+        </button>
+        <div style="text-align:center;margin-top:20px;font-size:12.5px;color:var(--text2)">
+          Нет аккаунта? <span style="color:var(--teal);font-weight:600;cursor:pointer">Зарегистрироваться</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-dashboard" class="screen">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="shield-icon">🛡️</div>
+        <div>
+          <div class="sidebar-logo-text">Family Guard</div>
+          <div class="sidebar-logo-sub">РОДИТЕЛЬСКИЙ КОНТРОЛЬ</div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item active"><div class="icon">🗺️</div> Карта семьи</div>
+        <div class="sidebar-item"><div class="icon">🚨</div> SOS история</div>
+        <div class="sidebar-item"><div class="icon">🔒</div> DNS фильтр</div>
+        <div class="sidebar-item"><div class="icon">📱</div> Приложения</div>
+        <div class="sidebar-item"><div class="icon">👨‍👩‍👧</div> Семья</div>
+        <div class="sidebar-item"><div class="icon">🔔</div> Уведомления <span class="badge badge-red" style="margin-left:auto;font-size:10px">3</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">АК</div>
+          <div>
+            <div class="user-name">Анвар Каримов</div>
+            <div class="user-role">Родитель</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Main -->
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Карта семьи</div>
+          <div class="page-subtitle">Местоположение в реальном времени</div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <span class="badge badge-teal">● WS подключено</span>
+          <button class="btn btn-ghost btn-sm">⚙️ Геозоны</button>
+          <button class="btn btn-primary btn-sm">+ Пригласить</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <!-- Stats -->
+        <div class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card">
+            <div class="stat-val grad-text">2</div>
+            <div class="stat-label">Членов онлайн</div>
+            <div class="stat-change up">↑ из 3 в семье</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" style="color:var(--red)">1</div>
+            <div class="stat-label">SOS сегодня</div>
+            <div class="stat-change down">Нажатие 3 мин назад</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" style="color:var(--orange)">47</div>
+            <div class="stat-label">Блок. доменов сег.</div>
+            <div class="stat-change up">↑ DNS защита активна</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val grad-text">3ч 42м</div>
+            <div class="stat-label">Экр. время (Алиса)</div>
+            <div class="stat-change down">↑ +40м vs вчера</div>
+          </div>
+        </div>
+        <!-- Map + Panel -->
+        <div class="flex gap-3" style="align-items:flex-start">
+          <!-- Map -->
+          <div style="flex:1">
+            <div class="card">
+              <div class="map-box">
+                <div class="map-grid"></div>
+                <!-- Fake city roads -->
+                <div class="map-road" style="width:300px;height:3px;top:45%;left:10%;transform:rotate(-8deg)"></div>
+                <div class="map-road" style="width:200px;height:3px;top:55%;left:30%;transform:rotate(15deg)"></div>
+                <div class="map-road" style="width:2px;height:160px;top:30%;left:52%"></div>
+                <div class="map-road" style="width:180px;height:2px;top:35%;left:55%"></div>
+                <!-- Parent pin -->
+                <div class="map-pin" style="left:35%;top:48%">
+                  <div class="map-pin-dot parent" style="position:relative">
+                    👨
+                    <div class="map-pulse"></div>
+                  </div>
+                  <div class="map-label" style="color:var(--teal2)">Анвар</div>
+                </div>
+                <!-- Child pin 1 -->
+                <div class="map-pin" style="left:58%;top:38%">
+                  <div class="map-pin-dot child">👧</div>
+                  <div class="map-label" style="color:var(--orange)">Алиса • 🔋78%</div>
+                </div>
+                <!-- Child pin 2 (offline) -->
+                <div class="map-pin" style="left:72%;top:62%">
+                  <div class="map-pin-dot" style="background:#4A6785;font-size:18px">👦</div>
+                  <div class="map-label" style="color:var(--text2)">Тимур • оффлайн</div>
+                </div>
+                <!-- Geofence circle -->
+                <div style="position:absolute;width:120px;height:120px;border:2px dashed rgba(45,218,182,0.4);border-radius:50%;top:20%;left:50%;transform:translate(-50%,-50%);background:rgba(45,218,182,0.05)"></div>
+                <div style="position:absolute;top:8%;left:50%;transform:translateX(-50%);background:rgba(45,218,182,0.15);border:1px solid rgba(45,218,182,0.3);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--teal);font-weight:600">📍 Школа №12</div>
+                <!-- Legend -->
+                <div style="position:absolute;bottom:16px;left:16px;background:rgba(13,27,42,0.85);border-radius:10px;padding:10px 14px;display:flex;gap:16px">
+                  <span style="font-size:12px;color:white;display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--cyan));display:inline-block"></span>Родитель</span>
+                  <span style="font-size:12px;color:white;display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FF4D6D);display:inline-block"></span>Ребёнок</span>
+                  <span style="font-size:12px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:#4A6785;display:inline-block"></span>Оффлайн</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Side panel -->
+          <div style="width:260px;flex-shrink:0">
+            <div class="card card-pad mb-4">
+              <div class="card-title">👨‍👩‍👧 Члены семьи</div>
+              <div class="flex-col gap-2">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:rgba(45,218,182,0.05);border:1px solid rgba(45,218,182,0.15)">
+                  <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:16px">👨</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">Анвар</div>
+                    <div style="font-size:11px;color:var(--teal)">● онлайн</div>
+                  </div>
+                  <span class="badge badge-teal">Родитель</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:rgba(255,140,66,0.05);border:1px solid rgba(255,140,66,0.15)">
+                  <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FF4D6D);display:flex;align-items:center;justify-content:center;font-size:16px">👧</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">Алиса</div>
+                    <div style="font-size:11px;color:var(--orange)">● онлайн • 🔋78%</div>
+                  </div>
+                  <span class="badge badge-orange">Ребёнок</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--bg)">
+                  <div style="width:36px;height:36px;border-radius:50%;background:#4A6785;display:flex;align-items:center;justify-content:center;font-size:16px">👦</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">Тимур</div>
+                    <div style="font-size:11px;color:var(--text2)">○ оффлайн</div>
+                  </div>
+                  <span class="badge badge-gray">Ребёнок</span>
+                </div>
+              </div>
+            </div>
+            <!-- SOS Alert -->
+            <div class="card card-pad" style="border-color:rgba(255,77,109,0.3);background:rgba(255,77,109,0.03)">
+              <div class="card-title" style="color:var(--red)">🚨 SOS сигнал</div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Алиса Каримова</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px">3 нажатия • 3 минуты назад</div>
+              <div style="font-size:12px;color:var(--cyan2);margin-top:6px">📍 ул. Навои 45, Ташкент</div>
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <button class="btn btn-danger btn-sm" style="flex:1;justify-content:center">На карте</button>
+                <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center">Решено</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: FAMILY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-family" class="screen">
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><div class="shield-icon">🛡️</div><div><div class="sidebar-logo-text">Family Guard</div><div class="sidebar-logo-sub">РОДИТЕЛЬСКИЙ КОНТРОЛЬ</div></div></div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item"><div class="icon">🗺️</div> Карта семьи</div>
+        <div class="sidebar-item"><div class="icon">🚨</div> SOS история</div>
+        <div class="sidebar-item"><div class="icon">🔒</div> DNS фильтр</div>
+        <div class="sidebar-item"><div class="icon">📱</div> Приложения</div>
+        <div class="sidebar-item active"><div class="icon">👨‍👩‍👧</div> Семья</div>
+        <div class="sidebar-item"><div class="icon">🔔</div> Уведомления</div>
+      </div>
+      <div class="sidebar-footer"><div class="user-card"><div class="user-avatar">АК</div><div><div class="user-name">Анвар Каримов</div><div class="user-role">Родитель</div></div></div></div>
+    </div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Семья Каримовых</div>
+          <div class="page-subtitle">3 участника • создана 01.06.2025</div>
+        </div>
+        <button class="btn btn-primary">+ Пригласить ребёнка</button>
+      </div>
+      <div class="page-content">
+        <div class="grid-2">
+          <!-- Parents -->
+          <div class="card card-pad">
+            <div class="card-title">👨 Родители (1)</div>
+            <div class="member-card">
+              <div class="member-avatar" style="background:linear-gradient(135deg,var(--teal),var(--cyan))">👨</div>
+              <div style="flex:1">
+                <div style="font-size:14px;font-weight:700">Анвар Каримов</div>
+                <div style="font-size:12px;color:var(--text2)">parent@familyguard.uz</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px">📱 Xiaomi 13 Pro</div>
+              </div>
+              <div>
+                <span class="badge badge-teal">● онлайн</span>
+              </div>
+            </div>
+          </div>
+          <!-- Children -->
+          <div class="card card-pad">
+            <div class="card-title">👶 Дети (2)</div>
+            <div class="flex-col gap-2">
+              <div class="member-card">
+                <div class="member-avatar" style="background:linear-gradient(135deg,#FF8C42,#FF4D6D)">👧</div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:700">Алиса Каримова</div>
+                  <div style="font-size:12px;color:var(--text2)">alice@example.com</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px">📱 Samsung A54 • 🔋78%</div>
+                </div>
+                <div class="flex-col gap-1" style="align-items:flex-end">
+                  <span class="badge badge-orange">● онлайн</span>
+                  <span style="font-size:11px;color:var(--text2);cursor:pointer">Удалить</span>
+                </div>
+              </div>
+              <div class="member-card">
+                <div class="member-avatar" style="background:#4A6785">👦</div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:700">Тимур Каримов</div>
+                  <div style="font-size:12px;color:var(--text2)">timur@example.com</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px">📱 iPhone 13</div>
+                </div>
+                <div class="flex-col gap-1" style="align-items:flex-end">
+                  <span class="badge badge-gray">○ оффлайн</span>
+                  <span style="font-size:11px;color:var(--text2);cursor:pointer">Удалить</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Invite Code Box -->
+        <div class="card card-pad mt-2" style="margin-top:20px">
+          <div class="card-title">🔑 Пригласить ребёнка</div>
+          <div class="grid-2" style="align-items:center">
+            <div>
+              <p style="font-size:13.5px;color:var(--text2);line-height:1.6;margin-bottom:16px">Нажмите «Создать код» — получите 6-значный код. Передайте его ребёнку. После ввода в приложении FamilyGuard он автоматически вступит в семью.</p>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-primary">Создать новый код</button>
+                <button class="btn btn-ghost">История кодов</button>
+              </div>
+            </div>
+            <div class="invite-badge">
+              <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Активный код</div>
+              <div class="invite-code">285472</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:8px">⏱ действует ещё 23ч 45м</div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:12px">📋 Скопировать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: SOS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-sos" class="screen">
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><div class="shield-icon">🛡️</div><div><div class="sidebar-logo-text">Family Guard</div><div class="sidebar-logo-sub">РОДИТЕЛЬСКИЙ КОНТРОЛЬ</div></div></div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item"><div class="icon">🗺️</div> Карта семьи</div>
+        <div class="sidebar-item active"><div class="icon">🚨</div> SOS история</div>
+        <div class="sidebar-item"><div class="icon">🔒</div> DNS фильтр</div>
+        <div class="sidebar-item"><div class="icon">📱</div> Приложения</div>
+        <div class="sidebar-item"><div class="icon">👨‍👩‍👧</div> Семья</div>
+        <div class="sidebar-item"><div class="icon">🔔</div> Уведомления</div>
+      </div>
+      <div class="sidebar-footer"><div class="user-card"><div class="user-avatar">АК</div><div><div class="user-name">Анвар Каримов</div><div class="user-role">Родитель</div></div></div></div>
+    </div>
+    <div class="main">
+      <div class="page-header">
+        <div><div class="page-title">История SOS сигналов</div><div class="page-subtitle">Экстренные сигналы от устройств детей</div></div>
+      </div>
+      <div class="page-content">
+        <div class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card"><div class="stat-val" style="color:var(--text)">12</div><div class="stat-label">Всего сигналов</div></div>
+          <div class="stat-card"><div class="stat-val" style="color:var(--red)">2</div><div class="stat-label">Экстренных</div></div>
+          <div class="stat-card"><div class="stat-val" style="color:var(--orange)">1</div><div class="stat-label">Нерешённых</div></div>
+          <div class="stat-card"><div class="stat-val grad-text">9</div><div class="stat-label">Решённых</div></div>
+        </div>
+        <div class="card card-pad">
+          <div class="flex-col gap-3">
+            <!-- Emergency SOS -->
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:12px;background:rgba(255,77,109,0.04);border:1.5px solid rgba(255,77,109,0.2)">
+              <div style="font-size:28px">🚨</div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:700;color:var(--red)">ЭКСТРЕННЫЙ СИГНАЛ — Алиса Каримова</div>
+                <div style="font-size:13px;color:var(--text2);margin-top:4px">Устройство: Samsung A54 &nbsp;·&nbsp; <b>8 нажатий</b> кнопки SOS</div>
+                <a style="font-size:12px;color:var(--cyan2);margin-top:4px;display:inline-block">📍 41.2995, 69.2401 — открыть на карте</a>
+                <div style="font-size:11px;color:var(--text2);margin-top:4px">23 июня 2025, 14:32</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+                <span class="badge badge-red">Нерешено</span>
+                <button class="btn btn-ghost btn-sm">✓ Решено</button>
+              </div>
+            </div>
+            <!-- Alert SOS -->
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:12px;background:rgba(255,140,66,0.04);border:1px solid rgba(255,140,66,0.2)">
+              <div style="font-size:28px">⚠️</div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:700;color:var(--orange)">Сигнал о помощи — Тимур Каримов</div>
+                <div style="font-size:13px;color:var(--text2);margin-top:4px">iPhone 13 &nbsp;·&nbsp; <b>3 нажатия</b></div>
+                <a style="font-size:12px;color:var(--cyan2);margin-top:4px;display:inline-block">📍 41.3015, 69.2510</a>
+                <div style="font-size:11px;color:var(--text2);margin-top:4px">22 июня 2025, 09:14</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+                <span class="badge badge-teal">Решено</span>
+                <div style="font-size:11px;color:var(--text2)">Анвар Каримов</div>
+              </div>
+            </div>
+            <!-- Resolved -->
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:12px;background:var(--bg);border:1px solid var(--border);opacity:.7">
+              <div style="font-size:28px">✅</div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:600">Сигнал — Алиса Каримова</div>
+                <div style="font-size:13px;color:var(--text2);margin-top:4px">Samsung A54 &nbsp;·&nbsp; 2 нажатия</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:4px">20 июня 2025, 16:45</div>
+              </div>
+              <span class="badge badge-teal">Решено</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: DNS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-dns" class="screen">
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><div class="shield-icon">🛡️</div><div><div class="sidebar-logo-text">Family Guard</div><div class="sidebar-logo-sub">РОДИТЕЛЬСКИЙ КОНТРОЛЬ</div></div></div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item"><div class="icon">🗺️</div> Карта семьи</div>
+        <div class="sidebar-item"><div class="icon">🚨</div> SOS история</div>
+        <div class="sidebar-item active"><div class="icon">🔒</div> DNS фильтр</div>
+        <div class="sidebar-item"><div class="icon">📱</div> Приложения</div>
+        <div class="sidebar-item"><div class="icon">👨‍👩‍👧</div> Семья</div>
+        <div class="sidebar-item"><div class="icon">🔔</div> Уведомления</div>
+      </div>
+      <div class="sidebar-footer"><div class="user-card"><div class="user-avatar">АК</div><div><div class="user-name">Анвар Каримов</div><div class="user-role">Родитель</div></div></div></div>
+    </div>
+    <div class="main">
+      <div class="page-header">
+        <div><div class="page-title">DNS Фильтрация</div><div class="page-subtitle">Перехват трафика через VPN · защита в реальном времени</div></div>
+        <span class="badge badge-teal" style="font-size:13px;padding:6px 14px">🛡️ VPN активен · Алиса</span>
+      </div>
+      <div class="page-content">
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:20px">
+          <!-- Left panel -->
+          <div class="flex-col gap-4">
+            <div class="card card-pad">
+              <div class="card-title">🚫 Заблокировать домен</div>
+              <div class="form-group"><label class="form-label">ДОМЕН</label><input class="form-input" value="tiktok.com"></div>
+              <div class="form-group"><label class="form-label">ПРИЧИНА</label><input class="form-input" value="Социальная сеть"></div>
+              <button class="btn btn-danger w-full" style="justify-content:center">Заблокировать</button>
+            </div>
+            <div class="card card-pad">
+              <div class="card-title">📂 Категории блокировки</div>
+              <div class="flex-col gap-2">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:9px;background:rgba(255,77,109,0.04);border:1px solid rgba(255,77,109,0.15)">
+                  <div><div style="font-size:13px;font-weight:600">Взрослый контент</div><div style="font-size:11px;color:var(--text2)">8 доменов</div></div>
+                  <div class="toggle on"></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:9px;background:rgba(255,140,66,0.04);border:1px solid rgba(255,140,66,0.15)">
+                  <div><div style="font-size:13px;font-weight:600">Азартные игры</div><div style="font-size:11px;color:var(--text2)">4 домена</div></div>
+                  <div class="toggle on"></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:9px;background:var(--bg)">
+                  <div><div style="font-size:13px;font-weight:600">Социальные сети</div><div style="font-size:11px;color:var(--text2)">6 доменов</div></div>
+                  <div class="toggle"></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:9px;background:var(--bg)">
+                  <div><div style="font-size:13px;font-weight:600">Насилие</div><div style="font-size:11px;color:var(--text2)">2 домена</div></div>
+                  <div class="toggle"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Blocked list -->
+            <div class="card card-pad">
+              <div class="card-title">🔴 Заблокировано (5)</div>
+              <div class="flex-col gap-1">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:rgba(255,77,109,0.05)">
+                  <span class="domain-pill">tiktok.com</span><span style="font-size:11px;color:var(--text2);cursor:pointer">✕</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:rgba(255,77,109,0.05)">
+                  <span class="domain-pill">instagram.com</span><span style="font-size:11px;color:var(--text2);cursor:pointer">✕</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:rgba(255,77,109,0.05)">
+                  <span class="domain-pill">pornhub.com</span><span style="font-size:11px;color:var(--text2);cursor:pointer">✕</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:rgba(255,77,109,0.05)">
+                  <span class="domain-pill">1xbet.com</span><span style="font-size:11px;color:var(--text2);cursor:pointer">✕</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:rgba(255,77,109,0.05)">
+                  <span class="domain-pill">bestgore.com</span><span style="font-size:11px;color:var(--text2);cursor:pointer">✕</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Right panel: Query log -->
+          <div class="card">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:15px;font-weight:600">📋 Журнал DNS-запросов (Алиса)</div>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" style="width:180px;padding:7px 12px;font-size:13px" placeholder="Поиск домена...">
+                <select class="form-input form-select" style="width:130px;padding:7px 12px;font-size:13px">
+                  <option>Все запросы</option>
+                  <option>Заблокированные</option>
+                  <option>Разрешённые</option>
+                </select>
+              </div>
+            </div>
+            <table class="table">
+              <thead><tr><th>Домен</th><th>Тип</th><th>Статус</th><th>Время</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><span class="domain-pill">youtube.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">14:38:12</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+                <tr><td><span class="domain-pill">tiktok.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-red">Заблокирован</span></td><td style="color:var(--text2);font-size:12px">14:35:44</td><td></td></tr>
+                <tr><td><span class="domain-pill">google.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">14:33:01</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+                <tr><td><span class="domain-pill">instagram.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-red">Заблокирован</span></td><td style="color:var(--text2);font-size:12px">14:31:58</td><td></td></tr>
+                <tr><td><span class="domain-pill">api.vk.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">14:28:33</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+                <tr><td><span class="domain-pill">1xbet.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-red">Заблокирован</span></td><td style="color:var(--text2);font-size:12px">14:22:17</td><td></td></tr>
+                <tr><td><span class="domain-pill">yandex.ru</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">14:19:04</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+                <tr><td><span class="domain-pill">cdn.discord.com</span></td><td style="color:var(--text2)">AAAA</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">14:14:52</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+                <tr><td><span class="domain-pill">pornhub.com</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-red">Заблокирован</span></td><td style="color:var(--text2);font-size:12px">14:08:39</td><td></td></tr>
+                <tr><td><span class="domain-pill">twitch.tv</span></td><td style="color:var(--text2)">A</td><td><span class="badge badge-teal">Разрешён</span></td><td style="color:var(--text2);font-size:12px">13:58:22</td><td><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)">Блок</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: APPS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-apps" class="screen">
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><div class="shield-icon">🛡️</div><div><div class="sidebar-logo-text">Family Guard</div><div class="sidebar-logo-sub">РОДИТЕЛЬСКИЙ КОНТРОЛЬ</div></div></div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item"><div class="icon">🗺️</div> Карта семьи</div>
+        <div class="sidebar-item"><div class="icon">🚨</div> SOS история</div>
+        <div class="sidebar-item"><div class="icon">🔒</div> DNS фильтр</div>
+        <div class="sidebar-item active"><div class="icon">📱</div> Приложения</div>
+        <div class="sidebar-item"><div class="icon">👨‍👩‍👧</div> Семья</div>
+        <div class="sidebar-item"><div class="icon">🔔</div> Уведомления</div>
+      </div>
+      <div class="sidebar-footer"><div class="user-card"><div class="user-avatar">АК</div><div><div class="user-name">Анвар Каримов</div><div class="user-role">Родитель</div></div></div></div>
+    </div>
+    <div class="main">
+      <div class="page-header">
+        <div><div class="page-title">Контроль приложений</div><div class="page-subtitle">Статистика и ограничения · Алиса Каримова</div></div>
+        <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:4px;background:var(--bg);border-radius:9px;padding:3px;border:1px solid var(--border)">
+            <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--teal),var(--cyan));color:white;border-radius:7px">Алиса</button>
+            <button class="btn btn-sm btn-ghost" style="border:none">Тимур</button>
+          </div>
+          <button class="btn btn-primary">+ Новое правило</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div style="display:grid;grid-template-columns:280px 1fr;gap:20px">
+          <!-- Screen time summary -->
+          <div class="flex-col gap-3">
+            <div class="card card-pad">
+              <div style="text-align:center;padding:8px 0 16px">
+                <div style="font-size:38px;font-weight:800" class="grad-text">3ч 42м</div>
+                <div style="font-size:13px;color:var(--text2);margin-top:4px">Экранное время сегодня</div>
+                <div style="font-size:12px;color:var(--orange);margin-top:4px">↑ +40 мин vs вчера</div>
+              </div>
+              <div class="flex-col gap-3">
+                <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>YouTube</span><span style="font-weight:600">1ч 20м</span></div><div class="progress"><div class="progress-fill" style="width:36%"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>TikTok</span><span style="font-weight:600;color:var(--red)">Заблокирован</span></div><div class="progress"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>Minecraft</span><span style="font-weight:600">58м</span></div><div class="progress"><div class="progress-fill" style="width:26%"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>WhatsApp</span><span style="font-weight:600">35м</span></div><div class="progress"><div class="progress-fill" style="width:16%"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>Chrome</span><span style="font-weight:600">29м</span></div><div class="progress"><div class="progress-fill" style="width:13%"></div></div></div>
+              </div>
+            </div>
+            <!-- Расписание -->
+            <div class="card card-pad">
+              <div class="card-title">🕐 Расписание экрана</div>
+              <div class="flex-col gap-2">
+                <div style="padding:10px;border-radius:9px;background:rgba(45,218,182,0.05);border:1px solid rgba(45,218,182,0.2);display:flex;justify-content:space-between;align-items:center">
+                  <div><div style="font-size:13px;font-weight:600">Сон</div><div style="font-size:11px;color:var(--text2)">Пн–Пт · 22:00–07:00</div></div>
+                  <div class="toggle on"></div>
+                </div>
+                <div style="padding:10px;border-radius:9px;background:rgba(45,218,182,0.05);border:1px solid rgba(45,218,182,0.2);display:flex;justify-content:space-between;align-items:center">
+                  <div><div style="font-size:13px;font-weight:600">Учёба</div><div style="font-size:11px;color:var(--text2)">Пн–Пт · 08:00–14:00</div></div>
+                  <div class="toggle on"></div>
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm w-full" style="justify-content:center;margin-top:10px">+ Новое расписание</button>
+            </div>
+          </div>
+          <!-- App list with rules -->
+          <div class="card">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+              <div style="font-size:15px;font-weight:600">Все приложения (23)</div>
+            </div>
+            <table class="table">
+              <thead><tr><th>Приложение</th><th>Сегодня</th><th>Правило</th><th>Действие</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div style="font-weight:600">YouTube</div><div style="font-size:11px;color:var(--text2)">com.google.android.youtube</div></td>
+                  <td>1ч 20м</td>
+                  <td><span class="badge badge-orange">Лимит 2ч/день</span></td>
+                  <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">Изменить</button><button class="btn btn-sm" style="background:rgba(255,77,109,0.1);color:var(--red);font-size:12px">Блок</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">TikTok</div><div style="font-size:11px;color:var(--text2)">com.zhiliaoapp.musically</div></td>
+                  <td style="color:var(--text2)">—</td>
+                  <td><span class="badge badge-red">Заблокировано</span></td>
+                  <td><button class="btn btn-ghost btn-sm">Разблокировать</button></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">Minecraft</div><div style="font-size:11px;color:var(--text2)">com.mojang.minecraftpe</div></td>
+                  <td>58м</td>
+                  <td><span class="badge badge-teal">Разрешено</span></td>
+                  <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">Лимит</button><button class="btn btn-sm" style="background:rgba(255,77,109,0.1);color:var(--red);font-size:12px">Блок</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">WhatsApp</div><div style="font-size:11px;color:var(--text2)">com.whatsapp</div></td>
+                  <td>35м</td>
+                  <td><span class="badge badge-teal">Разрешено</span></td>
+                  <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">Лимит</button><button class="btn btn-sm" style="background:rgba(255,77,109,0.1);color:var(--red);font-size:12px">Блок</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">Chrome</div><div style="font-size:11px;color:var(--text2)">com.android.chrome</div></td>
+                  <td>29м</td>
+                  <td><span class="badge badge-teal">Разрешено</span></td>
+                  <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">Лимит</button><button class="btn btn-sm" style="background:rgba(255,77,109,0.1);color:var(--red);font-size:12px">Блок</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">Telegram</div><div style="font-size:11px;color:var(--text2)">org.telegram.messenger</div></td>
+                  <td>22м</td>
+                  <td><span class="badge badge-teal">Разрешено</span></td>
+                  <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">Лимит</button><button class="btn btn-sm" style="background:rgba(255,77,109,0.1);color:var(--red);font-size:12px">Блок</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Permission alerts -->
+            <div style="padding:14px 20px;border-top:1px solid var(--border);background:rgba(255,140,66,0.03)">
+              <div style="font-size:13px;font-weight:600;color:var(--orange);margin-bottom:8px">⚠️ Изменения разрешений</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px">
+                <span>Алиса отозвала разрешение <b>GPS Location</b></span>
+                <span style="color:var(--text2)">сегодня 11:23</span>
+                <span class="badge badge-red">Отозвано</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCREEN: ANDROID -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="screen-android" class="screen">
+  <div style="background:var(--bg);min-height:calc(100vh - 53px);padding:40px;display:flex;flex-direction:column;align-items:center;gap:40px">
+    <div style="text-align:center">
+      <div style="font-size:20px;font-weight:700;color:var(--text)">Android-приложение для ребёнка</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px">Минималистичный UI · всё управление на устройстве родителя</div>
+    </div>
+    <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+      <!-- Phone 1: Onboarding -->
+      <div style="text-align:center">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Экран входа</div>
+        <div style="width:280px;height:560px;background:linear-gradient(180deg,#0D1B2A,#132235);border-radius:40px;border:6px solid #1C3045;box-shadow:0 20px 60px rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;gap:20px">
+          <div style="font-size:48px">🛡️</div>
+          <div style="font-size:22px;font-weight:800;color:white;letter-spacing:1px">FamilyGuard</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);text-align:center">Введите инвайт-код от родителя</div>
+          <div style="width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:20px">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px">КОД (6 ЦИФР)</div>
+            <div style="font-size:38px;font-weight:800;color:white;letter-spacing:12px;text-align:center">2 8 5 4 7 2</div>
+          </div>
+          <div style="width:100%;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--teal),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white">Присоединиться</div>
+        </div>
+      </div>
+      <!-- Phone 2: SOS screen -->
+      <div style="text-align:center">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Главный экран</div>
+        <div style="width:280px;height:560px;background:linear-gradient(180deg,#0D1B2A,#0A1628);border-radius:40px;border:6px solid #1C3045;box-shadow:0 20px 60px rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:20px">
+          <!-- Status -->
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(45,218,182,0.1);border:1px solid rgba(45,218,182,0.25);border-radius:30px;padding:7px 16px">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></div>
+            <div style="font-size:12px;color:var(--teal);font-weight:600">Защита активна</div>
+          </div>
+          <!-- SOS Button -->
+          <div style="position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center">
+            <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,77,109,0.07)"></div>
+            <div style="position:absolute;width:168px;height:168px;border-radius:50%;background:rgba(255,77,109,0.12)"></div>
+            <div style="width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,#FF4D6D,#C9002C);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(255,77,109,0.25),0 8px 40px rgba(255,77,109,0.5)">
+              <div style="font-size:36px;font-weight:900;color:white;letter-spacing:2px;font-family:inherit">SOS</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);text-align:center">Нажмите для сигнала тревоги<br>8+ нажатий — экстренный вызов</div>
+          <!-- Device info -->
+          <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:12px 16px;width:100%;text-align:center">
+            <div style="font-size:12px;color:rgba(255,255,255,0.3)">Samsung Galaxy A54 · Алиса</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:2px">🔋 78% · 📍 GPS активен · 🔒 VPN</div>
+          </div>
+        </div>
+      </div>
+      <!-- Phone 3: Block overlay -->
+      <div style="text-align:center">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Блокировка приложения</div>
+        <div style="width:280px;height:560px;background:linear-gradient(180deg,#0D1B2A,#1C0A1A);border-radius:40px;border:6px solid #1C3045;box-shadow:0 20px 60px rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px">
+          <div style="font-size:56px">🚫</div>
+          <div style="font-size:20px;font-weight:700;color:white;text-align:center">TikTok заблокирован</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.6">Это приложение ограничено родителем. Обратитесь к маме или папе.</div>
+          <div style="width:100%;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25);border-radius:14px;padding:16px;text-align:center">
+            <div style="font-size:12px;color:rgba(255,255,255,0.4)">Установлено родителем</div>
+            <div style="font-size:14px;color:var(--red);font-weight:600;margin-top:4px">Анвар Каримов</div>
+          </div>
+          <div style="width:100%;height:48px;border-radius:14px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,0.6)">← На главный экран</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

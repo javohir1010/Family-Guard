@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- VPN (DNS filter) -->
+    <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
+
+    <!-- Usage Stats (app monitoring) -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Foreground service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Boot autostart -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Vibration (SOS haptic) -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- POST_NOTIFICATIONS (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Wake lock (keep service alive) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Device admin (prevent uninstall) -->
+    <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:name=".FamilyGuardApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.FamilyGuard"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Location Foreground Service -->
+        <service
+            android:name=".services.LocationForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <!-- DNS VPN Service -->
+        <service
+            android:name=".services.DnsVpnService"
+            android:exported="false"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
+        <!-- App Monitor Accessibility Service -->
+        <service
+            android:name=".services.AppMonitorAccessibilityService"
+            android:exported="true"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Block Overlay Activity — shown when child opens blocked app -->
+        <activity
+            android:name=".services.BlockOverlayActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:showOnLockScreen="true"
+            android:taskAffinity="com.familyguard.block"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <!-- UsageStats Sync Worker (WorkManager) -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
+
+        <!-- Boot Receiver -->
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Device Admin Receiver -->
+        <receiver
+            android:name=".receivers.DeviceAdminReceiver"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_config" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>

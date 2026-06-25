@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FamilyGuard</string>
+    <string name="accessibility_service_label">FamilyGuard — Защита ребёнка</string>
+    <string name="accessibility_service_description">Отслеживает запуск приложений и блокирует нежелательные согласно правилам, установленным родителем. Не собирает личные данные.</string>
+</resources>
