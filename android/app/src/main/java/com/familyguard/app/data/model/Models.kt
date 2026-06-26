@@ -4,6 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 // Auth
 data class LoginRequest(val email: String, val password: String)
+data class RegisterRequest(
+    val email: String,
+    val username: String,
+    @SerializedName("first_name") val firstName: String,
+    @SerializedName("last_name") val lastName: String,
+    val password: String,
+    @SerializedName("password2") val passwordConfirm: String,
+    val role: String,
+    @SerializedName("phone_number") val phoneNumber: String = "",
+    @SerializedName("device_name") val deviceName: String = ""
+)
+data class RegisterResponse(
+    val message: String,
+    val access: String,
+    val refresh: String,
+    val user: UserProfile
+)
 data class LoginResponse(val access: String, val refresh: String)
 data class DeviceTokenRequest(@SerializedName("device_token") val deviceToken: String)
 data class UserProfile(

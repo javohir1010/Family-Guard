@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 data class AuthUiState(
     val isLoggedIn: Boolean = false,
+    val hasFamily: Boolean = false,
     val isLoading: Boolean = false,
     val inviteCode: String = "",
     val deviceName: String = "",
@@ -39,7 +40,11 @@ class AuthViewModel @Inject constructor(
     private fun checkLoginState() {
         viewModelScope.launch {
             val loggedIn = tokenStorage.isLoggedIn()
-            _uiState.value = _uiState.value.copy(isLoggedIn = loggedIn)
+            val familyId = tokenStorage.getFamilyId()
+            _uiState.value = _uiState.value.copy(
+                isLoggedIn = loggedIn,
+                hasFamily = !familyId.isNullOrEmpty()
+            )
         }
     }
 
@@ -59,21 +64,26 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                // Step 1: Need access token from register/login first
-                // For child onboarding: register anonymously then join with invite code
-                // In production, child gets credentials from parent via QR/email
-                // Here we use the invite code flow directly
                 val deviceName = _uiState.value.deviceName.ifEmpty {
                     android.os.Build.MODEL
                 }
 
-                val response = apiService.joinFamily(
+                apiService.joinFamily(
                     JoinFamilyRequest(code = code, deviceName = deviceName)
+                )
+
+                // After joining, refresh profile to update family state
+                val profile = apiService.getProfile()
+                tokenStorage.saveUserInfo(
+                    userId = profile.id,
+                    familyId = profile.family,
+                    deviceName = deviceName
                 )
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    isLoggedIn = true
+                    isLoggedIn = true,
+                    hasFamily = true
                 )
             } catch (e: Exception) {
                 val errorMsg = when {
@@ -97,18 +107,49 @@ class AuthViewModel @Inject constructor(
                     com.familyguard.app.data.model.LoginRequest(email, password)
                 )
                 tokenStorage.saveTokens(response.access, response.refresh)
-                // Fetch profile to get user info
+                
+                // Fetch profile to get family status
                 val profile = apiService.getProfile()
                 tokenStorage.saveUserInfo(
                     userId = profile.id,
                     familyId = profile.family,
                     deviceName = android.os.Build.MODEL
                 )
-                _uiState.value = _uiState.value.copy(isLoading = false, isLoggedIn = true)
+                
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false, 
+                    isLoggedIn = true,
+                    hasFamily = !profile.family.isNullOrEmpty()
+                )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     error = "Неверный email или пароль"
+                )
+            }
+        }
+    }
+
+    fun register(request: com.familyguard.app.data.model.RegisterRequest) {
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        viewModelScope.launch {
+            try {
+                val response = apiService.register(request)
+                tokenStorage.saveTokens(response.access, response.refresh)
+                tokenStorage.saveUserInfo(
+                    userId = response.user.id,
+                    familyId = response.user.family,
+                    deviceName = request.deviceName
+                )
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isLoggedIn = true,
+                    hasFamily = !response.user.family.isNullOrEmpty()
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Ошибка регистрации. Возможно, email уже занят."
                 )
             }
         }

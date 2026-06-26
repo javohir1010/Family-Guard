@@ -13,8 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.familyguard.app.ui.screens.OnboardingScreen
-import com.familyguard.app.ui.screens.SosScreen
+import com.familyguard.app.ui.screens.*
 import com.familyguard.app.ui.theme.FamilyGuardTheme
 import com.familyguard.app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,12 +30,43 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val authViewModel: AuthViewModel = hiltViewModel()
-                    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+                    val uiState by authViewModel.uiState.collectAsState()
+                    val isLoggedIn by authViewModel.isLoggedIn.collectAsState(initial = false)
+
+                    // Determine start destination
+                    val startDest = when {
+                        !isLoggedIn -> "login"
+                        !uiState.hasFamily -> "onboarding"
+                        else -> "sos"
+                    }
 
                     NavHost(
                         navController = navController,
-                        startDestination = if (isLoggedIn) "sos" else "onboarding"
+                        startDestination = startDest
                     ) {
+                        composable("login") {
+                            LoginScreen(
+                                viewModel = authViewModel,
+                                onNavigateToRegister = { navController.navigate("register") },
+                                onLoginSuccess = {
+                                    val target = if (uiState.hasFamily) "sos" else "onboarding"
+                                    navController.navigate(target) {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
+                        composable("register") {
+                            RegisterScreen(
+                                viewModel = authViewModel,
+                                onNavigateToLogin = { navController.popBackStack() },
+                                onRegisterSuccess = {
+                                    navController.navigate("onboarding") {
+                                        popUpTo("register") { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
                         composable("onboarding") {
                             OnboardingScreen(
                                 onJoinSuccess = {

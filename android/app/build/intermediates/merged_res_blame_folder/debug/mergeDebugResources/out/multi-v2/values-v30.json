@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.familyguard.app-mergeDebugResources-64:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/home/javohir/.gradle/caches/9.3.0/transforms/5bf0b31593a998488fa459e101547482/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

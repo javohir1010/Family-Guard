@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/xml_device_admin_config.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/xml/device_admin_config.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.familyguard.app-debug-66:/xml_network_security_config.xml.flat",
+        "source": "com.familyguard.app-main-68:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/xml_network_security_config.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/drawable_ic_shield.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/drawable/ic_shield.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/xml_accessibility_service_config.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/xml/accessibility_service_config.xml"
+    },
+    {
+        "merged": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-debug-66:/drawable_ic_launcher_background.xml.flat",
+        "source": "/home/javohir/.gradle/daemon/9.3.0/com.familyguard.app-main-68:/drawable/ic_launcher_background.xml"
+    }
+]

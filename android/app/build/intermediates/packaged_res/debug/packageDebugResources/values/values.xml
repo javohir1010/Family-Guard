@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Отслеживает запуск приложений и блокирует нежелательные согласно правилам, установленным родителем. Не собирает личные данные.</string>
+    <string name="accessibility_service_label">FamilyGuard — Защита ребёнка</string>
+    <string name="app_name">FamilyGuard</string>
+    <style name="Theme.FamilyGuard" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#0D1B2A</item>
+        <item name="android:windowBackground">#0D1B2A</item>
+    </style>
+</resources>

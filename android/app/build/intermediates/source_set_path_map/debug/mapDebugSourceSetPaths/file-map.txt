@@ -1,0 +1,70 @@
+com.familyguard.app-lifecycle-runtime-ktx-release-0 /home/javohir/.gradle/caches/9.3.0/transforms/004159ca867785654c92f51031f4cc34/transformed/lifecycle-runtime-ktx-release/res
+com.familyguard.app-graphics-path-1.0.1-1 /home/javohir/.gradle/caches/9.3.0/transforms/00d3a27e4dcbcf0f7565021cc2e4647b/transformed/graphics-path-1.0.1/res
+com.familyguard.app-annotation-experimental-1.4.1-2 /home/javohir/.gradle/caches/9.3.0/transforms/046a7883603d649a564bb019c5a54bff/transformed/annotation-experimental-1.4.1/res
+com.familyguard.app-foundation-layout-release-3 /home/javohir/.gradle/caches/9.3.0/transforms/0c74c24460cf3ff2c1fbe4856c675b80/transformed/foundation-layout-release/res
+com.familyguard.app-work-runtime-2.9.1-4 /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/res
+com.familyguard.app-navigation-common-2.8.0-5 /home/javohir/.gradle/caches/9.3.0/transforms/100c107a1fb279b3ffcfdc366381e073/transformed/navigation-common-2.8.0/res
+com.familyguard.app-ui-release-6 /home/javohir/.gradle/caches/9.3.0/transforms/13ea43396a2230c2cdf66c9932ad85eb/transformed/ui-release/res
+com.familyguard.app-activity-ktx-1.9.0-7 /home/javohir/.gradle/caches/9.3.0/transforms/182ff9c3a290c5cda7a9646019550e7e/transformed/activity-ktx-1.9.0/res
+com.familyguard.app-lifecycle-livedata-core-2.8.3-8 /home/javohir/.gradle/caches/9.3.0/transforms/1f999a54e9762cd85f824e3b726f2d22/transformed/lifecycle-livedata-core-2.8.3/res
+com.familyguard.app-animation-core-release-9 /home/javohir/.gradle/caches/9.3.0/transforms/21ecc97dafc1150f8a33025cae83d110/transformed/animation-core-release/res
+com.familyguard.app-play-services-base-18.5.0-10 /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/res
+com.familyguard.app-lifecycle-viewmodel-savedstate-2.8.3-11 /home/javohir/.gradle/caches/9.3.0/transforms/29b651cee7760f9b36ca72cf85064f89/transformed/lifecycle-viewmodel-savedstate-2.8.3/res
+com.familyguard.app-navigation-common-ktx-2.8.0-12 /home/javohir/.gradle/caches/9.3.0/transforms/29e52251d106a038966d7032f2dd615d/transformed/navigation-common-ktx-2.8.0/res
+com.familyguard.app-play-services-basement-18.4.0-13 /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/res
+com.familyguard.app-savedstate-1.2.1-14 /home/javohir/.gradle/caches/9.3.0/transforms/2b651464ed24354949fe229219510a7c/transformed/savedstate-1.2.1/res
+com.familyguard.app-lifecycle-process-2.8.3-15 /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/res
+com.familyguard.app-lifecycle-viewmodel-compose-release-16 /home/javohir/.gradle/caches/9.3.0/transforms/333e156dd1f595733a8d319cbdd5d259/transformed/lifecycle-viewmodel-compose-release/res
+com.familyguard.app-ui-graphics-release-17 /home/javohir/.gradle/caches/9.3.0/transforms/36d88273fa086bcb8350c9f7e1651af6/transformed/ui-graphics-release/res
+com.familyguard.app-hilt-work-1.2.0-18 /home/javohir/.gradle/caches/9.3.0/transforms/397f9b61baa74e117498b8cbeea36acd/transformed/hilt-work-1.2.0/res
+com.familyguard.app-animation-release-19 /home/javohir/.gradle/caches/9.3.0/transforms/3a093e146e3c14b3b17bf87cf898f69e/transformed/animation-release/res
+com.familyguard.app-emoji2-1.3.0-20 /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/res
+com.familyguard.app-datastore-core-release-21 /home/javohir/.gradle/caches/9.3.0/transforms/3c11419073fcaa9b2b05438c619972f5/transformed/datastore-core-release/res
+com.familyguard.app-ui-geometry-release-22 /home/javohir/.gradle/caches/9.3.0/transforms/41408dc52e6a7917b455c68f18feda13/transformed/ui-geometry-release/res
+com.familyguard.app-activity-compose-1.9.0-23 /home/javohir/.gradle/caches/9.3.0/transforms/4fbace83517ae01d2668cf882bcee307/transformed/activity-compose-1.9.0/res
+com.familyguard.app-work-runtime-ktx-2.9.1-24 /home/javohir/.gradle/caches/9.3.0/transforms/4fecc627e74f45960c3f58be6b6b3fca/transformed/work-runtime-ktx-2.9.1/res
+com.familyguard.app-hilt-navigation-compose-1.2.0-25 /home/javohir/.gradle/caches/9.3.0/transforms/54284871a4980eba904041f2fbb62bd6/transformed/hilt-navigation-compose-1.2.0/res
+com.familyguard.app-runtime-release-26 /home/javohir/.gradle/caches/9.3.0/transforms/5645e81d7ecfab4100029965e3e55e21/transformed/runtime-release/res
+com.familyguard.app-material3-release-27 /home/javohir/.gradle/caches/9.3.0/transforms/5bf0b31593a998488fa459e101547482/transformed/material3-release/res
+com.familyguard.app-ui-text-release-28 /home/javohir/.gradle/caches/9.3.0/transforms/5c7491c95e33b13598213a0ef60afe07/transformed/ui-text-release/res
+com.familyguard.app-room-ktx-2.6.1-29 /home/javohir/.gradle/caches/9.3.0/transforms/67cb66100d19bac6d2359a340312032f/transformed/room-ktx-2.6.1/res
+com.familyguard.app-security-crypto-1.1.0-alpha07-30 /home/javohir/.gradle/caches/9.3.0/transforms/6d042a87781f3a38c4f5d18e007bcba5/transformed/security-crypto-1.1.0-alpha07/res
+com.familyguard.app-datastore-preferences-release-31 /home/javohir/.gradle/caches/9.3.0/transforms/6e710696a91bdf804c81f196bb914aca/transformed/datastore-preferences-release/res
+com.familyguard.app-core-1.13.1-32 /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/res
+com.familyguard.app-lifecycle-service-2.8.3-33 /home/javohir/.gradle/caches/9.3.0/transforms/7d022dfee226dfd1de5f08b03c00e5f6/transformed/lifecycle-service-2.8.3/res
+com.familyguard.app-lifecycle-livedata-2.8.3-34 /home/javohir/.gradle/caches/9.3.0/transforms/7fc61a459be77e8a9a6e4cbaa42777ed/transformed/lifecycle-livedata-2.8.3/res
+com.familyguard.app-lifecycle-viewmodel-ktx-2.8.3-35 /home/javohir/.gradle/caches/9.3.0/transforms/8056502c25c448bfb9b9340a1c5ef084/transformed/lifecycle-viewmodel-ktx-2.8.3/res
+com.familyguard.app-ui-unit-release-36 /home/javohir/.gradle/caches/9.3.0/transforms/883775eb697a6eb77ec29c879f642fc8/transformed/ui-unit-release/res
+com.familyguard.app-core-ktx-1.13.1-37 /home/javohir/.gradle/caches/9.3.0/transforms/8933d8fba237edc6373ed51f17d275d0/transformed/core-ktx-1.13.1/res
+com.familyguard.app-savedstate-ktx-1.2.1-38 /home/javohir/.gradle/caches/9.3.0/transforms/897580135f585b313e8da2d1506bcb4a/transformed/savedstate-ktx-1.2.1/res
+com.familyguard.app-datastore-release-39 /home/javohir/.gradle/caches/9.3.0/transforms/8b208d2b0100941bd6dd8ce5742fac07/transformed/datastore-release/res
+com.familyguard.app-material-icons-core-release-40 /home/javohir/.gradle/caches/9.3.0/transforms/8c6d6db48bac34b02e11220a91165273/transformed/material-icons-core-release/res
+com.familyguard.app-room-runtime-2.6.1-41 /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/res
+com.familyguard.app-core-runtime-2.2.0-42 /home/javohir/.gradle/caches/9.3.0/transforms/97a3ab9b845035383cd288bdd28de89b/transformed/core-runtime-2.2.0/res
+com.familyguard.app-ui-util-release-43 /home/javohir/.gradle/caches/9.3.0/transforms/9b277f11c3651eabc10bf15d685209df/transformed/ui-util-release/res
+com.familyguard.app-lifecycle-runtime-compose-release-44 /home/javohir/.gradle/caches/9.3.0/transforms/9ed3c1758471175330a80d6e4863fce0/transformed/lifecycle-runtime-compose-release/res
+com.familyguard.app-navigation-runtime-2.8.0-45 /home/javohir/.gradle/caches/9.3.0/transforms/9eeeeb7ba773d92fb285a086e5474bf1/transformed/navigation-runtime-2.8.0/res
+com.familyguard.app-sqlite-framework-2.4.0-46 /home/javohir/.gradle/caches/9.3.0/transforms/a12ad450300e3e22ffcae65fa7ba300c/transformed/sqlite-framework-2.4.0/res
+com.familyguard.app-runtime-saveable-release-47 /home/javohir/.gradle/caches/9.3.0/transforms/a2981426990eaf0197326aec57fc188d/transformed/runtime-saveable-release/res
+com.familyguard.app-profileinstaller-1.3.1-48 /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/res
+com.familyguard.app-lifecycle-livedata-core-ktx-2.8.3-49 /home/javohir/.gradle/caches/9.3.0/transforms/b3c02fbd58e6b7c7caf2f3e722efacb9/transformed/lifecycle-livedata-core-ktx-2.8.3/res
+com.familyguard.app-navigation-compose-2.8.0-50 /home/javohir/.gradle/caches/9.3.0/transforms/c2952092174bb729ba837e97d29a8e00/transformed/navigation-compose-2.8.0/res
+com.familyguard.app-lifecycle-runtime-release-51 /home/javohir/.gradle/caches/9.3.0/transforms/d3e9ade65ad2adfd899e09c0713172eb/transformed/lifecycle-runtime-release/res
+com.familyguard.app-navigation-runtime-ktx-2.8.0-52 /home/javohir/.gradle/caches/9.3.0/transforms/dcc45b920a69d1ec372dadf8606c8d43/transformed/navigation-runtime-ktx-2.8.0/res
+com.familyguard.app-customview-poolingcontainer-1.0.0-53 /home/javohir/.gradle/caches/9.3.0/transforms/e5051e0ea2bd544092c8eb369f1de03c/transformed/customview-poolingcontainer-1.0.0/res
+com.familyguard.app-startup-runtime-1.1.1-54 /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/res
+com.familyguard.app-lifecycle-viewmodel-release-55 /home/javohir/.gradle/caches/9.3.0/transforms/eb1726de0a8148266feee9b1688f4ebc/transformed/lifecycle-viewmodel-release/res
+com.familyguard.app-hilt-navigation-1.2.0-56 /home/javohir/.gradle/caches/9.3.0/transforms/ed85177d144dcdbce2dd6b72cbf25fa6/transformed/hilt-navigation-1.2.0/res
+com.familyguard.app-material-ripple-release-57 /home/javohir/.gradle/caches/9.3.0/transforms/ee0893146fbc1d3e805577b04a58925e/transformed/material-ripple-release/res
+com.familyguard.app-activity-1.9.0-58 /home/javohir/.gradle/caches/9.3.0/transforms/f2ffb01ccadbeec06ab458a170202dbb/transformed/activity-1.9.0/res
+com.familyguard.app-foundation-release-59 /home/javohir/.gradle/caches/9.3.0/transforms/fc1ed44da90f18ce60f42b4efe60c99d/transformed/foundation-release/res
+com.familyguard.app-fragment-1.5.1-60 /home/javohir/.gradle/caches/9.3.0/transforms/fef0fd37c7f8167e22bee9161155e852/transformed/fragment-1.5.1/res
+com.familyguard.app-sqlite-2.4.0-61 /home/javohir/.gradle/caches/9.3.0/transforms/ff12803ca6e08d82228096d1b1d686f4/transformed/sqlite-2.4.0/res
+com.familyguard.app-pngs-62 /home/javohir/Desktop/Family Guard/android/app/build/generated/res/pngs/debug
+com.familyguard.app-resValues-63 /home/javohir/Desktop/Family Guard/android/app/build/generated/res/resValues/debug
+com.familyguard.app-updated_navigation_xml-64 /home/javohir/Desktop/Family Guard/android/app/build/generated/updated_navigation_xml/debug
+com.familyguard.app-packageDebugResources-65 /home/javohir/Desktop/Family Guard/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.familyguard.app-packageDebugResources-66 /home/javohir/Desktop/Family Guard/android/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.familyguard.app-debug-67 /home/javohir/Desktop/Family Guard/android/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.familyguard.app-debug-68 /home/javohir/Desktop/Family Guard/android/app/src/debug/res
+com.familyguard.app-main-69 /home/javohir/Desktop/Family Guard/android/app/src/main/res

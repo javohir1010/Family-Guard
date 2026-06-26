@@ -1,0 +1,808 @@
+-- Merging decision tree log ---
+provider#androidx.work.impl.WorkManagerInitializer
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:102:9-106:35
+	tools:node
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:106:13-32
+	android:authorities
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:104:13-68
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:105:13-37
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:103:13-69
+manifest
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:2:1-132:12
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:2:1-132:12
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:2:1-132:12
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:2:1-132:12
+MERGED from [androidx.work:work-runtime-ktx:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/4fecc627e74f45960c3f58be6b6b3fca/transformed/work-runtime-ktx-2.9.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.hilt:hilt-work:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/397f9b61baa74e117498b8cbeea36acd/transformed/hilt-work-1.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:17:1-145:12
+MERGED from [com.google.android.gms:play-services-location:21.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/02a966767217bb89e8d6d894617310f1/transformed/play-services-location-21.3.0/AndroidManifest.xml:2:1-8:12
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.room:room-ktx:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/67cb66100d19bac6d2359a340312032f/transformed/room-ktx-2.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/54284871a4980eba904041f2fbb62bd6/transformed/hilt-navigation-compose-1.2.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.hilt:hilt-navigation:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/ed85177d144dcdbce2dd6b72cbf25fa6/transformed/hilt-navigation-1.2.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-common:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/100c107a1fb279b3ffcfdc366381e073/transformed/navigation-common-2.8.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/9eeeeb7ba773d92fb285a086e5474bf1/transformed/navigation-runtime-2.8.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/29e52251d106a038966d7032f2dd615d/transformed/navigation-common-ktx-2.8.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/dcc45b920a69d1ec372dadf8606c8d43/transformed/navigation-runtime-ktx-2.8.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-compose:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/c2952092174bb729ba837e97d29a8e00/transformed/navigation-compose-2.8.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.dagger:hilt-android:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/294aa8b58cbe9136b5b1af7775dc4f01/transformed/hilt-android-2.51/AndroidManifest.xml:16:1-19:12
+MERGED from [androidx.fragment:fragment:1.5.1] /home/javohir/.gradle/caches/9.3.0/transforms/fef0fd37c7f8167e22bee9161155e852/transformed/fragment-1.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/f2ffb01ccadbeec06ab458a170202dbb/transformed/activity-1.9.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-ktx:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/182ff9c3a290c5cda7a9646019550e7e/transformed/activity-ktx-1.9.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/5bf0b31593a998488fa459e101547482/transformed/material3-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-compose:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/4fbace83517ae01d2668cf882bcee307/transformed/activity-compose-1.9.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/ee0893146fbc1d3e805577b04a58925e/transformed/material-ripple-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/fc1ed44da90f18ce60f42b4efe60c99d/transformed/foundation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/0c74c24460cf3ff2c1fbe4856c675b80/transformed/foundation-layout-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/21ecc97dafc1150f8a33025cae83d110/transformed/animation-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/3a093e146e3c14b3b17bf87cf898f69e/transformed/animation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/883775eb697a6eb77ec29c879f642fc8/transformed/ui-unit-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/41408dc52e6a7917b455c68f18feda13/transformed/ui-geometry-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/9b277f11c3651eabc10bf15d685209df/transformed/ui-util-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5c7491c95e33b13598213a0ef60afe07/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/36d88273fa086bcb8350c9f7e1651af6/transformed/ui-graphics-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/8c6d6db48bac34b02e11220a91165273/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.loader:loader:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/2d6eb2a607b9cfef22f770b71160a9f6/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/897580135f585b313e8da2d1506bcb4a/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/2b651464ed24354949fe229219510a7c/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/934e122dcf2e57c38deac3b702d8ad06/transformed/lifecycle-viewmodel-2.8.3/AndroidManifest.xml:2:1-5:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/eb1726de0a8148266feee9b1688f4ebc/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/004159ca867785654c92f51031f4cc34/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/d3e9ade65ad2adfd899e09c0713172eb/transformed/lifecycle-runtime-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/29b651cee7760f9b36ca72cf85064f89/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/8056502c25c448bfb9b9340a1c5ef084/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-service:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7d022dfee226dfd1de5f08b03c00e5f6/transformed/lifecycle-service-2.8.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/b3c02fbd58e6b7c7caf2f3e722efacb9/transformed/lifecycle-livedata-core-ktx-2.8.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/1f999a54e9762cd85f824e3b726f2d22/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7fc61a459be77e8a9a6e4cbaa42777ed/transformed/lifecycle-livedata-2.8.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/9ed3c1758471175330a80d6e4863fce0/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/333e156dd1f595733a8d319cbdd5d259/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/13ea43396a2230c2cdf66c9932ad85eb/transformed/ui-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/a2981426990eaf0197326aec57fc188d/transformed/runtime-saveable-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5645e81d7ecfab4100029965e3e55e21/transformed/runtime-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/3c11419073fcaa9b2b05438c619972f5/transformed/datastore-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/8b208d2b0100941bd6dd8ce5742fac07/transformed/datastore-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/6e710696a91bdf804c81f196bb914aca/transformed/datastore-preferences-release/AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/f9bc709bd42ba82c0ecf3871b134a5fa/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:2:1-5:12
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/f7f2dd095bde2261c71aed66a1961342/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/8003e8058c08f4086e53f07620506340/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.graphics:graphics-path:1.0.1] /home/javohir/.gradle/caches/9.3.0/transforms/00d3a27e4dcbcf0f7565021cc2e4647b/transformed/graphics-path-1.0.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.customview:customview:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/75360ae17e6426e1ca9de66cedf2724b/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/e5051e0ea2bd544092c8eb369f1de03c/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/8933d8fba237edc6373ed51f17d275d0/transformed/core-ktx-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/a12ad450300e3e22ffcae65fa7ba300c/transformed/sqlite-framework-2.4.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/ff12803ca6e08d82228096d1b1d686f4/transformed/sqlite-2.4.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.security:security-crypto:1.1.0-alpha07] /home/javohir/.gradle/caches/9.3.0/transforms/6d042a87781f3a38c4f5d18e007bcba5/transformed/security-crypto-1.1.0-alpha07/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/97a3ab9b845035383cd288bdd28de89b/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/48079472bb51d5a44f7bf9648a0443fb/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/de7bf2a48c841bb801d87bc49736fbf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/a5382ffadd8ef5c603451ed511ca65d6/transformed/tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /home/javohir/.gradle/caches/9.3.0/transforms/046a7883603d649a564bb019c5a54bff/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.dagger:dagger-lint-aar:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/d7cf271046abb9108659924271ecf270/transformed/dagger-lint-aar-2.51/AndroidManifest.xml:16:1-19:12
+	package
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:6:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:7:5-79
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:24:5-79
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:24:5-79
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:7:22-76
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:10:5-79
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:10:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:11:5-81
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:11:22-78
+uses-permission#android.permission.ACCESS_BACKGROUND_LOCATION
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:12:5-85
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:12:22-82
+uses-permission#android.permission.BIND_VPN_SERVICE
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:15:5-75
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:15:22-72
+uses-permission#android.permission.PACKAGE_USAGE_STATS
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:18:5-19:47
+	tools:ignore
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:19:9-44
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:18:22-75
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:22:5-77
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:26:5-77
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:26:5-77
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:22:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_LOCATION
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:23:5-86
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:23:22-83
+uses-permission#android.permission.FOREGROUND_SERVICE_SPECIAL_USE
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:24:5-89
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:24:22-86
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:27:5-81
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:25:5-81
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:25:5-81
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:27:22-78
+uses-permission#android.permission.VIBRATE
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:30:5-66
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:30:22-63
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:33:5-77
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:33:22-74
+uses-permission#android.permission.WAKE_LOCK
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:36:5-68
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:23:5-68
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:23:5-68
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:36:22-65
+uses-permission#android.permission.BIND_DEVICE_ADMIN
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:39:5-40:47
+	tools:ignore
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:40:9-44
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:39:22-73
+application
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:42:5-131:19
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:42:5-131:19
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:28:5-143:19
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:28:5-143:19
+MERGED from [com.google.android.gms:play-services-location:21.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/02a966767217bb89e8d6d894617310f1/transformed/play-services-location-21.3.0/AndroidManifest.xml:6:5-20
+MERGED from [com.google.android.gms:play-services-location:21.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/02a966767217bb89e8d6d894617310f1/transformed/play-services-location-21.3.0/AndroidManifest.xml:6:5-20
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:23:5-33:19
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/f9bc709bd42ba82c0ecf3871b134a5fa/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/f9bc709bd42ba82c0ecf3871b134a5fa/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/de7bf2a48c841bb801d87bc49736fbf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/de7bf2a48c841bb801d87bc49736fbf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+	android:label
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:46:9-41
+	android:icon
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:45:9-43
+	android:allowBackup
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:44:9-36
+	android:theme
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:47:9-49
+	android:networkSecurityConfig
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:48:9-69
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:43:9-39
+activity#com.familyguard.app.ui.MainActivity
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:51:9-59:20
+	android:launchMode
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:54:13-43
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:53:13-36
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:52:13-44
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:55:13-58:29
+action#android.intent.action.MAIN
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:56:17-69
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:56:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:57:17-77
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:57:27-74
+service#com.familyguard.app.services.LocationForegroundService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:62:9-65:56
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:64:13-37
+	android:foregroundServiceType
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:65:13-53
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:63:13-63
+service#com.familyguard.app.services.DnsVpnService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:68:9-75:19
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:70:13-37
+	android:permission
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:71:13-69
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:69:13-51
+intent-filter#action:name:android.net.VpnService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:72:13-74:29
+action#android.net.VpnService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:73:17-65
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:73:25-62
+service#com.familyguard.app.services.AppMonitorAccessibilityService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:78:9-89:19
+	android:label
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:81:13-64
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:80:13-36
+	android:permission
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:82:13-79
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:79:13-68
+intent-filter#action:name:android.accessibilityservice.AccessibilityService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:83:13-85:29
+action#android.accessibilityservice.AccessibilityService
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:84:17-92
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:84:25-89
+meta-data#android.accessibilityservice
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:86:13-88:72
+	android:resource
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:88:17-69
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:87:17-60
+activity#com.familyguard.app.services.BlockOverlayActivity
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:92:9-99:86
+	android:excludeFromRecents
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:95:13-46
+	android:launchMode
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:96:13-48
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:94:13-37
+	android:showOnLockScreen
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:97:13-44
+	android:theme
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:99:13-83
+	android:taskAffinity
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:98:13-57
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:93:13-58
+receiver#com.familyguard.app.receivers.BootReceiver
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:109:9-116:20
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:111:13-36
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:110:13-51
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.MY_PACKAGE_REPLACED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:112:13-115:29
+	android:priority
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:112:28-50
+action#android.intent.action.BOOT_COMPLETED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:113:17-79
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:113:25-76
+action#android.intent.action.MY_PACKAGE_REPLACED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:114:17-84
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:114:25-81
+receiver#com.familyguard.app.receivers.DeviceAdminReceiver
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:119:9-129:20
+	android:exported
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:121:13-36
+	android:permission
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:122:13-70
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:120:13-58
+meta-data#android.app.device_admin
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:123:13-125:63
+	android:resource
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:125:17-60
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:124:17-56
+intent-filter#action:name:android.app.action.DEVICE_ADMIN_ENABLED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:126:13-128:29
+action#android.app.action.DEVICE_ADMIN_ENABLED
+ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:127:17-82
+	android:name
+		ADDED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml:127:25-79
+uses-sdk
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+MERGED from [androidx.work:work-runtime-ktx:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/4fecc627e74f45960c3f58be6b6b3fca/transformed/work-runtime-ktx-2.9.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.work:work-runtime-ktx:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/4fecc627e74f45960c3f58be6b6b3fca/transformed/work-runtime-ktx-2.9.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.hilt:hilt-work:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/397f9b61baa74e117498b8cbeea36acd/transformed/hilt-work-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.hilt:hilt-work:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/397f9b61baa74e117498b8cbeea36acd/transformed/hilt-work-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:21:5-44
+MERGED from [com.google.android.gms:play-services-location:21.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/02a966767217bb89e8d6d894617310f1/transformed/play-services-location-21.3.0/AndroidManifest.xml:4:5-44
+MERGED from [com.google.android.gms:play-services-location:21.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/02a966767217bb89e8d6d894617310f1/transformed/play-services-location-21.3.0/AndroidManifest.xml:4:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/67cb66100d19bac6d2359a340312032f/transformed/room-ktx-2.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/67cb66100d19bac6d2359a340312032f/transformed/room-ktx-2.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/54284871a4980eba904041f2fbb62bd6/transformed/hilt-navigation-compose-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/54284871a4980eba904041f2fbb62bd6/transformed/hilt-navigation-compose-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/ed85177d144dcdbce2dd6b72cbf25fa6/transformed/hilt-navigation-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation:1.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/ed85177d144dcdbce2dd6b72cbf25fa6/transformed/hilt-navigation-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/100c107a1fb279b3ffcfdc366381e073/transformed/navigation-common-2.8.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/100c107a1fb279b3ffcfdc366381e073/transformed/navigation-common-2.8.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/9eeeeb7ba773d92fb285a086e5474bf1/transformed/navigation-runtime-2.8.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/9eeeeb7ba773d92fb285a086e5474bf1/transformed/navigation-runtime-2.8.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/29e52251d106a038966d7032f2dd615d/transformed/navigation-common-ktx-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/29e52251d106a038966d7032f2dd615d/transformed/navigation-common-ktx-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/dcc45b920a69d1ec372dadf8606c8d43/transformed/navigation-runtime-ktx-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/dcc45b920a69d1ec372dadf8606c8d43/transformed/navigation-runtime-ktx-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/c2952092174bb729ba837e97d29a8e00/transformed/navigation-compose-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.8.0] /home/javohir/.gradle/caches/9.3.0/transforms/c2952092174bb729ba837e97d29a8e00/transformed/navigation-compose-2.8.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.dagger:hilt-android:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/294aa8b58cbe9136b5b1af7775dc4f01/transformed/hilt-android-2.51/AndroidManifest.xml:18:3-42
+MERGED from [com.google.dagger:hilt-android:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/294aa8b58cbe9136b5b1af7775dc4f01/transformed/hilt-android-2.51/AndroidManifest.xml:18:3-42
+MERGED from [androidx.fragment:fragment:1.5.1] /home/javohir/.gradle/caches/9.3.0/transforms/fef0fd37c7f8167e22bee9161155e852/transformed/fragment-1.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.5.1] /home/javohir/.gradle/caches/9.3.0/transforms/fef0fd37c7f8167e22bee9161155e852/transformed/fragment-1.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/f2ffb01ccadbeec06ab458a170202dbb/transformed/activity-1.9.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/f2ffb01ccadbeec06ab458a170202dbb/transformed/activity-1.9.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/182ff9c3a290c5cda7a9646019550e7e/transformed/activity-ktx-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/182ff9c3a290c5cda7a9646019550e7e/transformed/activity-ktx-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/5bf0b31593a998488fa459e101547482/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/5bf0b31593a998488fa459e101547482/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/4fbace83517ae01d2668cf882bcee307/transformed/activity-compose-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.9.0] /home/javohir/.gradle/caches/9.3.0/transforms/4fbace83517ae01d2668cf882bcee307/transformed/activity-compose-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/ee0893146fbc1d3e805577b04a58925e/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/ee0893146fbc1d3e805577b04a58925e/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/fc1ed44da90f18ce60f42b4efe60c99d/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/fc1ed44da90f18ce60f42b4efe60c99d/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/0c74c24460cf3ff2c1fbe4856c675b80/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/0c74c24460cf3ff2c1fbe4856c675b80/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/21ecc97dafc1150f8a33025cae83d110/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/21ecc97dafc1150f8a33025cae83d110/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/3a093e146e3c14b3b17bf87cf898f69e/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/3a093e146e3c14b3b17bf87cf898f69e/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/883775eb697a6eb77ec29c879f642fc8/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/883775eb697a6eb77ec29c879f642fc8/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/41408dc52e6a7917b455c68f18feda13/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/41408dc52e6a7917b455c68f18feda13/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/9b277f11c3651eabc10bf15d685209df/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/9b277f11c3651eabc10bf15d685209df/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5c7491c95e33b13598213a0ef60afe07/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5c7491c95e33b13598213a0ef60afe07/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/36d88273fa086bcb8350c9f7e1651af6/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/36d88273fa086bcb8350c9f7e1651af6/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/8c6d6db48bac34b02e11220a91165273/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/8c6d6db48bac34b02e11220a91165273/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.loader:loader:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/2d6eb2a607b9cfef22f770b71160a9f6/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/2d6eb2a607b9cfef22f770b71160a9f6/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/897580135f585b313e8da2d1506bcb4a/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/897580135f585b313e8da2d1506bcb4a/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/2b651464ed24354949fe229219510a7c/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /home/javohir/.gradle/caches/9.3.0/transforms/2b651464ed24354949fe229219510a7c/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/934e122dcf2e57c38deac3b702d8ad06/transformed/lifecycle-viewmodel-2.8.3/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/934e122dcf2e57c38deac3b702d8ad06/transformed/lifecycle-viewmodel-2.8.3/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/eb1726de0a8148266feee9b1688f4ebc/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/eb1726de0a8148266feee9b1688f4ebc/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/004159ca867785654c92f51031f4cc34/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/004159ca867785654c92f51031f4cc34/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/d3e9ade65ad2adfd899e09c0713172eb/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/d3e9ade65ad2adfd899e09c0713172eb/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/29b651cee7760f9b36ca72cf85064f89/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/29b651cee7760f9b36ca72cf85064f89/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/8056502c25c448bfb9b9340a1c5ef084/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/8056502c25c448bfb9b9340a1c5ef084/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-service:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7d022dfee226dfd1de5f08b03c00e5f6/transformed/lifecycle-service-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-service:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7d022dfee226dfd1de5f08b03c00e5f6/transformed/lifecycle-service-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/b3c02fbd58e6b7c7caf2f3e722efacb9/transformed/lifecycle-livedata-core-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/b3c02fbd58e6b7c7caf2f3e722efacb9/transformed/lifecycle-livedata-core-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/1f999a54e9762cd85f824e3b726f2d22/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/1f999a54e9762cd85f824e3b726f2d22/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7fc61a459be77e8a9a6e4cbaa42777ed/transformed/lifecycle-livedata-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/7fc61a459be77e8a9a6e4cbaa42777ed/transformed/lifecycle-livedata-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/9ed3c1758471175330a80d6e4863fce0/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/9ed3c1758471175330a80d6e4863fce0/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/333e156dd1f595733a8d319cbdd5d259/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/333e156dd1f595733a8d319cbdd5d259/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/13ea43396a2230c2cdf66c9932ad85eb/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/13ea43396a2230c2cdf66c9932ad85eb/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/a2981426990eaf0197326aec57fc188d/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/a2981426990eaf0197326aec57fc188d/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5645e81d7ecfab4100029965e3e55e21/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /home/javohir/.gradle/caches/9.3.0/transforms/5645e81d7ecfab4100029965e3e55e21/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/3c11419073fcaa9b2b05438c619972f5/transformed/datastore-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/3c11419073fcaa9b2b05438c619972f5/transformed/datastore-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/8b208d2b0100941bd6dd8ce5742fac07/transformed/datastore-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/8b208d2b0100941bd6dd8ce5742fac07/transformed/datastore-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/6e710696a91bdf804c81f196bb914aca/transformed/datastore-preferences-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/6e710696a91bdf804c81f196bb914aca/transformed/datastore-preferences-release/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/f9bc709bd42ba82c0ecf3871b134a5fa/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/f9bc709bd42ba82c0ecf3871b134a5fa/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/f7f2dd095bde2261c71aed66a1961342/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/f7f2dd095bde2261c71aed66a1961342/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/8003e8058c08f4086e53f07620506340/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/8003e8058c08f4086e53f07620506340/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.graphics:graphics-path:1.0.1] /home/javohir/.gradle/caches/9.3.0/transforms/00d3a27e4dcbcf0f7565021cc2e4647b/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] /home/javohir/.gradle/caches/9.3.0/transforms/00d3a27e4dcbcf0f7565021cc2e4647b/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.customview:customview:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/75360ae17e6426e1ca9de66cedf2724b/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/75360ae17e6426e1ca9de66cedf2724b/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/e5051e0ea2bd544092c8eb369f1de03c/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/e5051e0ea2bd544092c8eb369f1de03c/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/8933d8fba237edc6373ed51f17d275d0/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/8933d8fba237edc6373ed51f17d275d0/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/a12ad450300e3e22ffcae65fa7ba300c/transformed/sqlite-framework-2.4.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/a12ad450300e3e22ffcae65fa7ba300c/transformed/sqlite-framework-2.4.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/ff12803ca6e08d82228096d1b1d686f4/transformed/sqlite-2.4.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/ff12803ca6e08d82228096d1b1d686f4/transformed/sqlite-2.4.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.security:security-crypto:1.1.0-alpha07] /home/javohir/.gradle/caches/9.3.0/transforms/6d042a87781f3a38c4f5d18e007bcba5/transformed/security-crypto-1.1.0-alpha07/AndroidManifest.xml:20:5-44
+MERGED from [androidx.security:security-crypto:1.1.0-alpha07] /home/javohir/.gradle/caches/9.3.0/transforms/6d042a87781f3a38c4f5d18e007bcba5/transformed/security-crypto-1.1.0-alpha07/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/97a3ab9b845035383cd288bdd28de89b/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/javohir/.gradle/caches/9.3.0/transforms/97a3ab9b845035383cd288bdd28de89b/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/48079472bb51d5a44f7bf9648a0443fb/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/48079472bb51d5a44f7bf9648a0443fb/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/de7bf2a48c841bb801d87bc49736fbf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/de7bf2a48c841bb801d87bc49736fbf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/a5382ffadd8ef5c603451ed511ca65d6/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /home/javohir/.gradle/caches/9.3.0/transforms/a5382ffadd8ef5c603451ed511ca65d6/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /home/javohir/.gradle/caches/9.3.0/transforms/046a7883603d649a564bb019c5a54bff/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /home/javohir/.gradle/caches/9.3.0/transforms/046a7883603d649a564bb019c5a54bff/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [com.google.dagger:dagger-lint-aar:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/d7cf271046abb9108659924271ecf270/transformed/dagger-lint-aar-2.51/AndroidManifest.xml:18:3-42
+MERGED from [com.google.dagger:dagger-lint-aar:2.51] /home/javohir/.gradle/caches/9.3.0/transforms/d7cf271046abb9108659924271ecf270/transformed/dagger-lint-aar-2.51/AndroidManifest.xml:18:3-42
+	android:targetSdkVersion
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/javohir/Desktop/Family Guard/android/app/src/main/AndroidManifest.xml
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:29:9-37:20
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /home/javohir/.gradle/caches/9.3.0/transforms/e51db2be847fe777cd745619589b6c07/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:33:13-31
+	android:authorities
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:31:13-68
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:32:13-37
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:30:13-67
+meta-data#androidx.work.WorkManagerInitializer
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:34:13-36:52
+	android:value
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:36:17-49
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:35:17-68
+service#androidx.work.impl.background.systemalarm.SystemAlarmService
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:39:9-45:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:42:13-72
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:43:13-37
+	tools:ignore
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:44:13-60
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:45:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:41:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:40:13-88
+service#androidx.work.impl.background.systemjob.SystemJobService
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:46:9-52:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:49:13-70
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:50:13-36
+	android:permission
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:51:13-69
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:52:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:48:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:47:13-84
+service#androidx.work.impl.foreground.SystemForegroundService
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:53:9-59:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:56:13-77
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:57:13-37
+	tools:ignore
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:58:13-60
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:59:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:55:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:54:13-81
+receiver#androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:61:9-66:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:64:13-35
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:65:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:66:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:63:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:62:13-88
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:67:9-77:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:70:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:71:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:72:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:69:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:68:13-106
+intent-filter#action:name:android.intent.action.ACTION_POWER_CONNECTED+action:name:android.intent.action.ACTION_POWER_DISCONNECTED
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:73:13-76:29
+action#android.intent.action.ACTION_POWER_CONNECTED
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:74:17-87
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:74:25-84
+action#android.intent.action.ACTION_POWER_DISCONNECTED
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:75:17-90
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:75:25-87
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:78:9-88:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:81:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:82:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:83:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:80:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:79:13-104
+intent-filter#action:name:android.intent.action.BATTERY_LOW+action:name:android.intent.action.BATTERY_OKAY
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:84:13-87:29
+action#android.intent.action.BATTERY_OKAY
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:85:17-77
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:85:25-74
+action#android.intent.action.BATTERY_LOW
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:86:17-76
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:86:25-73
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:89:9-99:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:92:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:93:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:94:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:91:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:90:13-104
+intent-filter#action:name:android.intent.action.DEVICE_STORAGE_LOW+action:name:android.intent.action.DEVICE_STORAGE_OK
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:95:13-98:29
+action#android.intent.action.DEVICE_STORAGE_LOW
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:96:17-83
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:96:25-80
+action#android.intent.action.DEVICE_STORAGE_OK
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:97:17-82
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:97:25-79
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:100:9-109:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:103:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:104:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:105:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:102:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:101:13-103
+intent-filter#action:name:android.net.conn.CONNECTIVITY_CHANGE
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:106:13-108:29
+action#android.net.conn.CONNECTIVITY_CHANGE
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:107:17-79
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:107:25-76
+receiver#androidx.work.impl.background.systemalarm.RescheduleReceiver
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:110:9-121:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:113:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:114:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:115:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:112:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:111:13-88
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.TIMEZONE_CHANGED+action:name:android.intent.action.TIME_SET
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:116:13-120:29
+action#android.intent.action.TIME_SET
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:118:17-73
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:118:25-70
+action#android.intent.action.TIMEZONE_CHANGED
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:119:17-81
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:119:25-78
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:122:9-131:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:125:13-72
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:126:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:127:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:124:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:123:13-99
+intent-filter#action:name:androidx.work.impl.background.systemalarm.UpdateProxies
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:128:13-130:29
+action#androidx.work.impl.background.systemalarm.UpdateProxies
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:129:17-98
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:129:25-95
+receiver#androidx.work.impl.diagnostics.DiagnosticsReceiver
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:132:9-142:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:135:13-35
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:136:13-36
+	android:permission
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:137:13-57
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:138:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:134:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:133:13-78
+intent-filter#action:name:androidx.work.diagnostics.REQUEST_DIAGNOSTICS
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:139:13-141:29
+action#androidx.work.diagnostics.REQUEST_DIAGNOSTICS
+ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:140:17-88
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.1] /home/javohir/.gradle/caches/9.3.0/transforms/0c7b95221640c225f89a4e3540ba903e/transformed/work-runtime-2.9.1/AndroidManifest.xml:140:25-85
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /home/javohir/.gradle/caches/9.3.0/transforms/273ba6f6f40f7c63ec0a0db398a42e5c/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+service#androidx.room.MultiInstanceInvalidationService
+ADDED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+	android:exported
+		ADDED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:28:13-60
+	android:directBootAware
+		ADDED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+	android:name
+		ADDED from [androidx.room:room-runtime:2.6.1] /home/javohir/.gradle/caches/9.3.0/transforms/8ebb6fdf11c8b13c73f48153623b5fde/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /home/javohir/.gradle/caches/9.3.0/transforms/3bb21c4bb581aa8be694de81dd6bba63/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /home/javohir/.gradle/caches/9.3.0/transforms/2b721cf26470b0d56632fc6cf4d4272f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:30:17-78
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /home/javohir/.gradle/caches/9.3.0/transforms/2acfe9993e5eeb40c893e326319cdbb2/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+permission#com.familyguard.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+uses-permission#com.familyguard.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /home/javohir/.gradle/caches/9.3.0/transforms/7be877c38a3e494c072a79595f07e272/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/javohir/.gradle/caches/9.3.0/transforms/a9f4f778250037154f1dc7c38663174f/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92

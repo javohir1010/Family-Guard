@@ -92,8 +92,9 @@ class BlockOverlayActivity : ComponentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         // App was re-launched while overlay is visible → stay on overlay
     }
 
