@@ -1,3 +1,4 @@
+import math
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -59,8 +60,6 @@ class LocationCreateView(generics.CreateAPIView):
 
     def _check_geofences(self, user, record):
         """Check if user entered/exited any active geofence zones."""
-        import math
-
         if not user.family:
             return
 
