@@ -47,20 +47,26 @@ export default function LoginPage() {
       setTokens(data.access, data.refresh);
       setUser(data.user);
 
-      // Auto-create family for parent
+      // Auto-create family for parent, then reload the profile so the stored
+      // user has its family id (the dashboard map and WebSocket need it)
       if (regForm.role === "parent") {
         try {
           await familyApi.create(`Семья ${data.user.last_name}`);
-        } catch {}
+          const profile = await authApi.profile();
+          setUser(profile.data);
+        } catch {
+          toast.error("Не удалось создать семью — создайте её на странице «Семья»");
+        }
       }
 
       toast.success("Регистрация успешна!");
       navigate("/dashboard");
     } catch (err: any) {
       const errors = err.response?.data;
-      const msg = errors
-        ? Object.values(errors).flat().join(", ")
-        : "Ошибка регистрации";
+      const msg =
+        errors && typeof errors === "object"
+          ? Object.values(errors).flat().join(", ")
+          : "Ошибка регистрации";
       toast.error(msg);
     } finally {
       setLoading(false);

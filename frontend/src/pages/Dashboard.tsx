@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useQuery } from "@tanstack/react-query";
 import { locationApi } from "../api/client";
@@ -33,6 +33,25 @@ function makeIcon(role: string, isOnline: boolean) {
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
+}
+
+// MapContainer only reads `center` on mount; move the map once data arrives
+function FitToPositions({ positions }: { positions: any[] }) {
+  const map = useMap();
+  const fitted = useRef(false);
+  useEffect(() => {
+    if (fitted.current || positions.length === 0) return;
+    fitted.current = true;
+    if (positions.length === 1) {
+      map.setView([positions[0].latitude, positions[0].longitude], 14);
+    } else {
+      map.fitBounds(
+        positions.map((p) => [p.latitude, p.longitude] as [number, number]),
+        { padding: [40, 40] }
+      );
+    }
+  }, [positions, map]);
+  return null;
 }
 
 export default function DashboardPage() {
@@ -114,9 +133,17 @@ export default function DashboardPage() {
               attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <FitToPositions positions={positionsList} />
             {positionsList.map((pos) => (
+              <Fragment key={pos.user_id}>
+              {pos.accuracy ? (
+                <Circle
+                  center={[pos.latitude, pos.longitude]}
+                  radius={pos.accuracy}
+                  pathOptions={{ color: "#2563eb", fillOpacity: 0.1 }}
+                />
+              ) : null}
               <Marker
-                key={pos.user_id}
                 position={[pos.latitude, pos.longitude]}
                 icon={makeIcon(pos.role, pos.is_online)}
               >
@@ -126,7 +153,7 @@ export default function DashboardPage() {
                     <div className={pos.role === "child" ? "text-green-600" : "text-blue-600"}>
                       {pos.role === "child" ? "Ребёнок" : "Родитель"}
                     </div>
-                    {pos.battery_level !== null && (
+                    {pos.battery_level != null && (
                       <div className="flex items-center gap-1 text-gray-600">
                         🔋 {pos.battery_level}%
                       </div>
@@ -146,16 +173,10 @@ export default function DashboardPage() {
                     >
                       {pos.is_online ? "● Онлайн" : "○ Оффлайн"}
                     </div>
-                    {pos.accuracy && (
-                      <Circle
-                        center={[pos.latitude, pos.longitude]}
-                        radius={pos.accuracy}
-                        pathOptions={{ color: "#2563eb", fillOpacity: 0.1 }}
-                      />
-                    )}
                   </div>
                 </Popup>
               </Marker>
+              </Fragment>
             ))}
           </MapContainer>
         </div>

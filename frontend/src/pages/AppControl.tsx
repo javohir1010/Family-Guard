@@ -3,16 +3,32 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appsApi, familyApi } from "../api/client";
 import toast from "react-hot-toast";
 
+const EMPTY_RULE_FORM = {
+  child: "",
+  package_name: "",
+  app_name: "",
+  rule_type: "block",
+  daily_limit_minutes: 60,
+};
+
+function todayIso() {
+  // Local calendar date — the device reports usage per local day
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function errorText(e: any) {
+  const data = e.response?.data;
+  if (data && typeof data === "object") return Object.values(data).flat().join(", ");
+  return "Ошибка";
+}
+
 export default function AppControlPage() {
   const qc = useQueryClient();
   const [selectedChild, setSelectedChild] = useState<string>("");
-  const [ruleForm, setRuleForm] = useState({
-    child: "",
-    package_name: "",
-    app_name: "",
-    rule_type: "block",
-    daily_limit_minutes: 60,
-  });
+  const [ruleForm, setRuleForm] = useState(EMPTY_RULE_FORM);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [showAddRule, setShowAddRule] = useState(false);
 
   const { data: members = [] } = useQuery({
@@ -24,12 +40,11 @@ export default function AppControlPage() {
 
   const activeChild = selectedChild || children[0]?.id || "";
 
+  const today = todayIso();
   const { data: usageData = [] } = useQuery({
-    queryKey: ["app-usage", activeChild],
+    queryKey: ["app-usage", activeChild, today],
     queryFn: () =>
-      activeChild
-        ? appsApi.usage(activeChild).then((r) => r.data.results ?? r.data)
-        : [],
+      appsApi.usage(activeChild, { date: today }).then((r) => r.data.results ?? r.data),
     enabled: !!activeChild,
   });
 
@@ -43,15 +58,36 @@ export default function AppControlPage() {
     queryFn: () => appsApi.permissionAlerts().then((r) => r.data.results ?? r.data),
   });
 
-  const createRuleMutation = useMutation({
-    mutationFn: (data: object) => appsApi.createRule(data),
+  const saveRuleMutation = useMutation({
+    mutationFn: (data: Record<string, any>) =>
+      editingRuleId
+        ? appsApi.updateRule(editingRuleId, {
+            app_name: data.app_name,
+            rule_type: data.rule_type,
+            daily_limit_minutes: data.daily_limit_minutes,
+          })
+        : appsApi.createRule(data),
     onSuccess: () => {
-      toast.success("Правило создано");
+      toast.success(editingRuleId ? "Правило обновлено" : "Правило создано");
       qc.invalidateQueries({ queryKey: ["app-rules"] });
       setShowAddRule(false);
     },
-    onError: (e: any) => toast.error(JSON.stringify(e.response?.data)),
+    onError: (e: any) => toast.error(errorText(e)),
   });
+
+  function openRuleModal(app?: { package_name: string; app_name: string }) {
+    const existing = app && childRules.find((r: any) => r.package_name === app.package_name);
+    setEditingRuleId(existing?.id ?? null);
+    setRuleForm({
+      ...EMPTY_RULE_FORM,
+      child: activeChild,
+      package_name: app?.package_name ?? "",
+      app_name: existing?.app_name || app?.app_name || "",
+      rule_type: existing?.rule_type ?? "block",
+      daily_limit_minutes: existing?.daily_limit_minutes ?? 60,
+    });
+    setShowAddRule(true);
+  }
 
   const deleteRuleMutation = useMutation({
     mutationFn: (id: string) => appsApi.deleteRule(id),
@@ -65,6 +101,9 @@ export default function AppControlPage() {
     const m = Math.round(secs / 60);
     return m >= 60 ? `${Math.floor(m / 60)}ч ${m % 60}м` : `${m}м`;
   }
+
+  // Rules of the selected child only — the same app can have different rules per child
+  const childRules = rules.filter((r: any) => r.child === activeChild);
 
   const totalScreenTime = usageData.reduce(
     (acc: number, a: any) => acc + a.duration_seconds,
@@ -81,7 +120,8 @@ export default function AppControlPage() {
           </p>
         </div>
         <button
-          onClick={() => setShowAddRule(true)}
+          onClick={() => openRuleModal()}
+          disabled={!activeChild}
           className="btn-primary"
         >
           + Добавить правило
@@ -156,7 +196,7 @@ export default function AppControlPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {usageData.map((app: any) => {
-                  const rule = rules.find(
+                  const rule = childRules.find(
                     (r: any) => r.package_name === app.package_name
                   );
                   return (
@@ -189,19 +229,19 @@ export default function AppControlPage() {
                       </td>
                       <td className="table-cell">
                         <button
-                          onClick={() => {
-                            setRuleForm((f) => ({
-                              ...f,
-                              package_name: app.package_name,
-                              app_name: app.app_name,
-                              child: activeChild,
-                            }));
-                            setShowAddRule(true);
-                          }}
+                          onClick={() => openRuleModal(app)}
                           className="text-xs text-blue-500 hover:text-blue-700"
                         >
                           Настроить
                         </button>
+                        {rule && (
+                          <button
+                            onClick={() => deleteRuleMutation.mutate(rule.id)}
+                            className="text-xs text-red-400 hover:text-red-600 ml-2"
+                          >
+                            Снять
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -247,7 +287,7 @@ export default function AppControlPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              Новое правило для приложения
+              {editingRuleId ? "Изменить правило" : "Новое правило для приложения"}
             </h2>
             <div className="space-y-3">
               <div>
@@ -256,6 +296,7 @@ export default function AppControlPage() {
                 </label>
                 <select
                   value={ruleForm.child || activeChild}
+                  disabled={!!editingRuleId}
                   onChange={(e) =>
                     setRuleForm((f) => ({ ...f, child: e.target.value }))
                   }
@@ -274,6 +315,7 @@ export default function AppControlPage() {
                 </label>
                 <input
                   value={ruleForm.package_name}
+                  disabled={!!editingRuleId}
                   onChange={(e) =>
                     setRuleForm((f) => ({ ...f, package_name: e.target.value }))
                   }
@@ -316,6 +358,7 @@ export default function AppControlPage() {
                   </label>
                   <input
                     type="number"
+                    min={1}
                     value={ruleForm.daily_limit_minutes}
                     onChange={(e) =>
                       setRuleForm((f) => ({
@@ -337,7 +380,7 @@ export default function AppControlPage() {
               </button>
               <button
                 onClick={() =>
-                  createRuleMutation.mutate({
+                  saveRuleMutation.mutate({
                     ...ruleForm,
                     child: ruleForm.child || activeChild,
                     daily_limit_minutes:
@@ -346,10 +389,10 @@ export default function AppControlPage() {
                         : null,
                   })
                 }
-                disabled={createRuleMutation.isPending}
+                disabled={!ruleForm.package_name || saveRuleMutation.isPending}
                 className="btn-primary flex-1"
               >
-                Создать
+                {editingRuleId ? "Сохранить" : "Создать"}
               </button>
             </div>
           </div>
