@@ -1,6 +1,7 @@
 import environ
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 env = environ.Env()
 
@@ -149,9 +150,17 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Tashkent"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_BEAT_SCHEDULE = {
+    # Monday 09:00 (CELERY_TIMEZONE)
+    "weekly-report": {
+        "task": "apps.notifications.tasks.send_weekly_report",
+        "schedule": crontab(minute=0, hour=9, day_of_week=1),
+    },
+}
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS — explicit origins from env; allow-all only when the list is empty in DEBUG
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
+CORS_ALLOW_ALL_ORIGINS = DEBUG and not CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = True
 
 # Static & Media

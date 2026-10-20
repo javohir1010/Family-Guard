@@ -1,9 +1,19 @@
+import datetime
 from rest_framework import serializers
+from django.utils.dateparse import parse_datetime
 from .models import AppUsage, AppRule, ScreenSchedule, PermissionAlert
 
 
+def validate_family_child(serializer, child):
+    """Parents may only target children of their own family."""
+    user = serializer.context["request"].user
+    if child.role != "child" or not user.family_id or child.family_id != user.family_id:
+        raise serializers.ValidationError("Child not found in your family.")
+    return child
+
+
 class AppUsageSerializer(serializers.ModelSerializer):
-    duration_minutes = serializers.ReadOnlyField()
+    duration_minutes = serializers.FloatField(read_only=True)
 
     class Meta:
         model = AppUsage
@@ -21,12 +31,23 @@ class AppUsageBatchSerializer(serializers.Serializer):
         for u in usages:
             if not u.get("package_name") or not u.get("date"):
                 continue
+            try:
+                date = datetime.date.fromisoformat(str(u["date"]))
+                duration = max(0, int(u.get("duration_seconds") or 0))
+            except (TypeError, ValueError):
+                continue  # skip malformed entries instead of failing the batch
+            last_used = None
+            if u.get("last_used"):
+                try:
+                    last_used = parse_datetime(str(u["last_used"]))
+                except ValueError:
+                    pass
             validated.append({
                 "package_name": str(u["package_name"])[:255],
-                "app_name": str(u.get("app_name", u["package_name"]))[:255],
-                "duration_seconds": max(0, int(u.get("duration_seconds", 0))),
-                "date": u["date"],
-                "last_used": u.get("last_used"),
+                "app_name": str(u.get("app_name") or u["package_name"])[:255],
+                "duration_seconds": duration,
+                "date": date,
+                "last_used": last_used,
             })
         return validated
 
@@ -42,12 +63,21 @@ class AppRuleSerializer(serializers.ModelSerializer):
         validated_data["created_by"] = self.context["request"].user
         return super().create(validated_data)
 
+    def validate_child(self, child):
+        return validate_family_child(self, child)
+
     def validate(self, attrs):
-        if attrs.get("rule_type") == AppRule.RuleType.LIMIT:
-            if not attrs.get("daily_limit_minutes"):
-                raise serializers.ValidationError(
-                    {"daily_limit_minutes": "Required for LIMIT rule type."}
-                )
+        # Fall back to the stored values on PATCH so partial updates are checked too
+        rule_type = attrs.get("rule_type", getattr(self.instance, "rule_type", None))
+        limit = attrs.get(
+            "daily_limit_minutes", getattr(self.instance, "daily_limit_minutes", None)
+        )
+        if rule_type == AppRule.RuleType.LIMIT and not limit:
+            raise serializers.ValidationError(
+                {"daily_limit_minutes": "Required for LIMIT rule type."}
+            )
+        if rule_type == AppRule.RuleType.BLOCK:
+            attrs["daily_limit_minutes"] = None
         return attrs
 
 
@@ -60,7 +90,22 @@ class ScreenScheduleSerializer(serializers.ModelSerializer):
                   "start_time", "end_time", "is_active", "created_at")
         read_only_fields = ("id", "created_at", "days_list")
 
-    def get_days_list(self, obj):
+    def validate_child(self, child):
+        return validate_family_child(self, child)
+
+    def validate_days_bitmask(self, value):
+        if not 1 <= value <= 127:
+            raise serializers.ValidationError("Must be between 1 and 127 (Mon=1 … Sun=64).")
+        return value
+
+    def validate(self, attrs):
+        start = attrs.get("start_time", getattr(self.instance, "start_time", None))
+        end = attrs.get("end_time", getattr(self.instance, "end_time", None))
+        if start is not None and start == end:
+            raise serializers.ValidationError({"end_time": "Must differ from start_time."})
+        return attrs
+
+    def get_days_list(self, obj) -> list[str]:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         return [days[i] for i in range(7) if obj.days_bitmask & (1 << i)]
 

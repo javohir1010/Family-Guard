@@ -7,7 +7,7 @@ User = get_user_model()
 
 class DnsCategory(models.Model):
     """Predefined categories for bulk domain blocking."""
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     is_enabled = models.BooleanField(default=False)
     family = models.ForeignKey(
@@ -18,6 +18,9 @@ class DnsCategory(models.Model):
 
     class Meta:
         verbose_name_plural = "DNS Categories"
+        # Each family gets its own copy of every built-in category
+        unique_together = ("family", "name")
+        ordering = ["name"]
 
     def __str__(self):
         return self.name

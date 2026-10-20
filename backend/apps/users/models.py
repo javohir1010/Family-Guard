@@ -1,6 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import uuid
+from datetime import timedelta
+from django.utils import timezone
+
+# Child devices report location every ~10 min; allow two missed reports
+ONLINE_WINDOW = timedelta(minutes=25)
 
 
 class Family(models.Model):
@@ -47,6 +52,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name() or self.email} ({self.role})"
+
+    @property
+    def is_active_now(self):
+        """Online = reported recently (the is_online flag alone never resets)."""
+        return bool(
+            self.is_online
+            and self.last_seen
+            and timezone.now() - self.last_seen <= ONLINE_WINDOW
+        )
 
     @property
     def is_parent(self):

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.cache import cache
 from drf_spectacular.utils import extend_schema
 from .models import Family
+from .permissions import IsParentOrReadOnly
 from .invite_model import InviteCode
 from .serializers import (
     FamilySerializer,
@@ -42,8 +43,9 @@ class CreateFamilyView(generics.CreateAPIView):
 
 
 class FamilyDetailView(generics.RetrieveUpdateAPIView):
-    """Get current family info."""
+    """Get current family info. Only parents can rename it."""
     serializer_class = FamilySerializer
+    permission_classes = [IsParentOrReadOnly]
 
     @extend_schema(tags=["family"])
     def get_object(self):
@@ -69,7 +71,8 @@ def generate_invite_code(request):
 
     code = InviteCode.generate_code()
     # Ensure uniqueness
-    while InviteCode.objects.filter(code=code, is_used=False).exists():
+    # code is unique across all rows (used ones included)
+    while InviteCode.objects.filter(code=code).exists():
         code = InviteCode.generate_code()
 
     ttl = settings.INVITE_CODE_TTL
@@ -145,7 +148,7 @@ def family_members(request):
 @api_view(["DELETE"])
 def remove_member(request, user_id):
     """Remove a child from the family (parent only)."""
-    if not request.user.is_parent:
+    if not request.user.is_parent or not request.user.family:
         return Response(status=status.HTTP_403_FORBIDDEN)
     try:
         member = User.objects.get(id=user_id, family=request.user.family, role=User.Role.CHILD)

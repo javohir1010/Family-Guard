@@ -28,7 +28,7 @@ BUILTIN_CATEGORIES = {
 class BlockedDomainListView(generics.ListCreateAPIView):
     """List blocked domains / add a new one. Parents only."""
     serializer_class = BlockedDomainSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["dns"])
     def get_queryset(self):
@@ -38,7 +38,7 @@ class BlockedDomainListView(generics.ListCreateAPIView):
 class BlockedDomainDetailView(generics.RetrieveDestroyAPIView):
     """Get or delete a blocked domain. Parents only."""
     serializer_class = BlockedDomainSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["dns"])
     def get_queryset(self):
@@ -94,13 +94,14 @@ def upload_dns_queries(request):
     bulk_objects = []
     for q in queries_data:
         ts = q.get("timestamp")
-        if isinstance(ts, str):
-            try:
-                ts = datetime.datetime.fromisoformat(ts)
-            except ValueError:
-                ts = timezone.now()
-        elif not ts:
+        try:
+            ts = datetime.datetime.fromisoformat(ts) if isinstance(ts, str) else None
+        except ValueError:
+            ts = None
+        if ts is None:
             ts = timezone.now()
+        elif timezone.is_naive(ts):
+            ts = timezone.make_aware(ts)
 
         bulk_objects.append(
             DnsQuery(
@@ -112,7 +113,7 @@ def upload_dns_queries(request):
             )
         )
 
-    DnsQuery.objects.bulk_create(bulk_objects, ignore_conflicts=True)
+    DnsQuery.objects.bulk_create(bulk_objects)
     return Response({"created": len(bulk_objects)}, status=status.HTTP_201_CREATED)
 
 
@@ -122,7 +123,7 @@ class DnsQueryListView(generics.ListAPIView):
     filterset_fields = ["was_blocked"]
     search_fields = ["domain"]
     ordering_fields = ["timestamp", "domain"]
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(
         tags=["dns"],
@@ -144,7 +145,7 @@ class DnsQueryListView(generics.ListAPIView):
 class DnsCategoryView(generics.ListAPIView):
     """List DNS filter categories. Parents only."""
     serializer_class = DnsCategorySerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["dns"])
     def get_queryset(self):
@@ -163,7 +164,7 @@ class DnsCategoryView(generics.ListAPIView):
 @api_view(["PATCH"])
 def toggle_category(request, category_id):
     """Toggle DNS category on/off."""
-    if not request.user.is_parent:
+    if not request.user.is_parent or not request.user.family:
         return Response(status=status.HTTP_403_FORBIDDEN)
     try:
         cat = DnsCategory.objects.get(id=category_id, family=request.user.family)
