@@ -40,9 +40,12 @@ docker compose exec web python manage.py createsuperuser
 | ReDoc | http://localhost:8000/api/redoc/ |
 | Admin | http://localhost:8000/admin/ |
 
-**Тестовые данные (созданы при запуске тестов):**
-- Родитель: `parent@familyguard.uz` / `TestPass123!`
-- Ребёнок: `child@familyguard.uz` / `TestPass123!`
+**Автотесты backend:**
+```bash
+docker compose exec web python manage.py test apps
+```
+Тестовых пользователей тесты не создают — зарегистрируйтесь в дашборде
+или создайте суперпользователя (`createsuperuser`).
 
 ### 2. Frontend
 
@@ -55,10 +58,13 @@ npm run dev
 
 ### 3. Android
 
-Открыть `android/` в Android Studio, указать в `app/build.gradle.kts`:
-```kotlin
-buildConfigField("String", "BASE_URL", "\"http://YOUR_IP:8000/api/v1/\"")
+Открыть `android/` в Android Studio. Адрес сервера для debug-сборки задаётся в
+`android/gradle.properties` (или `android/local.properties`):
+```properties
+familyguard.devServer=192.168.1.100:8000   # IP компьютера в той же Wi-Fi; для эмулятора 10.0.2.2:8000
 ```
+После входа на устройстве ребёнка нажмите «⚙️ Настройте защиту» и включите
+геолокацию, статистику приложений, спец. возможности и DNS-фильтр.
 
 ## API эндпоинты
 
