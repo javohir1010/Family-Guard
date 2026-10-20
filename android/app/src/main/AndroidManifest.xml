@@ -68,10 +68,14 @@
         <service
             android:name=".services.DnsVpnService"
             android:exported="false"
+            android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Local DNS filter for parental control (VpnService)" />
         </service>
 
         <!-- App Monitor Accessibility Service -->
@@ -98,12 +102,18 @@
             android:taskAffinity="com.familyguard.block"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
-        <!-- UsageStats Sync Worker (WorkManager) -->
+        <!-- UsageStats Sync Worker (WorkManager): disable the default initializer,
+             FamilyGuardApp provides a configuration with HiltWorkerFactory -->
         <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
-            tools:node="remove" />
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
         <!-- Boot Receiver -->
         <receiver

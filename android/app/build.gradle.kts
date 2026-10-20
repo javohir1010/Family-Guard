@@ -6,6 +6,13 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
+val localProperties = java.util.Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val devServer: String = localProperties.getProperty("familyguard.devServer")
+    ?: providers.gradleProperty("familyguard.devServer").getOrElse("10.0.2.2:8000")
+
 android {
     namespace = "com.familyguard.app"
     compileSdk = 35
@@ -23,12 +30,17 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://10.108.119.232:8000/api/v1/\"")
-            buildConfigField("String", "WS_URL", "\"ws://10.108.119.232:8000/ws/\"")
+            // Dev server host:port — set familyguard.devServer in gradle.properties
+            // (or local.properties): 10.0.2.2:8000 for the emulator, your PC's LAN IP for a phone
+            buildConfigField("String", "BASE_URL", "\"http://$devServer/api/v1/\"")
+            buildConfigField("String", "WS_URL", "\"ws://$devServer/ws/\"")
         }
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 

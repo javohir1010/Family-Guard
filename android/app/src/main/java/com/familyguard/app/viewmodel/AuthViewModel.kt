@@ -1,11 +1,17 @@
 package com.familyguard.app.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.local.TokenStorage
 import com.familyguard.app.data.model.JoinFamilyRequest
+import com.familyguard.app.services.DnsVpnService
+import com.familyguard.app.services.LocationForegroundService
+import com.familyguard.app.services.UsageStatsSyncWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import retrofit2.HttpException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AuthUiState(
+    val isReady: Boolean = false,      // stored session has been read
     val isLoggedIn: Boolean = false,
     val hasFamily: Boolean = false,
     val isLoading: Boolean = false,
@@ -25,7 +32,8 @@ data class AuthUiState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val apiService: ApiService,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -42,6 +50,7 @@ class AuthViewModel @Inject constructor(
             val loggedIn = tokenStorage.isLoggedIn()
             val familyId = tokenStorage.getFamilyId()
             _uiState.value = _uiState.value.copy(
+                isReady = true,
                 isLoggedIn = loggedIn,
                 hasFamily = !familyId.isNullOrEmpty()
             )
@@ -86,10 +95,11 @@ class AuthViewModel @Inject constructor(
                     hasFamily = true
                 )
             } catch (e: Exception) {
-                val errorMsg = when {
-                    e.message?.contains("400") == true -> "Неверный или истёкший код"
-                    e.message?.contains("404") == true -> "Семья не найдена"
-                    else -> "Ошибка подключения. Проверьте интернет."
+                val errorMsg = when ((e as? HttpException)?.code()) {
+                    400 -> "Неверный или истёкший код"
+                    404 -> "Семья не найдена"
+                    null -> "Ошибка подключения. Проверьте интернет."
+                    else -> "Ошибка сервера (${(e as HttpException).code()})"
                 }
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
@@ -124,7 +134,12 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Неверный email или пароль"
+                    error = when ((e as? HttpException)?.code()) {
+                        401 -> "Неверный email или пароль"
+                        429 -> "Слишком много попыток. Подождите минуту."
+                        null -> "Нет связи с сервером. Проверьте интернет и адрес сервера."
+                        else -> "Ошибка сервера (${(e as HttpException).code()})"
+                    }
                 )
             }
         }
@@ -149,16 +164,39 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Ошибка регистрации. Возможно, email уже занят."
+                    error = (e as? HttpException)?.let { serverErrorText(it) }
+                        ?: "Нет связи с сервером. Проверьте интернет и адрес сервера."
                 )
             }
         }
     }
 
     fun logout() {
+        // Stop background work first — it would only fail with 401 afterwards
+        LocationForegroundService.stopService(context)
+        DnsVpnService.stopVpn(context)
+        UsageStatsSyncWorker.cancel(context)
         viewModelScope.launch {
+            try {
+                tokenStorage.getRefreshToken()?.let {
+                    apiService.logout(com.familyguard.app.data.model.LogoutRequest(it))
+                }
+            } catch (e: Exception) {
+                // Offline logout is fine: tokens are dropped locally anyway
+            }
             tokenStorage.clear()
-            _uiState.value = AuthUiState()
+            _uiState.value = AuthUiState(isReady = true)
         }
+    }
+
+    /** Joins DRF validation messages, e.g. {"email": ["...already exists."]}. */
+    private fun serverErrorText(e: HttpException): String {
+        val body = try { e.response()?.errorBody()?.string() } catch (ignored: Exception) { null }
+        val messages = try {
+            com.google.gson.JsonParser.parseString(body ?: "").asJsonObject.entrySet()
+                .flatMap { (_, v) -> if (v.isJsonArray) v.asJsonArray.map { it.asString }
+                    else listOf(if (v.isJsonPrimitive) v.asString else v.toString()) }
+        } catch (ignored: Exception) { emptyList() }
+        return messages.joinToString("\n").ifEmpty { "Ошибка регистрации (${e.code()})" }
     }
 }

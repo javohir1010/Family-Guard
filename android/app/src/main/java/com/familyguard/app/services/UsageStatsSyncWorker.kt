@@ -50,6 +50,10 @@ class UsageStatsSyncWorker @AssistedInject constructor(
                 request
             )
         }
+
+        fun cancel(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+        }
     }
 
     override suspend fun doWork(): Result {
@@ -81,8 +85,10 @@ class UsageStatsSyncWorker @AssistedInject constructor(
         val now = System.currentTimeMillis()
         val today = LocalDate.now().toString()
 
-        val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startOfDay, now)
-            ?: return emptyList()
+        // Aggregated per package: queryUsageStats(INTERVAL_DAILY) can return several
+        // overlapping buckets for the same app, which would overwrite each other
+        val stats = usm.queryAndAggregateUsageStats(startOfDay, now).values
+        if (stats.isEmpty()) return emptyList()
 
         val pm = applicationContext.packageManager
 

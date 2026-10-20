@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +30,11 @@ fun SosScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
+
+    // Requests location/notification permissions and starts background services
+    val setup = rememberProtectionSetup()
+    var showSetup by remember { mutableStateOf(false) }
 
     // Pulse animation for the SOS button
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -72,6 +78,15 @@ fun SosScreen(
         ) {
             // Status indicator
             StatusIndicator(isConnected = uiState.isConnected)
+
+            TextButton(onClick = { showSetup = true }) {
+                val done = setup.value.done
+                Text(
+                    text = if (done == 4) "⚙️ Защита настроена" else "⚙️ Настройте защиту: $done/4",
+                    color = if (done == 4) Color.White.copy(alpha = 0.4f) else Color(0xFFFBBF24),
+                    fontSize = 13.sp
+                )
+            }
 
             // App title
             Text(
@@ -183,6 +198,18 @@ fun SosScreen(
                     fontSize = 11.sp
                 )
             }
+
+            uiState.error?.let { error ->
+                Text(text = error, color = Color(0xFFFF6B6B), fontSize = 12.sp)
+            }
+        }
+
+        if (showSetup) {
+            ProtectionSetupDialog(
+                status = setup.value,
+                onChanged = { setup.value = readProtectionStatus(context) },
+                onDismiss = { showSetup = false }
+            )
         }
     }
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.local.TokenStorage
 import com.familyguard.app.data.model.SosTriggerRequest
-import com.familyguard.app.services.LocationForegroundService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
@@ -41,11 +40,13 @@ class SosViewModel @Inject constructor(
     private var pendingPressCount = 0
 
     init {
-        // Start location service when ViewModel is created
-        LocationForegroundService.startService(context)
-        // Check connectivity
+        // Location service is started by SosScreen once permission is granted.
+        // Re-check connectivity periodically so the status badge doesn't go stale.
         viewModelScope.launch {
-            checkConnection()
+            while (isActive) {
+                checkConnection()
+                delay(60_000)
+            }
         }
     }
 

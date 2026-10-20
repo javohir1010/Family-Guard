@@ -2,6 +2,7 @@ package com.familyguard.app.di
 
 import com.familyguard.app.BuildConfig
 import com.familyguard.app.data.api.ApiService
+import com.familyguard.app.data.api.TokenAuthenticator
 import com.familyguard.app.data.local.TokenStorage
 import dagger.Module
 import dagger.Provides
@@ -27,7 +28,7 @@ object NetworkModule {
             val token = runBlocking { tokenStorage.getAccessToken() }
             val request = if (token != null) {
                 chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token")
                     .build()
             } else chain.request()
             chain.proceed(request)
@@ -42,6 +43,7 @@ object NetworkModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .authenticator(TokenAuthenticator(tokenStorage))
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
