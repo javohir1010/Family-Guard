@@ -8,6 +8,7 @@ import com.familyguard.app.data.local.TokenStorage
 import com.familyguard.app.data.model.JoinFamilyRequest
 import com.familyguard.app.services.DnsVpnService
 import com.familyguard.app.services.LocationForegroundService
+import com.familyguard.app.services.PushTokenSyncWorker
 import com.familyguard.app.services.UsageStatsSyncWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,6 +49,7 @@ class AuthViewModel @Inject constructor(
     private fun checkLoginState() {
         viewModelScope.launch {
             val loggedIn = tokenStorage.isLoggedIn()
+            if (loggedIn) PushTokenSyncWorker.enqueue(context)
             val familyId = tokenStorage.getFamilyId()
             _uiState.value = _uiState.value.copy(
                 isReady = true,
@@ -126,6 +128,7 @@ class AuthViewModel @Inject constructor(
                     deviceName = android.os.Build.MODEL
                 )
                 
+                PushTokenSyncWorker.enqueue(context)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false, 
                     isLoggedIn = true,
@@ -156,6 +159,7 @@ class AuthViewModel @Inject constructor(
                     familyId = response.user.family,
                     deviceName = request.deviceName
                 )
+                PushTokenSyncWorker.enqueue(context)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isLoggedIn = true,

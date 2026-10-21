@@ -8,6 +8,12 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
+// Push (FCM) needs app/google-services.json from the Firebase console. It is
+// git-ignored; without it the app still builds, just without push.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
@@ -92,6 +98,10 @@ dependencies {
     // DataStore (secure token storage)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.security.crypto)
+
+    // Push notifications (FCM)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // Room (offline buffer)
     implementation(libs.room.runtime)

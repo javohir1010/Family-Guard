@@ -78,6 +78,7 @@ def send_push_notification(self, user_id: str, title: str, body: str, data: dict
             android=messaging.AndroidConfig(
                 priority="high",
                 notification=messaging.AndroidNotification(
+                    channel_id="fg_alerts_channel",  # PushMessagingService.CHANNEL_ID
                     sound="default",
                     priority="max",
                 ),
