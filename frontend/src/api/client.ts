@@ -17,21 +17,37 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// One refresh at a time: the backend rotates and blacklists refresh tokens,
+// so parallel refreshes with the same token would log the user out.
+let refreshPromise: Promise<string> | null = null;
+
+function refreshAccessToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const refresh = useAuthStore.getState().refreshToken;
+      if (!refresh) throw new Error("No refresh token");
+      const { data } = await axios.post(`${API_BASE}/auth/refresh/`, { refresh });
+      // ROTATE_REFRESH_TOKENS=True: store the new refresh token, the old one is dead
+      useAuthStore.getState().setTokens(data.access, data.refresh ?? refresh);
+      return data.access as string;
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
 // Handle 401 — refresh token or logout
 apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
+    const isAuthCall = original?.url?.startsWith("/auth/login") || original?.url?.startsWith("/auth/register");
+    if (error.response?.status === 401 && original && !original._retry && !isAuthCall) {
       original._retry = true;
       try {
-        const refresh = useAuthStore.getState().refreshToken;
-        if (!refresh) throw new Error("No refresh token");
-        const { data } = await axios.post(`${API_BASE}/auth/refresh/`, {
-          refresh,
-        });
-        useAuthStore.getState().setTokens(data.access, refresh);
-        original.headers.Authorization = `Bearer ${data.access}`;
+        const access = await refreshAccessToken();
+        original.headers.Authorization = `Bearer ${access}`;
         return apiClient(original);
       } catch {
         useAuthStore.getState().logout();

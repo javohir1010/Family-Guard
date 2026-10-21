@@ -1,21 +1,38 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { familyApi } from "../api/client";
+import { authApi, familyApi } from "../api/client";
+import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 
 export default function FamilyPage() {
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [familyName, setFamilyName] = useState("");
+  const { user, setUser } = useAuthStore();
+  const hasFamily = !!user?.family;
 
   const { data: family } = useQuery({
     queryKey: ["family-detail"],
     queryFn: () => familyApi.detail().then((r) => r.data),
+    enabled: hasFamily,
   });
 
   const { data: members = [] } = useQuery({
     queryKey: ["family-members"],
     queryFn: () => familyApi.members().then((r) => r.data),
+    enabled: hasFamily,
+  });
+
+  const createFamilyMutation = useMutation({
+    mutationFn: () => familyApi.create(familyName.trim()),
+    onSuccess: async () => {
+      const profile = await authApi.profile();
+      setUser(profile.data);
+      toast.success("Семья создана");
+      qc.invalidateQueries();
+    },
+    onError: (e: any) => toast.error(e.response?.data?.error || "Ошибка создания семьи"),
   });
 
   const generateInviteMutation = useMutation({
@@ -24,7 +41,7 @@ export default function FamilyPage() {
       setInviteCode(res.data.code);
       setShowInvite(true);
     },
-    onError: () => toast.error("Ошибка генерации кода"),
+    onError: (e: any) => toast.error(e.response?.data?.error || "Ошибка генерации кода"),
   });
 
   const removeMemberMutation = useMutation({
@@ -33,7 +50,44 @@ export default function FamilyPage() {
       toast.success("Участник удалён");
       qc.invalidateQueries({ queryKey: ["family-members"] });
     },
+    onError: () => toast.error("Не удалось удалить участника"),
   });
+
+  if (!hasFamily) {
+    return (
+      <div className="p-6">
+        <div className="card max-w-md">
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Создайте семью</h1>
+          <p className="text-sm text-gray-500 mb-4">
+            Семья нужна, чтобы приглашать детей и видеть их на карте.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              createFamilyMutation.mutate();
+            }}
+            className="flex gap-2"
+          >
+            <input
+              value={familyName}
+              onChange={(e) => setFamilyName(e.target.value)}
+              placeholder="Название семьи"
+              required
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              disabled={!familyName.trim() || createFamilyMutation.isPending}
+              className="btn-primary"
+            >
+              Создать
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   const parents = members.filter((m: any) => m.role === "parent");
   const children = members.filter((m: any) => m.role === "child");
@@ -92,7 +146,11 @@ export default function FamilyPage() {
                   key={m.id}
                   member={m}
                   canRemove
-                  onRemove={() => removeMemberMutation.mutate(m.id)}
+                  onRemove={() => {
+                    if (confirm(`Удалить ${m.first_name || m.email} из семьи?`)) {
+                      removeMemberMutation.mutate(m.id);
+                    }
+                  }}
                 />
               ))}
             </div>

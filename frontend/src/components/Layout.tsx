@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { authApi } from "../api/client";
@@ -12,8 +13,13 @@ const navItems = [
 ];
 
 export default function Layout() {
-  const { user, refreshToken, logout } = useAuthStore();
+  const { user, refreshToken, logout, setUser } = useAuthStore();
   const navigate = useNavigate();
+
+  // The persisted user can be stale (e.g. family created/changed elsewhere)
+  useEffect(() => {
+    authApi.profile().then((r) => setUser(r.data)).catch(() => {});
+  }, [setUser]);
 
   async function handleLogout() {
     try {

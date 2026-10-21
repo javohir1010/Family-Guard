@@ -31,11 +31,15 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val authViewModel: AuthViewModel = hiltViewModel()
                     val uiState by authViewModel.uiState.collectAsState()
-                    val isLoggedIn by authViewModel.isLoggedIn.collectAsState(initial = false)
+                    val isLoggedIn by authViewModel.isLoggedIn.collectAsState(initial = null)
+
+                    // Wait for the stored session, otherwise the graph is built with
+                    // "login" first and rebuilt (login → onboarding → sos flashes)
+                    if (isLoggedIn == null || !uiState.isReady) return@Surface
 
                     // Determine start destination
                     val startDest = when {
-                        !isLoggedIn -> "login"
+                        isLoggedIn != true -> "login"
                         !uiState.hasFamily -> "onboarding"
                         else -> "sos"
                     }

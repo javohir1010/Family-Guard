@@ -2,48 +2,78 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+# Maps the "type" sent in push data to Notification.NotificationType
+NOTIFICATION_TYPE_MAP = {
+    "sos": "sos",
+    "geofence": "geofence",
+    "permission_revoked": "permission",
+    "weekly_report": "system",
+}
+
+
 def get_fcm_app():
-    """Initialize Firebase Admin app (lazy, singleton)."""
+    """Initialize Firebase Admin app (lazy, singleton). None if not configured."""
+    cred_file = settings.FIREBASE_CREDENTIALS_FILE
+    if not cred_file or not os.path.isfile(cred_file):
+        return None
     try:
         import firebase_admin
         from firebase_admin import credentials
         try:
             return firebase_admin.get_app()
         except ValueError:
-            cred_file = settings.FIREBASE_CREDENTIALS_FILE
-            if cred_file:
-                cred = credentials.Certificate(cred_file)
-            else:
-                cred = credentials.ApplicationDefault()
-            return firebase_admin.initialize_app(cred)
+            return firebase_admin.initialize_app(credentials.Certificate(cred_file))
     except Exception as e:
         logger.error(f"Firebase init error: {e}")
         return None
 
 
 @shared_task(bind=True, queue="notifications", max_retries=3, default_retry_delay=60)
-def send_push_notification(self, user_id: str, title: str, body: str, data: dict = None):
-    """Send FCM push notification to a single user."""
+def send_push_notification(self, user_id: str, title: str, body: str, data: dict = None,
+                           notification_id: str = None):
+    """Store a notification for the user and deliver it via FCM if possible."""
+    from .models import Notification
+
+    data = data or {}
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        logger.warning(f"Push skipped: user {user_id} not found")
+        return
+
+    # Store first so the web dashboard shows it even without FCM.
+    # On retry the same row is reused instead of creating a duplicate.
+    if notification_id is None:
+        notification_type = NOTIFICATION_TYPE_MAP.get(data.get("type"), "system")
+        notification_id = str(Notification.objects.create(
+            recipient=user,
+            notification_type=notification_type,
+            title=title,
+            body=body,
+            data=data,
+        ).id)
+
+    if not user.device_token:
+        logger.info(f"User {user_id} has no device token, skipping push.")
+        return
+
+    app = get_fcm_app()
+    if not app:
+        logger.info("FCM not configured, skipping push.")
+        return
+
     try:
         from firebase_admin import messaging
 
-        user = User.objects.get(id=user_id)
-        if not user.device_token:
-            logger.info(f"User {user_id} has no device token, skipping push.")
-            return
-
-        app = get_fcm_app()
-        if not app:
-            return
-
         message = messaging.Message(
             notification=messaging.Notification(title=title, body=body),
-            data={k: str(v) for k, v in (data or {}).items()},
+            data={k: str(v) for k, v in data.items()},
             token=user.device_token,
             android=messaging.AndroidConfig(
                 priority="high",
@@ -55,20 +85,12 @@ def send_push_notification(self, user_id: str, title: str, body: str, data: dict
         )
         response = messaging.send(message, app=app)
         logger.info(f"FCM sent to {user.email}: {response}")
-
-        # Save to DB
-        from .models import Notification
-        Notification.objects.create(
-            recipient=user,
-            notification_type=data.get("type", "system") if data else "system",
-            title=title,
-            body=body,
-            data=data or {},
-        )
-
     except Exception as exc:
         logger.error(f"FCM send error for user {user_id}: {exc}")
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc, kwargs={
+            "user_id": user_id, "title": title, "body": body,
+            "data": data, "notification_id": notification_id,
+        })
 
 
 @shared_task(bind=True, queue="notifications", max_retries=2)

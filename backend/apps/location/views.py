@@ -1,12 +1,17 @@
+import datetime
+import math
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.utils.dateparse import parse_date, parse_datetime
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .models import LocationRecord, GeoZone, GeoZoneEvent
+from apps.users.permissions import IsFamilyMember, IsParentOrReadOnly
 from .serializers import (
     LocationCreateSerializer,
     LocationRecordSerializer,
@@ -59,8 +64,6 @@ class LocationCreateView(generics.CreateAPIView):
 
     def _check_geofences(self, user, record):
         """Check if user entered/exited any active geofence zones."""
-        import math
-
         if not user.family:
             return
 
@@ -78,22 +81,24 @@ class LocationCreateView(generics.CreateAPIView):
                 .order_by("-timestamp")
                 .first()
             )
-            was_inside = last_event and last_event.event_type == GeoZoneEvent.EventType.ENTER
+            was_inside = bool(
+                last_event and last_event.event_type == GeoZoneEvent.EventType.ENTER
+            )
+            if inside == was_inside:
+                continue
 
-            if inside and not was_inside and zone.notify_on_enter:
-                GeoZoneEvent.objects.create(
-                    zone=zone, user=user,
-                    event_type=GeoZoneEvent.EventType.ENTER,
-                    latitude=record.latitude, longitude=record.longitude,
-                )
-                self._notify_geofence(user, zone, "enter")
-            elif not inside and was_inside and zone.notify_on_exit:
-                GeoZoneEvent.objects.create(
-                    zone=zone, user=user,
-                    event_type=GeoZoneEvent.EventType.EXIT,
-                    latitude=record.latitude, longitude=record.longitude,
-                )
-                self._notify_geofence(user, zone, "exit")
+            # Always record the transition so enter/exit state stays consistent,
+            # even when notifications for this direction are turned off.
+            event_type = (
+                GeoZoneEvent.EventType.ENTER if inside else GeoZoneEvent.EventType.EXIT
+            )
+            GeoZoneEvent.objects.create(
+                zone=zone, user=user,
+                event_type=event_type,
+                latitude=record.latitude, longitude=record.longitude,
+            )
+            if (inside and zone.notify_on_enter) or (not inside and zone.notify_on_exit):
+                self._notify_geofence(user, zone, "enter" if inside else "exit")
 
     def _haversine(self, lat1, lon1, lat2, lon2):
         """Calculate distance between two coordinates in meters."""
@@ -119,6 +124,7 @@ class LocationCreateView(generics.CreateAPIView):
 class LocationHistoryView(generics.ListAPIView):
     """GET /api/v1/location/history/<child_id>/ — location history for a child."""
     serializer_class = LocationRecordSerializer
+    permission_classes = [IsFamilyMember]
 
     @extend_schema(
         tags=["location"],
@@ -134,18 +140,32 @@ class LocationHistoryView(generics.ListAPIView):
             user__id=child_id, user__family=user.family
         ).order_by("-recorded_at")
 
-        from_date = self.request.query_params.get("from_date")
-        to_date = self.request.query_params.get("to_date")
-        if from_date:
-            qs = qs.filter(recorded_at__gte=from_date)
-        if to_date:
-            qs = qs.filter(recorded_at__lte=to_date)
+        for param, lookup in (("from_date", "recorded_at__gte"), ("to_date", "recorded_at__lte")):
+            value = self.request.query_params.get(param)
+            if not value:
+                continue
+            try:
+                parsed = parse_datetime(value)
+                parsed_date = None if parsed else parse_date(value)
+            except ValueError:
+                parsed = parsed_date = None
+            if parsed is None:
+                if parsed_date is None:
+                    raise ValidationError({param: "Expected ISO date or datetime."})
+                parsed = datetime.datetime.combine(
+                    parsed_date,
+                    datetime.time.max if param == "to_date" else datetime.time.min,
+                )
+            if timezone.is_naive(parsed):
+                parsed = timezone.make_aware(parsed)
+            qs = qs.filter(**{lookup: parsed})
         return qs
 
 
 class GeoZoneViewSet(generics.ListCreateAPIView):
-    """List and create geofence zones."""
+    """List and create geofence zones (parents only can modify)."""
     serializer_class = GeoZoneSerializer
+    permission_classes = [IsFamilyMember, IsParentOrReadOnly]
 
     @extend_schema(tags=["location"])
     def get_queryset(self):
@@ -154,6 +174,7 @@ class GeoZoneViewSet(generics.ListCreateAPIView):
 
 class GeoZoneDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GeoZoneSerializer
+    permission_classes = [IsFamilyMember, IsParentOrReadOnly]
 
     @extend_schema(tags=["location"])
     def get_queryset(self):
@@ -186,7 +207,7 @@ def current_positions(request):
                     "accuracy": last.accuracy,
                     "battery_level": last.battery_level,
                     "recorded_at": last.recorded_at.isoformat(),
-                    "is_online": member.is_online,
+                    "is_online": member.is_active_now,
                     "last_seen": member.last_seen.isoformat() if member.last_seen else None,
                 }
             )

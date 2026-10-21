@@ -1,5 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -30,21 +31,14 @@ def upload_app_usage(request):
     created = updated = 0
 
     for u in serializer.validated_data["usages"]:
-        date = u["date"]
-        if isinstance(date, str):
-            try:
-                date = datetime.date.fromisoformat(date)
-            except ValueError:
-                date = timezone.now().date()
-
         obj, is_created = AppUsage.objects.update_or_create(
             child=child,
             package_name=u["package_name"],
-            date=date,
+            date=u["date"],
             defaults={
                 "app_name": u["app_name"],
                 "duration_seconds": u["duration_seconds"],
-                "last_used": u.get("last_used"),
+                "last_used": u["last_used"],
             },
         )
         if is_created:
@@ -60,7 +54,7 @@ def upload_app_usage(request):
 class AppUsageListView(generics.ListAPIView):
     """GET /api/v1/apps/usage/<child_id>/ — app usage for parent dashboard."""
     serializer_class = AppUsageSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(
         tags=["apps"],
@@ -77,7 +71,10 @@ class AppUsageListView(generics.ListAPIView):
         )
         date_str = self.request.query_params.get("date")
         if date_str:
-            qs = qs.filter(date=date_str)
+            try:
+                qs = qs.filter(date=datetime.date.fromisoformat(date_str))
+            except ValueError:
+                raise ValidationError({"date": "Expected YYYY-MM-DD."})
         pkg = self.request.query_params.get("package_name")
         if pkg:
             qs = qs.filter(package_name=pkg)
@@ -87,7 +84,7 @@ class AppUsageListView(generics.ListAPIView):
 class AppRuleListView(generics.ListCreateAPIView):
     """List app rules / create a new rule. Parents only."""
     serializer_class = AppRuleSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["apps"])
     def get_queryset(self):
@@ -101,7 +98,7 @@ class AppRuleListView(generics.ListCreateAPIView):
 class AppRuleDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Manage a single rule. Parents only."""
     serializer_class = AppRuleSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["apps"])
     def get_queryset(self):
@@ -122,7 +119,7 @@ def get_active_rules_for_device(request):
 class ScreenScheduleListView(generics.ListCreateAPIView):
     """List/create screen schedules. Parents only."""
     serializer_class = ScreenScheduleSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["apps"])
     def get_queryset(self):
@@ -136,7 +133,7 @@ class ScreenScheduleListView(generics.ListCreateAPIView):
 class ScreenScheduleDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Manage schedule. Parents only."""
     serializer_class = ScreenScheduleSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["apps"])
     def get_queryset(self):
@@ -154,7 +151,7 @@ def get_schedule_for_device(request):
 class PermissionAlertListView(generics.ListAPIView):
     """List permission alerts for parent."""
     serializer_class = PermissionAlertSerializer
-    permission_classes = [IsParent]
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["apps"])
     def get_queryset(self):

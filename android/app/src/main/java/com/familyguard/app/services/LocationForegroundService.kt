@@ -1,11 +1,17 @@
 package com.familyguard.app.services
 
+import android.Manifest
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.*
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import com.familyguard.app.R
 import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.local.TokenStorage
@@ -31,12 +37,25 @@ class LocationForegroundService : Service() {
         const val LOCATION_INTERVAL_MS = 10 * 60 * 1000L  // 10 minutes
         const val LOCATION_FASTEST_INTERVAL_MS = 5 * 60 * 1000L
 
+        private const val TAG = "LocationService"
+
+        fun hasLocationPermission(context: Context): Boolean =
+            listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+
+        /** Starts tracking if location permission is granted; otherwise does nothing. */
         fun startService(context: Context) {
+            if (!hasLocationPermission(context)) return
             val intent = Intent(context, LocationForegroundService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Exception) {
+                // e.g. ForegroundServiceStartNotAllowedException when started from background
+                Log.w(TAG, "Could not start location service", e)
             }
         }
 
@@ -52,12 +71,36 @@ class LocationForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(NOTIFICATION_ID, buildNotification())
-        startLocationUpdates()
+        try {
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                buildNotification(),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                else 0
+            )
+        } catch (e: Exception) {
+            // Missing location permission (SecurityException on Android 14+)
+            // or not allowed to start from background
+            Log.w(TAG, "startForeground failed", e)
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
+        serviceScope.launch {
+            // Nothing to report without a session (e.g. after logout or before login)
+            if (!tokenStorage.isLoggedIn()) {
+                stopSelf()
+                return@launch
+            }
+            withContext(Dispatchers.Main) { startLocationUpdates() }
+        }
         return START_STICKY
     }
 
     private fun startLocationUpdates() {
+        if (locationCallback != null) return // onStartCommand can run several times
         val request = com.google.android.gms.location.LocationRequest.Builder(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
             LOCATION_INTERVAL_MS
@@ -82,6 +125,7 @@ class LocationForegroundService : Service() {
                 Looper.getMainLooper()
             )
         } catch (e: SecurityException) {
+            locationCallback = null
             stopSelf()
         }
     }

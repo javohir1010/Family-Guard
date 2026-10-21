@@ -50,10 +50,11 @@ class AppMonitorAccessibilityService : AccessibilityService() {
     @Inject lateinit var apiService: ApiService
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var activeRules: List<AppRule> = emptyList()
+    @Volatile private var activeRules: List<AppRule> = emptyList()
 
     // Track today's usage per app: packageName → used seconds today
-    private val todayUsageSeconds = mutableMapOf<String, Long>()
+    // Replaced as a whole on refresh, so yesterday's totals never linger
+    @Volatile private var todayUsageSeconds: Map<String, Long> = emptyMap()
 
     // Debounce: don't re-show overlay for the same app within 3 seconds
     private var lastBlockedPackage = ""
@@ -77,18 +78,18 @@ class AppMonitorAccessibilityService : AccessibilityService() {
             refreshTodayUsage()
         }
 
-        // Periodic rule refresh every 15 min
+        // Periodic rule refresh every 5 min (parent changes apply quickly)
         serviceScope.launch {
             while (isActive) {
-                delay(15 * 60 * 1000L)
+                delay(5 * 60 * 1000L)
                 refreshRules()
             }
         }
 
-        // Periodic usage refresh every 5 min
+        // Periodic usage refresh every minute (limits are checked against it)
         serviceScope.launch {
             while (isActive) {
-                delay(5 * 60 * 1000L)
+                delay(60 * 1000L)
                 refreshTodayUsage()
             }
         }
@@ -191,10 +192,9 @@ class AppMonitorAccessibilityService : AccessibilityService() {
             val startOfDay = calendar.timeInMillis
             val now = System.currentTimeMillis()
 
-            val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startOfDay, now)
-            stats?.forEach { stat ->
-                todayUsageSeconds[stat.packageName] = stat.totalTimeInForeground / 1000
-            }
+            // Aggregated per package (daily buckets can overlap and overwrite each other)
+            todayUsageSeconds = usm.queryAndAggregateUsageStats(startOfDay, now)
+                .mapValues { (_, stat) -> stat.totalTimeInForeground / 1000 }
         } catch (e: Exception) {
             // UsageStats not available (permission not granted)
         }

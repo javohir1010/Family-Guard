@@ -12,6 +12,9 @@ interface ApiService {
     @POST("auth/login/")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
+    @POST("auth/logout/")
+    suspend fun logout(@Body request: LogoutRequest)
+
     @GET("auth/profile/")
     suspend fun getProfile(): UserProfile
 

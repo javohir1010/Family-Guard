@@ -22,6 +22,7 @@ data class RegisterResponse(
     val user: UserProfile
 )
 data class LoginResponse(val access: String, val refresh: String)
+data class LogoutRequest(val refresh: String)
 data class DeviceTokenRequest(@SerializedName("device_token") val deviceToken: String)
 data class UserProfile(
     val id: String, val email: String,

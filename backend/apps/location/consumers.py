@@ -107,7 +107,7 @@ class FamilyMapConsumer(AsyncWebsocketConsumer):
                         "accuracy": last.accuracy,
                         "battery_level": last.battery_level,
                         "recorded_at": last.recorded_at.isoformat(),
-                        "is_online": member.is_online,
+                        "is_online": member.is_active_now,
                     }
                 )
         return positions

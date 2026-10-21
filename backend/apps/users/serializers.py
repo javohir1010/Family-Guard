@@ -9,6 +9,7 @@ User = get_user_model()
 
 class UserPublicSerializer(serializers.ModelSerializer):
     """Minimal public info about a family member."""
+    is_online = serializers.BooleanField(source="is_active_now", read_only=True)
 
     class Meta:
         model = User
@@ -19,6 +20,7 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     family_name = serializers.CharField(source="family.name", read_only=True)
+    is_online = serializers.BooleanField(source="is_active_now", read_only=True)
 
     class Meta:
         model = User
@@ -60,7 +62,7 @@ class FamilySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "created_at", "members", "member_count")
         read_only_fields = ("id", "created_at")
 
-    def get_member_count(self, obj):
+    def get_member_count(self, obj) -> int:
         return obj.members.count()
 
 
@@ -80,6 +82,10 @@ class InviteCodeSerializer(serializers.ModelSerializer):
 class JoinFamilySerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6, min_length=6)
     device_name = serializers.CharField(max_length=100, required=False)
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
 
 
 class DeviceTokenSerializer(serializers.Serializer):

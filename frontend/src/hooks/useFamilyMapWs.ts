@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 
 interface WsMessage {
@@ -14,66 +14,73 @@ export function useFamilyMapWs(familyId: string | null) {
   const [connected, setConnected] = useState(false);
   const pingInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const connect = useCallback(() => {
+  useEffect(() => {
     if (!familyId || !token) return;
 
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const host = window.location.host;
-    const url = `${protocol}://${host}/ws/family/${familyId}/map/?token=${token}`;
+    // Set on cleanup so the closing socket doesn't schedule a reconnect
+    // with a stale token (or after the page is gone).
+    let disposed = false;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
+    const connect = () => {
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const host = window.location.host;
+      const url = `${protocol}://${host}/ws/family/${familyId}/map/?token=${token}`;
 
-    ws.onopen = () => {
-      setConnected(true);
-      // Keepalive ping every 30 seconds
-      pingInterval.current = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: "ping" }));
+      const ws = new WebSocket(url);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        setConnected(true);
+        // Keepalive ping every 30 seconds
+        pingInterval.current = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: "ping" }));
+          }
+        }, 30_000);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg: WsMessage = JSON.parse(event.data);
+
+          if (msg.type === "initial_positions") {
+            const posMap: Record<string, any> = {};
+            (msg.data as any[]).forEach((p) => {
+              posMap[p.user_id] = p;
+            });
+            setPositions(posMap);
+          } else if (msg.type === "location_update") {
+            setPositions((prev) => ({
+              ...prev,
+              [msg.data.user_id]: msg.data,
+            }));
+          } else if (msg.type === "sos_alert") {
+            setSosAlerts((prev) => [msg.data, ...prev].slice(0, 50));
+          }
+        } catch {
+          // ignore parse errors
         }
-      }, 30_000);
+      };
+
+      ws.onclose = () => {
+        setConnected(false);
+        if (pingInterval.current) clearInterval(pingInterval.current);
+        // Reconnect after 5 seconds
+        if (!disposed) reconnectTimer = setTimeout(connect, 5_000);
+      };
+
+      ws.onerror = () => ws.close();
     };
 
-    ws.onmessage = (event) => {
-      try {
-        const msg: WsMessage = JSON.parse(event.data);
-
-        if (msg.type === "initial_positions") {
-          const posMap: Record<string, any> = {};
-          (msg.data as any[]).forEach((p) => {
-            posMap[p.user_id] = p;
-          });
-          setPositions(posMap);
-        } else if (msg.type === "location_update") {
-          setPositions((prev) => ({
-            ...prev,
-            [msg.data.user_id]: msg.data,
-          }));
-        } else if (msg.type === "sos_alert") {
-          setSosAlerts((prev) => [msg.data, ...prev].slice(0, 50));
-        }
-      } catch {
-        // ignore parse errors
-      }
-    };
-
-    ws.onclose = () => {
-      setConnected(false);
-      if (pingInterval.current) clearInterval(pingInterval.current);
-      // Reconnect after 5 seconds
-      setTimeout(connect, 5_000);
-    };
-
-    ws.onerror = () => ws.close();
-  }, [familyId, token]);
-
-  useEffect(() => {
     connect();
     return () => {
-      wsRef.current?.close();
+      disposed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       if (pingInterval.current) clearInterval(pingInterval.current);
+      wsRef.current?.close();
     };
-  }, [connect]);
+  }, [familyId, token]);
 
   return { positions, sosAlerts, connected };
 }

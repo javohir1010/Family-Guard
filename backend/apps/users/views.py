@@ -11,6 +11,7 @@ from .serializers import (
     RegisterSerializer,
     UserProfileSerializer,
     DeviceTokenSerializer,
+    LogoutSerializer,
 )
 
 User = get_user_model()
@@ -53,6 +54,7 @@ class LoginView(TokenObtainPairView):
 
 class LogoutView(generics.GenericAPIView):
     """Blacklist refresh token on logout."""
+    serializer_class = LogoutSerializer
 
     @extend_schema(tags=["auth"])
     def post(self, request):

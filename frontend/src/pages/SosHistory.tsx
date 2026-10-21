@@ -5,11 +5,14 @@ import toast from "react-hot-toast";
 export default function SosHistoryPage() {
   const qc = useQueryClient();
 
-  const { data: events = [] } = useQuery({
+  const { data } = useQuery({
     queryKey: ["sos-history"],
-    queryFn: () => sosApi.history().then((r) => r.data.results ?? r.data),
+    queryFn: () => sosApi.history().then((r) => r.data),
     refetchInterval: 30_000,
   });
+  // Paginated response: list holds the latest page, count is the real total
+  const events: any[] = data?.results ?? data ?? [];
+  const total: number = data?.count ?? events.length;
 
   const resolveMutation = useMutation({
     mutationFn: (id: string) => sosApi.resolve(id),
@@ -17,6 +20,7 @@ export default function SosHistoryPage() {
       toast.success("SOS отмечен как решённый");
       qc.invalidateQueries({ queryKey: ["sos-history"] });
     },
+    onError: () => toast.error("Не удалось обновить статус"),
   });
 
   const statusColors: Record<string, string> = {
@@ -45,7 +49,7 @@ export default function SosHistoryPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Всего", value: events.length, color: "text-gray-800" },
+          { label: "Всего", value: total, color: "text-gray-800" },
           {
             label: "Экстренных",
             value: events.filter((e: any) => e.sos_type === "emergency").length,
