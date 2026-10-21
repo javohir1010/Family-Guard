@@ -3,6 +3,7 @@ package com.familyguard.app
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.familyguard.app.services.PushMessagingService
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -15,6 +16,12 @@ import javax.inject.Inject
 class FamilyGuardApp : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
+
+    override fun onCreate() {
+        super.onCreate()
+        // Background pushes are shown by FCM in this channel, so it must exist early
+        PushMessagingService.ensureChannel(this)
+    }
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()

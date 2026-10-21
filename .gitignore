@@ -40,3 +40,7 @@ yarn-error.log*
 
 # Vite build output
 dist/
+
+# Firebase config: download from the Firebase console, never commit
+android/app/google-services.json
+backend/firebase-credentials.json
