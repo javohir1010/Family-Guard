@@ -14,11 +14,14 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.familyguard.app.R
 import com.familyguard.app.data.api.ApiService
+import com.familyguard.app.data.local.PendingLocation
+import com.familyguard.app.data.local.PendingLocationDao
 import com.familyguard.app.data.local.TokenStorage
-import com.familyguard.app.data.model.LocationRequest
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,6 +29,9 @@ class LocationForegroundService : Service() {
 
     @Inject lateinit var apiService: ApiService
     @Inject lateinit var tokenStorage: TokenStorage
+    @Inject lateinit var locationBuffer: PendingLocationDao
+
+    private val flushMutex = Mutex()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -38,6 +44,7 @@ class LocationForegroundService : Service() {
         const val LOCATION_FASTEST_INTERVAL_MS = 5 * 60 * 1000L
 
         private const val TAG = "LocationService"
+        private const val MAX_BUFFERED_LOCATIONS = 1000 // ~1 week at one point per 10 min
 
         fun hasLocationPermission(context: Context): Boolean =
             listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -130,22 +137,49 @@ class LocationForegroundService : Service() {
         }
     }
 
+    /**
+     * Every point goes through the Room buffer first; the buffer is then sent
+     * oldest-first, so points recorded offline reach the server in order and
+     * the newest one ends up as the current position on the map.
+     */
     private suspend fun sendLocationToServer(location: Location) {
         try {
-            val batteryLevel = getBatteryLevel()
-            val request = LocationRequest(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                accuracy = location.accuracy,
-                altitude = if (location.hasAltitude()) location.altitude else null,
-                speed = if (location.hasSpeed()) location.speed.toDouble() else null,
-                batteryLevel = batteryLevel,
-                recordedAt = java.time.Instant.ofEpochMilli(location.time).toString()
+            locationBuffer.insert(
+                PendingLocation(
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    accuracy = location.accuracy,
+                    altitude = if (location.hasAltitude()) location.altitude else null,
+                    speed = if (location.hasSpeed()) location.speed.toDouble() else null,
+                    batteryLevel = getBatteryLevel(),
+                    recordedAt = java.time.Instant.ofEpochMilli(location.time).toString()
+                )
             )
-            apiService.sendLocation(request)
+            locationBuffer.trim(MAX_BUFFERED_LOCATIONS)
         } catch (e: Exception) {
-            // Buffer locally via Room if network fails
-            // (RoomLocationBuffer.insert(location) — see data layer)
+            Log.w(TAG, "Could not buffer location", e)
+        }
+        flushLocationBuffer()
+    }
+
+    private suspend fun flushLocationBuffer() = flushMutex.withLock {
+        while (true) {
+            val batch = locationBuffer.oldest(50)
+            if (batch.isEmpty()) return@withLock
+            for (point in batch) {
+                try {
+                    apiService.sendLocation(point.toRequest())
+                } catch (e: retrofit2.HttpException) {
+                    // A point the server rejects would block the queue forever: drop it.
+                    // Auth, timeout and rate-limit errors are retried later.
+                    if (e.code() in 400..499 && e.code() !in setOf(401, 408, 429)) {
+                        Log.w(TAG, "Server rejected buffered location: ${e.code()}")
+                    } else return@withLock
+                } catch (e: Exception) {
+                    return@withLock // Offline: keep the rest for the next fix
+                }
+                locationBuffer.delete(point.id)
+            }
         }
     }
 
