@@ -70,6 +70,10 @@ class DnsVpnService : VpnService() {
             }
         }
 
+        /** True while the tunnel is up in this process. */
+        @Volatile var isRunning = false
+            private set
+
         fun stopVpn(context: Context) {
             context.startService(
                 Intent(context, DnsVpnService::class.java).apply { action = ACTION_STOP }
@@ -134,6 +138,7 @@ class DnsVpnService : VpnService() {
         }
 
         running = true
+        isRunning = true
         serviceScope.launch { runPacketLoop() }
         serviceScope.launch {
             while (running) {
@@ -339,6 +344,7 @@ class DnsVpnService : VpnService() {
     private fun stopVpn() {
         if (running) {
             running = false
+            isRunning = false
             // Separate scope: serviceScope is cancelled in onDestroy right after this
             CoroutineScope(Dispatchers.IO).launch { flushQueryBatch() }
         }
@@ -352,8 +358,9 @@ class DnsVpnService : VpnService() {
     }
 
     override fun onRevoke() {
-        // User disabled the VPN in system settings
+        // User disabled the VPN in system settings: let the parent know
         stopVpn()
+        ProtectionWatchWorker.checkSoon(applicationContext)
         super.onRevoke()
     }
 

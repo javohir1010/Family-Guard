@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-import random
-import string
+import secrets
 
 User = get_user_model()
 
@@ -39,4 +38,5 @@ class InviteCode(models.Model):
 
     @staticmethod
     def generate_code():
-        return "".join(random.choices(string.digits, k=6))
+        # secrets, not random: codes must not be predictable
+        return f"{secrets.randbelow(10**6):06d}"

@@ -1,5 +1,6 @@
 from rest_framework import generics, status, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.throttling import SimpleRateThrottle, UserRateThrottle
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -17,6 +18,21 @@ from .serializers import (
 )
 
 User = get_user_model()
+
+
+# A 6-digit code is guessable by brute force, so joining is rate limited
+# per account and per IP (several accounts from one address).
+class JoinFamilyUserThrottle(UserRateThrottle):
+    scope = "join_family_user"
+    rate = "5/minute"
+
+
+class JoinFamilyIpThrottle(SimpleRateThrottle):
+    scope = "join_family_ip"
+    rate = "30/hour"
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {"scope": self.scope, "ident": self.get_ident(request)}
 
 
 class CreateFamilyView(generics.CreateAPIView):
@@ -89,6 +105,7 @@ def generate_invite_code(request):
 
 @extend_schema(tags=["family"], request=JoinFamilySerializer)
 @api_view(["POST"])
+@throttle_classes([JoinFamilyUserThrottle, JoinFamilyIpThrottle])
 def join_family(request):
     """Join a family using an invite code."""
     if request.user.family:
