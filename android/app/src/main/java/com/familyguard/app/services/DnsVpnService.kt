@@ -11,9 +11,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.familyguard.app.R
 import com.familyguard.app.data.api.ApiService
+import com.familyguard.app.data.local.PendingDnsQuery
+import com.familyguard.app.data.local.PendingDnsQueryDao
 import com.familyguard.app.data.model.DnsQueryBatch
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -37,6 +41,7 @@ import javax.inject.Inject
 class DnsVpnService : VpnService() {
 
     @Inject lateinit var apiService: ApiService
+    @Inject lateinit var queryBuffer: PendingDnsQueryDao
 
     companion object {
         private const val TAG = "DnsVpnService"
@@ -51,7 +56,8 @@ class DnsVpnService : VpnService() {
 
         private const val FLUSH_INTERVAL_MS = 5 * 60 * 1000L
         private const val BLOCKLIST_REFRESH_MS = 15 * 60 * 1000L
-        private const val MAX_PENDING_QUERIES = 2000
+        private const val MAX_PENDING_QUERIES = 2000   // in memory, between flushes
+        private const val MAX_BUFFERED_QUERIES = 20_000 // in Room, while offline
 
         private const val BLOCKLIST_FILE = "dns_blocklist.txt"
 
@@ -104,6 +110,7 @@ class DnsVpnService : VpnService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     @Volatile private var blocklist: Set<String> = emptySet()
     private val pendingQueries = mutableListOf<DnsQueryBatch.Query>()
+    private val flushMutex = Mutex() // periodic and on-stop flushes must not upload the same rows
     @Volatile private var running = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -361,7 +368,23 @@ class DnsVpnService : VpnService() {
         }
     }
 
-    private suspend fun flushQueryBatch() {
+    /** Moves the in-memory log into Room, then uploads Room oldest-first. */
+    private suspend fun flushQueryBatch() = flushMutex.withLock {
+        saveQueriesToBuffer()
+        try {
+            while (true) {
+                // Backend accepts up to 500 queries per batch
+                val batch = queryBuffer.oldest(500)
+                if (batch.isEmpty()) break
+                apiService.uploadDnsQueries(DnsQueryBatch(queries = batch.map { it.toQuery() }))
+                queryBuffer.deleteUpTo(batch.last().id)
+            }
+        } catch (e: Exception) {
+            // Offline: the rest stays in Room for the next flush
+        }
+    }
+
+    private suspend fun saveQueriesToBuffer() {
         val batch: List<DnsQueryBatch.Query>
         synchronized(pendingQueries) {
             batch = pendingQueries.toList()
@@ -369,12 +392,13 @@ class DnsVpnService : VpnService() {
         }
         if (batch.isEmpty()) return
         try {
-            // Backend accepts up to 500 queries per batch
-            batch.chunked(500).forEach { apiService.uploadDnsQueries(DnsQueryBatch(queries = it)) }
+            queryBuffer.insertAll(batch.map {
+                PendingDnsQuery(domain = it.domain, queryType = it.queryType,
+                                wasBlocked = it.wasBlocked, timestamp = it.timestamp)
+            })
+            queryBuffer.trim(MAX_BUFFERED_QUERIES)
         } catch (e: Exception) {
-            synchronized(pendingQueries) {
-                if (pendingQueries.size + batch.size <= MAX_PENDING_QUERIES) pendingQueries.addAll(0, batch)
-            }
+            Log.w(TAG, "Could not buffer DNS log", e)
         }
     }
 
