@@ -6,9 +6,12 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
+import android.telecom.TelecomManager
 import android.view.accessibility.AccessibilityEvent
 import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.model.AppRule
+import com.familyguard.app.data.model.ScreenSchedule
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.Calendar
@@ -51,6 +54,7 @@ class AppMonitorAccessibilityService : AccessibilityService() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     @Volatile private var activeRules: List<AppRule> = emptyList()
+    @Volatile private var schedules: List<ScreenSchedule> = emptyList()
 
     // Track today's usage per app: packageName → used seconds today
     // Replaced as a whole on refresh, so yesterday's totals never linger
@@ -78,7 +82,7 @@ class AppMonitorAccessibilityService : AccessibilityService() {
             refreshTodayUsage()
         }
 
-        // Periodic rule refresh every 5 min (parent changes apply quickly)
+        // Periodic rule + schedule refresh every 5 min (parent changes apply quickly)
         serviceScope.launch {
             while (isActive) {
                 delay(5 * 60 * 1000L)
@@ -119,10 +123,21 @@ class AppMonitorAccessibilityService : AccessibilityService() {
     }
 
     private suspend fun checkAndBlock(packageName: String) {
+        val now = System.currentTimeMillis()
+
+        // Screen schedule: everything except essentials is locked during the window
+        val schedule = currentSchedule()
+        if (schedule != null && !isAlwaysAllowed(packageName)) {
+            if (packageName == lastBlockedPackage && now - lastBlockedTime < 3000) return
+            lastBlockedPackage = packageName
+            lastBlockedTime = now
+            val reason = "Сейчас «${schedule.name}»: телефон на паузе до ${schedule.endTime.take(5)}"
+            showBlockOverlay(packageName, appLabel(packageName), limitMinutes = -1, reason = reason)
+            return
+        }
+
         val rule = activeRules.find { it.packageName == packageName && it.isActive }
             ?: return
-
-        val now = System.currentTimeMillis()
 
         when (rule.ruleType) {
             "block" -> {
@@ -147,9 +162,63 @@ class AppMonitorAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun showBlockOverlay(packageName: String, appName: String, limitMinutes: Int) {
-        val intent = BlockOverlayActivity.createIntent(this, packageName, appName, limitMinutes)
+    private fun showBlockOverlay(
+        packageName: String,
+        appName: String,
+        limitMinutes: Int,
+        reason: String? = null
+    ) {
+        val intent = BlockOverlayActivity.createIntent(this, packageName, appName, limitMinutes, reason)
         startActivity(intent)
+    }
+
+    /**
+     * Active schedule covering the current local time, or null.
+     * Days use the backend bitmask (Mon=1 … Sun=64). A window whose end is
+     * before its start runs past midnight and belongs to the day it started.
+     */
+    private fun currentSchedule(): ScreenSchedule? {
+        val cal = Calendar.getInstance()
+        val nowMin = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        val todayBit = 1 shl ((cal.get(Calendar.DAY_OF_WEEK) + 5) % 7) // Mon=0 … Sun=6
+        val yesterdayBit = if (todayBit == 1) 64 else todayBit shr 1
+
+        return schedules.firstOrNull { s ->
+            val start = minutesOf(s.startTime) ?: return@firstOrNull false
+            val end = minutesOf(s.endTime) ?: return@firstOrNull false
+            if (!s.isActive) return@firstOrNull false
+            if (start < end) {
+                (s.daysBitmask and todayBit) != 0 && nowMin in start until end
+            } else {
+                ((s.daysBitmask and todayBit) != 0 && nowMin >= start) ||
+                    ((s.daysBitmask and yesterdayBit) != 0 && nowMin < end)
+            }
+        }
+    }
+
+    private fun minutesOf(time: String): Int? {
+        val parts = time.split(":")
+        val h = parts.getOrNull(0)?.toIntOrNull() ?: return null
+        val m = parts.getOrNull(1)?.toIntOrNull() ?: return null
+        return h * 60 + m
+    }
+
+    /** Apps that stay usable during a schedule: SOS (this app), calls, home screen, keyboard. */
+    private fun isAlwaysAllowed(pkg: String): Boolean {
+        if (pkg == packageName || pkg in ALWAYS_ALLOWED) return true
+        val tm = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+        if (pkg == tm?.defaultDialerPackage) return true
+        val ime = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        if (ime != null && pkg == ime.substringBefore('/')) return true
+        val home = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+        return packageManager.queryIntentActivities(home, 0)
+            .any { it.activityInfo.packageName == pkg }
+    }
+
+    private fun appLabel(pkg: String): String = try {
+        packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString()
+    } catch (e: Exception) {
+        pkg
     }
 
     /**
@@ -173,6 +242,11 @@ class AppMonitorAccessibilityService : AccessibilityService() {
             activeRules = apiService.getActiveRules()
         } catch (e: Exception) {
             // Keep existing rules on network error
+        }
+        try {
+            schedules = apiService.getScreenSchedule()
+        } catch (e: Exception) {
+            // Keep existing schedules on network error
         }
     }
 
@@ -198,6 +272,15 @@ class AppMonitorAccessibilityService : AccessibilityService() {
         } catch (e: Exception) {
             // UsageStats not available (permission not granted)
         }
+    }
+
+    companion object {
+        private val ALWAYS_ALLOWED = setOf(
+            "com.android.systemui",
+            "com.android.phone",
+            "com.android.server.telecom",
+            "com.android.emergency",
+        )
     }
 
     override fun onInterrupt() {

@@ -37,3 +37,6 @@ yarn-error.log*
 
 # Docker
 .docker/
+
+# Vite build output
+dist/

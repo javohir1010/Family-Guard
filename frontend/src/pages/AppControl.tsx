@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appsApi, familyApi } from "../api/client";
 import toast from "react-hot-toast";
+import ScreenSchedules from "../components/ScreenSchedules";
 
 const EMPTY_RULE_FORM = {
   child: "",
@@ -251,6 +252,8 @@ export default function AppControlPage() {
           </div>
         </div>
       </div>
+
+      {activeChild && <ScreenSchedules childId={activeChild} />}
 
       {/* Permission alerts */}
       {permAlerts.length > 0 && (
