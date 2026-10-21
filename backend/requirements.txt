@@ -15,7 +15,7 @@ channels-redis==4.2.0
 daphne==4.1.2
 
 # Database
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.11
 
 # Async / Tasks
 celery==5.4.0
@@ -26,6 +26,6 @@ firebase-admin==6.5.0
 twilio==9.3.3
 
 # Utils
-Pillow==10.4.0
+Pillow==11.3.0
 python-dateutil==2.9.0
 requests==2.32.3
