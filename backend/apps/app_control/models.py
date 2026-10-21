@@ -95,6 +95,8 @@ class PermissionAlert(models.Model):
         PHONE = "READ_PHONE_STATE", "Phone State"
         ACCESSIBILITY = "BIND_ACCESSIBILITY_SERVICE", "Accessibility Service"
         VPN = "BIND_VPN_SERVICE", "VPN Service"
+        # was_granted=False: strict "Private DNS" is on and bypasses the DNS filter
+        PRIVATE_DNS = "PRIVATE_DNS", "Private DNS (DNS filter bypass)"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     child = models.ForeignKey(
