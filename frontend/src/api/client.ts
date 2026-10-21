@@ -118,6 +118,9 @@ export const appsApi = {
       ? apiClient.get(`/apps/schedule/${childId}/`)
       : apiClient.get("/apps/schedule/"),
   createSchedule: (data: object) => apiClient.post("/apps/schedule/", data),
+  updateSchedule: (id: string, data: object) =>
+    apiClient.patch(`/apps/schedule/${id}/detail/`, data),
+  deleteSchedule: (id: string) => apiClient.delete(`/apps/schedule/${id}/detail/`),
   permissionAlerts: () => apiClient.get("/apps/permission-alerts/"),
 };
 

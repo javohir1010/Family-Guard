@@ -46,12 +46,14 @@ class BlockOverlayActivity : ComponentActivity() {
         const val EXTRA_PACKAGE = "package_name"
         const val EXTRA_APP_NAME = "app_name"
         const val EXTRA_LIMIT_MINUTES = "limit_minutes"
+        const val EXTRA_REASON = "reason"
 
         fun createIntent(
             context: Context,
             packageName: String,
             appName: String,
-            limitMinutes: Int = -1
+            limitMinutes: Int = -1,
+            reason: String? = null
         ): Intent = Intent(context, BlockOverlayActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TOP or
@@ -59,6 +61,7 @@ class BlockOverlayActivity : ComponentActivity() {
             putExtra(EXTRA_PACKAGE, packageName)
             putExtra(EXTRA_APP_NAME, appName)
             putExtra(EXTRA_LIMIT_MINUTES, limitMinutes)
+            putExtra(EXTRA_REASON, reason)
         }
     }
 
@@ -75,6 +78,7 @@ class BlockOverlayActivity : ComponentActivity() {
         val packageName  = intent.getStringExtra(EXTRA_PACKAGE) ?: "Приложение"
         val appName      = intent.getStringExtra(EXTRA_APP_NAME) ?: packageName
         val limitMinutes = intent.getIntExtra(EXTRA_LIMIT_MINUTES, -1)
+        val reason       = intent.getStringExtra(EXTRA_REASON)
 
         // Override back button — go HOME, not to the blocked app
         onBackPressedDispatcher.addCallback(this) {
@@ -86,6 +90,7 @@ class BlockOverlayActivity : ComponentActivity() {
                 BlockOverlayScreen(
                     appName = appName,
                     limitMinutes = limitMinutes,
+                    reason = reason,
                     onGoHome = { goHome() }
                 )
             }
@@ -134,6 +139,7 @@ class BlockOverlayActivity : ComponentActivity() {
 private fun BlockOverlayScreen(
     appName: String,
     limitMinutes: Int,
+    reason: String? = null,
     onGoHome: () -> Unit
 ) {
     Box(
@@ -164,14 +170,14 @@ private fun BlockOverlayScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            val reason = if (limitMinutes > 0) {
+            val reasonText = reason ?: if (limitMinutes > 0) {
                 "Дневной лимит ($limitMinutes мин) исчерпан"
             } else {
                 "Это приложение ограничено родителем"
             }
 
             Text(
-                text = reason,
+                text = reasonText,
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center,

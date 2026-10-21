@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Minimal policy set: Device Admin is only used so the app cannot be removed
+    silently. Destructive policies (wipe-data, reset-password) and unused ones
+    (camera, password rules, login watch) are deliberately not requested.
+-->
 <device-admin xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-policies>
-        <limit-password />
-        <watch-login />
-        <reset-password />
         <force-lock />
-        <wipe-data />
-        <disable-camera />
     </uses-policies>
 </device-admin>

@@ -25,6 +25,9 @@ FamilyGuard/
 # Клонировать и перейти в директорию
 cd "Family Guard"
 
+# Создать локальный файл настроек (он в .gitignore, в git не попадает)
+cp backend/.env.example backend/.env
+
 # Запустить все сервисы
 docker compose up -d
 
