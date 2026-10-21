@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
+from apps.users.permissions import IsFamilyMember, IsParent
 from .models import SosEvent
 from .serializers import SosTriggerSerializer, SosEventSerializer, SosResolveSerializer
 from .tasks import process_sos_event
@@ -55,25 +56,24 @@ class SosTriggerView(generics.GenericAPIView):
 class SosHistoryView(generics.ListAPIView):
     """GET /api/v1/sos/history/ — SOS history for the family."""
     serializer_class = SosEventSerializer
+    permission_classes = [IsFamilyMember]
 
     @extend_schema(tags=["sos"])
     def get_queryset(self):
-        user = self.request.user
-        if not user.family:
-            return SosEvent.objects.none()
         return SosEvent.objects.filter(
-            child__family=user.family
+            child__family=self.request.user.family
         ).select_related("child", "resolved_by").order_by("-created_at")
 
 
 class SosResolveView(generics.GenericAPIView):
     """POST /api/v1/sos/<id>/resolve/ — parent marks SOS as resolved."""
     serializer_class = SosResolveSerializer
+    # IsFamilyMember: with family=None the lookup below would match SOS
+    # events of every child who has no family
+    permission_classes = [IsParent, IsFamilyMember]
 
     @extend_schema(tags=["sos"])
     def post(self, request, sos_id):
-        if not request.user.is_parent:
-            return Response(status=status.HTTP_403_FORBIDDEN)
         try:
             event = SosEvent.objects.get(
                 id=sos_id, child__family=request.user.family
