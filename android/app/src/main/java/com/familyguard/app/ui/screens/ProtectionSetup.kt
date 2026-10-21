@@ -28,6 +28,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.familyguard.app.services.AppMonitorAccessibilityService
 import com.familyguard.app.services.DnsVpnService
 import com.familyguard.app.services.LocationForegroundService
+import com.familyguard.app.services.ProtectionWatchWorker
 import com.familyguard.app.services.UsageStatsSyncWorker
 
 private const val PREFS = "fg_setup"
@@ -46,9 +47,12 @@ fun readProtectionStatus(context: Context) = ProtectionStatus(
     location = LocationForegroundService.hasLocationPermission(context),
     usageAccess = hasUsageAccess(context),
     accessibility = isAccessibilityServiceEnabled(context),
-    dnsFilter = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        .getBoolean(KEY_VPN_ENABLED, false) && VpnService.prepare(context) == null,
+    dnsFilter = isDnsFilterRequested(context) && VpnService.prepare(context) == null,
 )
+
+/** The DNS filter was turned on during setup on this device. */
+fun isDnsFilterRequested(context: Context) =
+    context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_VPN_ENABLED, false)
 
 private fun hasUsageAccess(context: Context): Boolean {
     val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
@@ -88,6 +92,7 @@ fun rememberProtectionSetup(): MutableState<ProtectionStatus> {
 
     LaunchedEffect(Unit) {
         UsageStatsSyncWorker.schedule(context)
+        ProtectionWatchWorker.schedule(context)
         if (status.value.dnsFilter) DnsVpnService.startVpn(context)
         val permissions = buildList {
             add(Manifest.permission.ACCESS_FINE_LOCATION)

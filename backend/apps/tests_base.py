@@ -1,6 +1,7 @@
 """Shared helpers for API tests."""
 from unittest import mock
 
+from django.core.cache import cache
 from django.test import override_settings
 from rest_framework.test import APITestCase
 
@@ -32,6 +33,7 @@ class ApiTestCase(APITestCase):
 
     def setUp(self):
         super().setUp()
+        cache.clear()  # throttle counters live in the cache
         for target in (
             "apps.notifications.tasks.send_push_to_family_parents.delay",
             "apps.notifications.tasks.send_push_notification.delay",

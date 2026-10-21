@@ -47,6 +47,38 @@ class AuthAndFamilyFlowTests(ApiTestCase):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(res.data["code"], "222222")
 
+    def test_invite_code_is_six_digits(self):
+        for _ in range(50):
+            code = InviteCode.generate_code()
+            self.assertRegex(code, r"^\d{6}$")
+
+    def test_join_family_is_rate_limited(self):
+        family, parent, _ = self.make_family()
+        InviteCode.objects.create(
+            code="123456", family=family, created_by=parent,
+            expires_at=timezone.now() + timedelta(days=1),
+        )
+        guesser = self.make_user("guesser@x.uz", "child")
+        client = self.as_user(guesser)
+        for code in ("000001", "000002", "000003", "000004", "000005"):
+            res = client.post("/api/v1/family/invite/join/", {"code": code})
+            self.assertEqual(res.status_code, 400)
+        # Sixth try is refused even with the right code
+        res = client.post("/api/v1/family/invite/join/", {"code": "123456"})
+        self.assertEqual(res.status_code, 429)
+        guesser.refresh_from_db()
+        self.assertIsNone(guesser.family)
+
+    def test_join_family_is_rate_limited_per_ip(self):
+        family, parent, _ = self.make_family()
+        for i in range(30):
+            user = self.make_user(f"bot{i}@x.uz", "child")
+            res = self.as_user(user).post("/api/v1/family/invite/join/", {"code": "000000"})
+            self.assertEqual(res.status_code, 400)
+        user = self.make_user("bot-last@x.uz", "child")
+        res = self.as_user(user).post("/api/v1/family/invite/join/", {"code": "000000"})
+        self.assertEqual(res.status_code, 429)
+
     def test_child_cannot_rename_family(self):
         family, _, child = self.make_family()
         res = self.as_user(child).patch("/api/v1/family/detail/", {"name": "Hacked"})
