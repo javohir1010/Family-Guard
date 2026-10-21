@@ -1,4 +1,4 @@
-from apps.app_control.models import AppRule, AppUsage
+from apps.app_control.models import AppRule, AppUsage, PermissionAlert
 from apps.tests_base import ApiTestCase
 
 
@@ -65,3 +65,11 @@ class AppControlTests(ApiTestCase):
         self.assertEqual([u["package_name"] for u in res.data["results"]], ["b"])
         res = client.get(f"/api/v1/apps/usage/{self.child.id}/", {"date": "07.10.2026"})
         self.assertEqual(res.status_code, 400)
+
+    def test_private_dns_bypass_is_reported_to_parents(self):
+        res = self.as_user(self.child).post("/api/v1/apps/permissions/", {
+            "permission": "PRIVATE_DNS", "was_granted": False,
+        }, format="json")
+        self.assertEqual(res.status_code, 201, res.data)
+        self.assertEqual(PermissionAlert.objects.get().permission, "PRIVATE_DNS")
+        self.mock_send_push_to_family_parents.assert_called_once()

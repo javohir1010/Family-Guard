@@ -2,6 +2,8 @@ package com.familyguard.app.services
 
 import android.content.Context
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.os.Build
 import androidx.core.location.LocationManagerCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
@@ -37,6 +39,7 @@ class ProtectionWatchWorker @AssistedInject constructor(
         private const val VPN = "BIND_VPN_SERVICE"
         private const val ACCESSIBILITY = "BIND_ACCESSIBILITY_SERVICE"
         private const val LOCATION = "ACCESS_FINE_LOCATION"
+        private const val PRIVATE_DNS = "PRIVATE_DNS"
 
         private val networkConstraint = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -76,7 +79,11 @@ class ProtectionWatchWorker @AssistedInject constructor(
             put(LOCATION, status.location && isLocationEnabled())
             put(ACCESSIBILITY, status.accessibility)
             // Only watched once the DNS filter was set up on this device
-            if (isDnsFilterRequested(applicationContext)) put(VPN, DnsVpnService.isRunning)
+            if (isDnsFilterRequested(applicationContext)) {
+                put(VPN, DnsVpnService.isRunning)
+                // "Enabled" = the filter can't be bypassed via strict Private DNS
+                put(PRIVATE_DNS, !isStrictPrivateDnsOn())
+            }
         }
 
         return try {
@@ -93,6 +100,18 @@ class ProtectionWatchWorker @AssistedInject constructor(
             // State of the failed item is not saved, so the change is reported on retry
             if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
+    }
+
+    /**
+     * Strict Private DNS (Settings → Private DNS → hostname) sends DNS-over-TLS
+     * straight to that host, past the VPN, so the DNS filter sees nothing.
+     * Automatic mode is fine: it falls back to our plain DNS server.
+     */
+    private fun isStrictPrivateDnsOn(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return false
+        val cm = applicationContext.getSystemService(ConnectivityManager::class.java) ?: return false
+        @Suppress("DEPRECATION")
+        return cm.allNetworks.any { cm.getLinkProperties(it)?.privateDnsServerName != null }
     }
 
     private fun isLocationEnabled(): Boolean {

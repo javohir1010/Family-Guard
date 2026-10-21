@@ -14,6 +14,7 @@ import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.model.DnsQueryBatch
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
@@ -51,6 +52,24 @@ class DnsVpnService : VpnService() {
         private const val FLUSH_INTERVAL_MS = 5 * 60 * 1000L
         private const val BLOCKLIST_REFRESH_MS = 15 * 60 * 1000L
         private const val MAX_PENDING_QUERIES = 2000
+
+        private const val BLOCKLIST_FILE = "dns_blocklist.txt"
+
+        /**
+         * DNS-over-HTTPS endpoints (browser "Secure DNS") and Firefox's canary
+         * domain. Their names are resolved through us first, so answering
+         * NXDOMAIN stops apps from switching to DoH and skipping the filter.
+         */
+        private val DOH_BYPASS_DOMAINS = setOf(
+            "use-application-dns.net",
+            "dns.google", "dns.google.com",
+            "cloudflare-dns.com", "one.one.one.one", "1dot1dot1dot1.cloudflare-dns.com",
+            "dns.quad9.net", "dns9.quad9.net", "dns10.quad9.net", "dns11.quad9.net",
+            "doh.opendns.com", "doh.familyshield.opendns.com",
+            "dns.adguard.com", "dns.adguard-dns.com", "family.adguard-dns.com",
+            "dns.nextdns.io", "doh.cleanbrowsing.org", "doh.mullvad.net",
+            "dns.alidns.com", "doh.pub", "dns.yandex.ru", "common.dot.dns.yandex.net",
+        )
 
         private const val ACTION_START = "com.familyguard.VPN_START"
         private const val ACTION_STOP = "com.familyguard.VPN_STOP"
@@ -139,6 +158,8 @@ class DnsVpnService : VpnService() {
 
         running = true
         isRunning = true
+        // Last known list first: after a reboot without network the filter still works
+        loadSavedBlocklist()
         serviceScope.launch { runPacketLoop() }
         serviceScope.launch {
             while (running) {
@@ -231,6 +252,7 @@ class DnsVpnService : VpnService() {
     private fun isBlocked(domain: String): Boolean {
         val list = blocklist
         var d = domain
+        if (d in DOH_BYPASS_DOMAINS) return true
         while (true) {
             if (d in list) return true
             val dot = d.indexOf('.')
@@ -317,10 +339,25 @@ class DnsVpnService : VpnService() {
     }
 
     private suspend fun loadBlocklist() {
-        try {
-            blocklist = apiService.getBlocklist().domains.map { it.lowercase() }.toSet()
+        val domains = try {
+            apiService.getBlocklist().domains.map { it.lowercase() }.toSet()
         } catch (e: Exception) {
-            // Keep the previous list on network errors
+            return // Keep the previous list on network errors
+        }
+        blocklist = domains
+        try {
+            File(filesDir, BLOCKLIST_FILE).writeText(domains.joinToString("\n"))
+        } catch (e: IOException) {
+            Log.w(TAG, "Could not save blocklist", e)
+        }
+    }
+
+    private fun loadSavedBlocklist() {
+        try {
+            val file = File(filesDir, BLOCKLIST_FILE)
+            if (file.exists()) blocklist = file.readLines().filter { it.isNotBlank() }.toSet()
+        } catch (e: IOException) {
+            Log.w(TAG, "Could not read saved blocklist", e)
         }
     }
 
