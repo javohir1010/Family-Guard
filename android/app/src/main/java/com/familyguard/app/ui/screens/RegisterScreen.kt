@@ -166,7 +166,7 @@ fun RegisterScreen(
             enabled = email.isNotEmpty() && passwordProblem(password) == null && password == passwordConfirm && !uiState.isLoading
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                FgLogo(Modifier.size(24.dp), animated = true, color = MaterialTheme.colorScheme.onPrimary, cut = MaterialTheme.colorScheme.primary)
             } else {
                 Text("Зарегистрироваться")
             }

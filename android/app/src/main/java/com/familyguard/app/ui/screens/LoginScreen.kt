@@ -90,7 +90,7 @@ fun LoginScreen(
             enabled = email.isNotEmpty() && password.isNotEmpty() && !uiState.isLoading
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                FgLogo(Modifier.size(24.dp), animated = true, color = MaterialTheme.colorScheme.onPrimary, cut = MaterialTheme.colorScheme.primary)
             } else {
                 Text("Войти")
             }
@@ -154,7 +154,7 @@ private fun LoginCodeStep(viewModel: AuthViewModel) {
             enabled = code.length == 6 && !uiState.isLoading
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                FgLogo(Modifier.size(24.dp), animated = true, color = MaterialTheme.colorScheme.onPrimary, cut = MaterialTheme.colorScheme.primary)
             } else {
                 Text("Подтвердить")
             }
