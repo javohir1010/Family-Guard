@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
 import { authApi, familyApi } from "../api/client";
 import { useAuthStore } from "../store/authStore";
@@ -122,7 +123,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
-            <span className="text-3xl">🛡️</span>
+            <Logo size={44} />
           </div>
           <h1 className="text-3xl font-bold text-white">FamilyGuard</h1>
           <p className="text-blue-200 mt-1">Система родительского контроля</p>
@@ -171,7 +172,7 @@ export default function LoginPage() {
                   disabled={loading || loginCode.length !== 6}
                   className="btn-primary w-full py-3"
                 >
-                  {loading ? "Проверяем..." : "Подтвердить"}
+                  {loading ? <Spinner text="Проверяем" /> : "Подтвердить"}
                 </button>
                 <button
                   type="button"
@@ -219,7 +220,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="btn-primary w-full py-3"
                 >
-                  {loading ? "Входим..." : "Войти"}
+                  {loading ? <Spinner text="Входим" /> : "Войти"}
                 </button>
               </form>
             ) : (
@@ -356,7 +357,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="btn-primary w-full py-3 mt-2"
                 >
-                  {loading ? "Создаём аккаунт..." : "Создать аккаунт"}
+                  {loading ? <Spinner text="Создаём аккаунт" /> : "Создать аккаунт"}
                 </button>
               </form>
             )}
@@ -364,5 +365,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Spinner({ text }: { text: string }) {
+  return (
+    <span className="inline-flex items-center justify-center gap-2">
+      <Logo size={20} animated color="#ffffff" cut="rgb(var(--accent))" />
+      {text}
+    </span>
   );
 }

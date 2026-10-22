@@ -42,7 +42,7 @@ fun OnboardingScreen(
                 .padding(32.dp)
         ) {
             // Logo
-            Text(text = "🛡️", fontSize = 64.sp)
+            FgLogo(Modifier.size(72.dp))
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "FamilyGuard",
@@ -138,11 +138,7 @@ fun OnboardingScreen(
 
             if (uiState.waitingApproval) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 2.dp
-                    )
+                    FgLogo(Modifier.size(28.dp), animated = true)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "Заявка отправлена. Ждём, когда родитель подтвердит её в дашборде…",
@@ -162,10 +158,11 @@ fun OnboardingScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
+                    FgLogo(
+                        Modifier.size(24.dp),
+                        animated = true,
                         color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
+                        cut = MaterialTheme.colorScheme.primary,
                     )
                 } else {
                     Text(

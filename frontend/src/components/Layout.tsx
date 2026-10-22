@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import Logo from "./Logo";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { authApi } from "../api/client";
@@ -37,7 +38,7 @@ export default function Layout() {
       <aside className="w-60 bg-white border-r border-gray-100 flex flex-col">
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
-          <span className="text-2xl">🛡️</span>
+          <Logo size={36} />
           <div>
             <div className="font-bold text-gray-900 leading-tight">FamilyGuard</div>
             <div className="text-xs text-gray-400">Родительский контроль</div>
