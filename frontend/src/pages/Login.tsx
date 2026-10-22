@@ -105,12 +105,7 @@ export default function LoginPage() {
       toast.success("Регистрация успешна!");
       navigate("/dashboard");
     } catch (err: any) {
-      const errors = err.response?.data;
-      const msg =
-        errors && typeof errors === "object"
-          ? Object.values(errors).flat().join(", ")
-          : "Ошибка регистрации";
-      toast.error(msg);
+      toast.error(registerErrorText(err));
     } finally {
       setLoading(false);
     }
@@ -375,4 +370,18 @@ function Spinner({ text }: { text: string }) {
       {text}
     </span>
   );
+}
+
+/** Server validation messages ({"email": ["..."]}), or why there are none. */
+function registerErrorText(err: any): string {
+  const res = err.response;
+  if (!res) return "Нет связи с сервером. Проверьте, что backend запущен.";
+  const data = res.data;
+  if (data && typeof data === "object") {
+    const text = Object.values(data).flat().filter((v) => typeof v === "string").join("\n");
+    if (text) return text;
+  }
+  return res.status >= 500
+    ? `Ошибка сервера (${res.status}). Подробности в логах backend.`
+    : `Ошибка регистрации (${res.status})`;
 }

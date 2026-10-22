@@ -36,6 +36,8 @@ data class AuthUiState(
     val otpEmailHint: String? = null,
     // Joined with an invite code, a parent has not approved yet
     val waitingApproval: Boolean = false,
+    // "parent" or "child"; a parent without a family can create one
+    val role: String? = null,
     // Child logout: shown in a dialog while a parent decides
     val logoutPending: Boolean = false,
     val logoutMessage: String? = null
@@ -68,6 +70,7 @@ class AuthViewModel @Inject constructor(
                 // A parent may have approved the join request while the app was closed
                 familyId = try {
                     val profile = apiService.getProfile()
+                    _uiState.value = _uiState.value.copy(role = profile.role)
                     profile.family?.also {
                         tokenStorage.saveUserInfo(profile.id, it, android.os.Build.MODEL)
                     }
@@ -123,6 +126,31 @@ class AuthViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     error = errorMsg
+                )
+            }
+        }
+    }
+
+    /** A parent without a family starts a new one (an invite code is only for joining). */
+    fun createFamily(name: String) {
+        if (name.isBlank()) return
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        viewModelScope.launch {
+            try {
+                val family = apiService.createFamily(
+                    com.familyguard.app.data.model.CreateFamilyRequest(name.trim())
+                ).family
+                tokenStorage.saveUserInfo(
+                    userId = apiService.getProfile().id,
+                    familyId = family.id,
+                    deviceName = android.os.Build.MODEL
+                )
+                _uiState.value = _uiState.value.copy(isLoading = false, hasFamily = true)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = (e as? HttpException)?.let { serverErrorText(it) }
+                        ?: "Нет связи с сервером. Проверьте интернет."
                 )
             }
         }
@@ -253,6 +281,7 @@ class AuthViewModel @Inject constructor(
             otpChallengeId = null,
             otpEmailHint = null,
             isLoggedIn = true,
+            role = profile.role,
             hasFamily = !profile.family.isNullOrEmpty()
         )
     }
@@ -272,6 +301,7 @@ class AuthViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isLoggedIn = true,
+                    role = response.user.role,
                     hasFamily = !response.user.family.isNullOrEmpty()
                 )
             } catch (e: Exception) {

@@ -48,6 +48,9 @@ data class JoinFamilyRequest(
     val code: String,
     @SerializedName("device_name") val deviceName: String?
 )
+data class CreateFamilyRequest(val name: String)
+data class FamilyInfo(val id: String, val name: String)
+data class CreateFamilyResponse(val message: String, val family: FamilyInfo)
 data class JoinFamilyResponse(val message: String, val request: MemberRequest?)
 // Joining the family or logging out a child device waits for a parent's approval
 data class MemberRequest(val id: String, val kind: String, val status: String)

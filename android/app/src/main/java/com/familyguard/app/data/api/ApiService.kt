@@ -25,6 +25,9 @@ interface ApiService {
     suspend fun updateDeviceToken(@Body request: DeviceTokenRequest)
 
     // Family
+    @POST("family/create/")
+    suspend fun createFamily(@Body request: CreateFamilyRequest): CreateFamilyResponse
+
     @POST("family/invite/join/")
     suspend fun joinFamily(@Body request: JoinFamilyRequest): JoinFamilyResponse
 
