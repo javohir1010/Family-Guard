@@ -94,9 +94,13 @@ class RegisterSerializer(PersonFieldsMixin, serializers.ModelSerializer):
         model = User
         fields = ("email", "username", "first_name", "last_name", "password",
                   "password2", "role", "gender", "birth_date", "phone_number", "device_name")
-        # gender/birth_date/phone become required once the app and dashboard
-        # forms send them; until then an incomplete profile is asked for after login
-        extra_kwargs = {"first_name": {"required": True}, "last_name": {"required": True}}
+        extra_kwargs = {
+            "first_name": {"required": True}, "last_name": {"required": True},
+            # Needed for contact names ("Мама", "Старший брат") and quick dial
+            "gender": {"required": True, "allow_blank": False},
+            "birth_date": {"required": True, "allow_null": False},
+            "phone_number": {"required": True, "allow_blank": False},
+        }
 
     def validate(self, attrs):
         if attrs["password"] != attrs.pop("password2"):

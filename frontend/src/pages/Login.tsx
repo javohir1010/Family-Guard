@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PersonFields } from "../components/PersonFields";
 import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
 import { authApi, familyApi } from "../api/client";
@@ -26,6 +27,8 @@ export default function LoginPage() {
     password: "",
     password2: "",
     role: "parent",
+    gender: "",
+    birth_date: "",
     phone_number: "",
   });
 
@@ -282,6 +285,10 @@ export default function LoginPage() {
                                focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                <PersonFields
+                  value={regForm}
+                  onChange={(patch) => setRegForm((f) => ({ ...f, ...patch }))}
+                />
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Роль

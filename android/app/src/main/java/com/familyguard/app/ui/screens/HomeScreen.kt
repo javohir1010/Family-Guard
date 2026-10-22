@@ -53,9 +53,19 @@ fun HomeScreen(
     // Parent's logout progress or error
     LogoutApprovalDialog(authViewModel)
 
+    // Older adult accounts fill in gender, birth date and phone once
+    if (!home.profileComplete) {
+        CompleteProfileDialog(
+            saving = home.profileSaving,
+            error = home.profileError,
+            onSave = homeViewModel::completeProfile
+        )
+    }
+
     when (home.role) {
         null -> Box(Modifier.fillMaxSize())
-        HomeViewModel.ROLE_PARENT -> ParentHome(
+        // Grandparents get the parent's overview for now, without managing anything
+        HomeViewModel.ROLE_PARENT, HomeViewModel.ROLE_GRANDPARENT -> ParentHome(
             name = home.firstName,
             children = home.children,
             events = home.events,
@@ -64,7 +74,7 @@ fun HomeScreen(
             sos = sos,
             onSos = sosViewModel::onSosPressed,
             onRefresh = homeViewModel::refresh,
-            onUnlink = homeViewModel::unlinkDevice,
+            onUnlink = if (home.role == HomeViewModel.ROLE_PARENT) homeViewModel::unlinkDevice else null,
             onLogout = authViewModel::logout
         )
         // No logout for a child: only a parent can unlink the device
@@ -156,7 +166,7 @@ private fun ParentHome(
     sos: com.familyguard.app.viewmodel.SosUiState,
     onSos: () -> Unit,
     onRefresh: () -> Unit,
-    onUnlink: (MemberPosition) -> Unit,
+    onUnlink: ((MemberPosition) -> Unit)?,
     onLogout: () -> Unit
 ) {
     val context = LocalContext.current
@@ -210,8 +220,10 @@ private fun ParentHome(
                     }
                     child.batteryLevel?.let { Pill("$it%", warn = it < 25) }
                 }
-                TextButton(onClick = { unlinkTarget = child }) {
-                    Text("Отвязать устройство", fontSize = 13.sp)
+                if (onUnlink != null) {
+                    TextButton(onClick = { unlinkTarget = child }) {
+                        Text("Отвязать устройство", fontSize = 13.sp)
+                    }
                 }
             }
         }
@@ -265,13 +277,38 @@ private fun ParentHome(
             title = { Text("Отвязать устройство?") },
             text = { Text("${child.name} выйдет из аккаунта на своём телефоне, но останется в семье. Войти снова можно с любого телефона.") },
             confirmButton = {
-                TextButton(onClick = { onUnlink(child); unlinkTarget = null }) { Text("Отвязать") }
+                TextButton(onClick = { onUnlink?.invoke(child); unlinkTarget = null }) { Text("Отвязать") }
             },
             dismissButton = {
                 TextButton(onClick = { unlinkTarget = null }) { Text("Отмена") }
             }
         )
     }
+}
+
+@Composable
+private fun CompleteProfileDialog(saving: Boolean, error: String?, onSave: (PersonData) -> Unit) {
+    var person by remember { mutableStateOf(PersonData()) }
+    AlertDialog(
+        onDismissRequest = {},  // required once: contacts and quick dial depend on it
+        title = { Text("Заполните профиль") },
+        text = {
+            Column {
+                Text(
+                    "Это нужно, чтобы дети видели вас в контактах как «Мама», «Папа», «Бабушка» и могли позвонить в одно нажатие.",
+                    fontSize = 14.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                PersonFields(person) { person = it }
+                error?.let { Text(it, color = MaterialTheme.colorScheme.error, fontSize = 13.sp) }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSave(person) }, enabled = person.isComplete && !saving) {
+                Text(if (saving) "Сохраняем…" else "Сохранить")
+            }
+        }
+    )
 }
 
 @Composable
