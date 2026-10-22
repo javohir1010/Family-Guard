@@ -7,9 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -55,6 +59,21 @@ class MainActivity : ComponentActivity() {
                         else -> "sos"
                     }
 
+                    // The session is gone (own logout, a parent unlinked this device,
+                    // refresh token rejected): stop background work, back to login
+                    var wasLoggedIn by remember { mutableStateOf(isLoggedIn == true) }
+                    LaunchedEffect(isLoggedIn) {
+                        if (isLoggedIn == true) {
+                            wasLoggedIn = true
+                        } else if (wasLoggedIn) {
+                            wasLoggedIn = false
+                            authViewModel.onSessionEnded()
+                            navController.navigate("login") {
+                                popUpTo(navController.graph.id) { inclusive = true }
+                            }
+                        }
+                    }
+
                     NavHost(
                         navController = navController,
                         startDestination = startDest
@@ -84,6 +103,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("onboarding") {
                             OnboardingScreen(
+                                viewModel = authViewModel,
                                 onJoinSuccess = {
                                     navController.navigate("sos") {
                                         popUpTo("onboarding") { inclusive = true }
@@ -92,7 +112,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("sos") {
-                            HomeScreen(sosRequests = sosRequests.intValue)
+                            HomeScreen(sosRequests = sosRequests.intValue, authViewModel = authViewModel)
                         }
                     }
                 }

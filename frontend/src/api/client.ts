@@ -77,6 +77,8 @@ export const familyApi = {
     apiClient.post("/family/invite/generate/", { role }),
   join: (code: string, device_name?: string) =>
     apiClient.post("/family/invite/join/", { code, device_name }),
+  unlinkDevice: (userId: string) =>
+    apiClient.post(`/family/members/${userId}/unlink/`),
   removeMember: (userId: string) =>
     apiClient.delete(`/family/members/${userId}/remove/`),
   requests: () => apiClient.get("/family/requests/"),

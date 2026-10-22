@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.familyguard.app.viewmodel.AuthViewModel
 
-/** Shows the logout progress: a child device waits here for a parent's approval. */
+/** Shows the logout progress or why it failed (no connection, refused). */
 @Composable
 fun LogoutApprovalDialog(viewModel: AuthViewModel) {
     val uiState by viewModel.uiState.collectAsState()

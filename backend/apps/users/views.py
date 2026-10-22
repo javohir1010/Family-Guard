@@ -171,21 +171,13 @@ class LogoutView(generics.GenericAPIView):
 
     @extend_schema(tags=["auth"])
     def post(self, request):
-        # A child device leaves only after a parent approved it in the dashboard
-        user = request.user
-        if user.is_child and user.family_id:
-            approved = MemberRequest.objects.filter(
-                user=user, family_id=user.family_id, kind=MemberRequest.Kind.LOGOUT,
-                status=MemberRequest.Status.APPROVED,
-                decided_at__gt=timezone.now() - MemberRequest.TTL,
-            ).first()
-            if approved is None:
-                return Response(
-                    {"error": "Выход должен подтвердить родитель."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-            approved.status = MemberRequest.Status.USED
-            approved.save(update_fields=["status"])
+        # A child cannot leave on its own, otherwise it simply disappears from
+        # the map. A parent unlinks the device instead (family/members/<id>/unlink/).
+        if request.user.is_child and request.user.family_id:
+            return Response(
+                {"error": "Выйти может только родитель. Попросите родителя отвязать устройство."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         try:
             refresh_token = request.data.get("refresh")
             token = RefreshToken(refresh_token)

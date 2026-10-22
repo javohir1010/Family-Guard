@@ -50,7 +50,7 @@ fun HomeScreen(
         }
     }
 
-    // A child's logout waits here for a parent's approval
+    // Parent's logout progress or error
     LogoutApprovalDialog(authViewModel)
 
     when (home.role) {
@@ -64,13 +64,14 @@ fun HomeScreen(
             sos = sos,
             onSos = sosViewModel::onSosPressed,
             onRefresh = homeViewModel::refresh,
+            onUnlink = homeViewModel::unlinkDevice,
             onLogout = authViewModel::logout
         )
+        // No logout for a child: only a parent can unlink the device
         else -> ChildHome(
             name = home.firstName,
             sos = sos,
-            onSos = sosViewModel::onSosPressed,
-            onLogout = authViewModel::logout
+            onSos = sosViewModel::onSosPressed
         )
     }
 }
@@ -79,8 +80,7 @@ fun HomeScreen(
 private fun ChildHome(
     name: String,
     sos: com.familyguard.app.viewmodel.SosUiState,
-    onSos: () -> Unit,
-    onLogout: () -> Unit
+    onSos: () -> Unit
 ) {
     val context = LocalContext.current
     // Requests location/notification permissions and starts background services
@@ -134,7 +134,7 @@ private fun ChildHome(
             CardHint("Где ты находишься, какими приложениями пользуешься и сколько времени, какие сайты заблокированы и твои сигналы SOS. Переписку и фото родители не видят.")
         }
 
-        SettingsCard(onLogout)
+        SettingsCard(onLogout = null)
     }
 
     if (showSetup) {
@@ -156,10 +156,12 @@ private fun ParentHome(
     sos: com.familyguard.app.viewmodel.SosUiState,
     onSos: () -> Unit,
     onRefresh: () -> Unit,
+    onUnlink: (MemberPosition) -> Unit,
     onLogout: () -> Unit
 ) {
     val context = LocalContext.current
     val fg = LocalFgColors.current
+    var unlinkTarget by remember { mutableStateOf<MemberPosition?>(null) }
 
     Column(
         modifier = Modifier
@@ -208,6 +210,9 @@ private fun ParentHome(
                     }
                     child.batteryLevel?.let { Pill("$it%", warn = it < 25) }
                 }
+                TextButton(onClick = { unlinkTarget = child }) {
+                    Text("Отвязать устройство", fontSize = 13.sp)
+                }
             }
         }
 
@@ -253,6 +258,20 @@ private fun ParentHome(
 
         SettingsCard(onLogout)
     }
+
+    unlinkTarget?.let { child ->
+        AlertDialog(
+            onDismissRequest = { unlinkTarget = null },
+            title = { Text("Отвязать устройство?") },
+            text = { Text("${child.name} выйдет из аккаунта на своём телефоне, но останется в семье. Войти снова можно с любого телефона.") },
+            confirmButton = {
+                TextButton(onClick = { onUnlink(child); unlinkTarget = null }) { Text("Отвязать") }
+            },
+            dismissButton = {
+                TextButton(onClick = { unlinkTarget = null }) { Text("Отмена") }
+            }
+        )
+    }
 }
 
 @Composable
@@ -267,11 +286,11 @@ private fun Header(title: String, subtitle: String, letter: String) {
 }
 
 @Composable
-private fun SettingsCard(onLogout: () -> Unit) {
+private fun SettingsCard(onLogout: (() -> Unit)?) {
     FgCard {
         CardTitle("Оформление")
         ThemeSwitcher()
-        LogoutButton(onClick = onLogout, modifier = Modifier.align(Alignment.Start))
+        onLogout?.let { LogoutButton(onClick = it, modifier = Modifier.align(Alignment.Start)) }
     }
 }
 

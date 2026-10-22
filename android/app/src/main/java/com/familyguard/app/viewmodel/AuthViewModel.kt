@@ -38,7 +38,7 @@ data class AuthUiState(
     val waitingApproval: Boolean = false,
     // "parent" or "child"; a parent without a family can create one
     val role: String? = null,
-    // Child logout: shown in a dialog while a parent decides
+    // Logout progress or error, shown in a dialog
     val logoutPending: Boolean = false,
     val logoutMessage: String? = null
 )
@@ -319,20 +319,24 @@ class AuthViewModel @Inject constructor(
      * parents (and devices without a family) leave right away. Needs the network:
      * otherwise turning on flight mode would be a way around the approval.
      */
+    /** Only a parent (or a member without a family yet) logs out; the server refuses a child. */
     fun logout() {
         pollJob?.cancel()
         pollJob = viewModelScope.launch {
             showLogout("Выходим…")
             try {
-                if (serverLogout()) return@launch finishLogout()
-                val request = apiService.requestLogout()
-                showLogout("Запрос отправлен. Ждём, когда родитель подтвердит выход…")
-                when (pollRequest(request.id)) {
-                    "approved" -> if (serverLogout()) finishLogout()
-                        else showLogout("Подтверждение не найдено. Попробуйте ещё раз.", pending = false)
-                    "rejected" -> showLogout("Родитель отклонил выход.", pending = false)
-                    else -> showLogout("Запрос устарел. Попробуйте ещё раз.", pending = false)
+                val refresh = tokenStorage.getRefreshToken()
+                if (refresh != null) {
+                    try {
+                        apiService.logout(com.familyguard.app.data.model.LogoutRequest(refresh))
+                    } catch (e: HttpException) {
+                        // 400 = the token is already dead: nothing to keep
+                        if (e.code() == 403) {
+                            return@launch showLogout("Выйти может только родитель.", pending = false)
+                        }
+                    }
                 }
+                tokenStorage.clear()  // MainActivity sees it and calls onSessionEnded()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -350,23 +354,14 @@ class AuthViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(logoutPending = pending, logoutMessage = message)
     }
 
-    /** true = logged out on the server, false = a parent has to approve first. */
-    private suspend fun serverLogout(): Boolean {
-        val refresh = tokenStorage.getRefreshToken() ?: return true
-        return try {
-            apiService.logout(com.familyguard.app.data.model.LogoutRequest(refresh))
-            true
-        } catch (e: HttpException) {
-            e.code() != 403  // e.g. 400 for an already dead token: nothing to keep
-        }
-    }
-
-    private suspend fun finishLogout() {
-        // Stop background work first — it would only fail with 401 afterwards
-        LocationForegroundService.stopService(context)
-        DnsVpnService.stopVpn(context)
-        UsageStatsSyncWorker.cancel(context)
-        tokenStorage.clear()
+    /**
+     * The stored session is gone: our own logout, a parent unlinked this
+     * device, or the refresh token was rejected. Background work would only
+     * fail with 401 now.
+     */
+    fun onSessionEnded() {
+        pollJob?.cancel()
+        stopBackgroundWork(context)
         _uiState.value = AuthUiState(isReady = true)
     }
 
@@ -379,5 +374,13 @@ class AuthViewModel @Inject constructor(
                     else listOf(if (v.isJsonPrimitive) v.asString else v.toString()) }
         } catch (ignored: Exception) { emptyList() }
         return messages.joinToString("\n").ifEmpty { "Ошибка регистрации (${e.code()})" }
+    }
+
+    companion object {
+        fun stopBackgroundWork(context: Context) {
+            LocationForegroundService.stopService(context)
+            DnsVpnService.stopVpn(context)
+            UsageStatsSyncWorker.cancel(context)
+        }
     }
 }

@@ -26,7 +26,7 @@ export default function FamilyPage() {
     enabled: hasFamily,
   });
 
-  // Join and logout requests wait for a parent; poll so they show up quickly
+  // Join requests wait for a parent; poll so they show up quickly
   const { data: requests = [] } = useQuery({
     queryKey: ["family-requests"],
     queryFn: () => familyApi.requests().then((r) => r.data),
@@ -89,6 +89,15 @@ export default function FamilyPage() {
       setShowInvite(true);
     },
     onError: (e: any) => toast.error(e.response?.data?.error || "Ошибка генерации кода"),
+  });
+
+  const unlinkMutation = useMutation({
+    mutationFn: (id: string) => familyApi.unlinkDevice(id),
+    onSuccess: () => {
+      toast.success("Устройство отвязано");
+      qc.invalidateQueries({ queryKey: ["family-members"] });
+    },
+    onError: () => toast.error("Не удалось отвязать устройство"),
   });
 
   const removeMemberMutation = useMutation({
@@ -223,9 +232,7 @@ export default function FamilyPage() {
                     <span className="text-gray-400 font-normal">{r.user.email}</span>
                   </div>
                   <div className="text-gray-500">
-                    {r.kind === "logout"
-                      ? "хочет выйти из аккаунта на телефоне"
-                      : r.role === "parent"
+                    {r.role === "parent"
                         ? "хочет присоединиться как родитель"
                         : "хочет присоединиться как ребёнок"}
                     {r.device_name && ` · 📱 ${r.device_name}`}
@@ -285,6 +292,11 @@ export default function FamilyPage() {
                   key={m.id}
                   member={m}
                   canRemove
+                  onUnlink={() => {
+                    if (confirm(`Выйти из аккаунта на телефоне ${m.first_name || m.email}? Ребёнок останется в семье.`)) {
+                      unlinkMutation.mutate(m.id);
+                    }
+                  }}
                   onRemove={() => {
                     if (confirm(`Удалить ${m.first_name || m.email} из семьи?`)) {
                       removeMemberMutation.mutate(m.id);
@@ -345,10 +357,12 @@ function MemberCard({
   member,
   canRemove,
   onRemove,
+  onUnlink,
 }: {
   member: any;
   canRemove: boolean;
   onRemove?: () => void;
+  onUnlink?: () => void;
 }) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -381,6 +395,14 @@ function MemberCard({
           />
           {member.is_online ? "онлайн" : "оффлайн"}
         </div>
+        {onUnlink && (
+          <button
+            onClick={onUnlink}
+            className="text-xs text-gray-500 hover:text-gray-700"
+          >
+            Отвязать устройство
+          </button>
+        )}
         {canRemove && onRemove && (
           <button
             onClick={onRemove}

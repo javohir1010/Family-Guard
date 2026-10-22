@@ -231,23 +231,39 @@ class MemberRequestTests(ApiTestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(self.as_user(child).get(f"/api/v1/family/requests/{request_id}/").data["status"], "expired")
 
-    def test_child_logout_needs_parent_approval(self):
+    def test_child_cannot_log_out(self):
+        _, _, child = self.make_family()
+        refresh = str(RefreshToken.for_user(child))
+        res = self.as_user(child).post("/api/v1/auth/logout/", {"refresh": refresh})
+        self.assertEqual(res.status_code, 403)
+
+    def test_parent_unlinks_child_device(self):
         _, parent, child = self.make_family()
-        refresh = self.client.post(
-            "/api/v1/auth/login/", {"email": child.email, "password": PASSWORD}).data["refresh"]
-        client = self.as_user(child)
-        self.assertEqual(client.post("/api/v1/auth/logout/", {"refresh": refresh}).status_code, 403)
+        child.device_token = "fcm-token"
+        child.device_name = "Pixel"
+        child.save()
+        refresh = str(RefreshToken.for_user(child))
 
-        request_id = client.post("/api/v1/family/requests/logout/").data["id"]
-        # Pressing again reuses the pending request
-        self.assertEqual(client.post("/api/v1/family/requests/logout/").data["id"], request_id)
-        self.mock_send_push_to_family_parents.assert_called_once()
+        res = self.as_user(parent).post(f"/api/v1/family/members/{child.id}/unlink/")
+        self.assertEqual(res.status_code, 200)
+        self.mock_send_data_push_to_token.assert_called_once_with("fcm-token", {"type": "unlinked"})
+        child.refresh_from_db()
+        self.assertEqual((child.device_token, child.device_name), ("", ""))
+        # The device can no longer refresh its session
+        self.client.force_authenticate(None)
+        res = self.client.post("/api/v1/auth/refresh/", {"refresh": refresh})
+        self.assertEqual(res.status_code, 401)
 
-        self.as_user(parent).post(f"/api/v1/family/requests/{request_id}/approve/")
-        client = self.as_user(child)
-        self.assertEqual(client.post("/api/v1/auth/logout/", {"refresh": refresh}).status_code, 200)
-        # One approval is one logout
-        self.assertEqual(client.post("/api/v1/auth/logout/", {"refresh": refresh}).status_code, 403)
+    def test_unlink_only_own_family_child(self):
+        _, parent, child = self.make_family()
+        _, other_parent, other_child = self.make_family("Other")
+        self.assertEqual(
+            self.as_user(parent).post(f"/api/v1/family/members/{other_child.id}/unlink/").status_code, 404)
+        # Parents are not unlinked this way, and children cannot unlink anyone
+        self.assertEqual(
+            self.as_user(parent).post(f"/api/v1/family/members/{other_parent.id}/unlink/").status_code, 404)
+        self.assertEqual(
+            self.as_user(child).post(f"/api/v1/family/members/{child.id}/unlink/").status_code, 403)
 
     def test_parent_logs_out_freely(self):
         _, parent, _ = self.make_family()

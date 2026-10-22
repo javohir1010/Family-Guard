@@ -140,6 +140,25 @@ def send_data_push_to_family_children(family_id: str, data: dict):
             logger.warning(f"Data push to a child device failed: {exc}")
 
 
+@shared_task(queue="notifications")
+def send_data_push_to_token(token: str, data: dict):
+    """Silent FCM data message to one device, e.g. {"type": "unlinked"}.
+    Takes the token itself: the caller may already have cleared it on the user."""
+    app = get_fcm_app()
+    if not app:
+        return
+    from firebase_admin import messaging
+
+    try:
+        messaging.send(messaging.Message(
+            data={k: str(v) for k, v in data.items()},
+            token=token,
+            android=messaging.AndroidConfig(priority="high"),
+        ), app=app)
+    except Exception as exc:
+        logger.warning(f"Data push to a device failed: {exc}")
+
+
 @shared_task(bind=True, queue="sos", max_retries=3, default_retry_delay=10)
 def send_emergency_sms(self, message: str, sos_event_id: str = None):
     """Send emergency SMS via Twilio."""
