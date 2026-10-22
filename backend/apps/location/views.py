@@ -209,6 +209,8 @@ def current_positions(request):
                     "recorded_at": last.recorded_at.isoformat(),
                     "is_online": member.is_active_now,
                     "last_seen": member.last_seen.isoformat() if member.last_seen else None,
+                    # An adult stopped sharing: the point is the last known place
+                    "paused": member.location_paused,
                 }
             )
     return Response(result)

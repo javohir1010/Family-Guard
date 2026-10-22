@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from unittest import mock
 
 import re
@@ -18,6 +18,7 @@ class AuthAndFamilyFlowTests(ApiTestCase):
         res = self.client.post("/api/v1/auth/register/", {
             "email": "p@x.uz", "username": "p", "first_name": "P", "last_name": "A",
             "password": PASSWORD, "password2": PASSWORD, "role": "parent",
+            "gender": "female", "birth_date": "1990-05-01", "phone_number": "+998 90 123-45-67",
         })
         self.assertEqual(res.status_code, 201, res.data)
 
@@ -277,6 +278,7 @@ class PasswordRulesTests(ApiTestCase):
         return self.client.post("/api/v1/auth/register/", {
             "email": "kid@x.uz", "username": "kid", "first_name": "Ali", "last_name": "V",
             "password": password, "password2": password, "role": "child",
+            "gender": "male", "birth_date": "2014-03-02", "phone_number": "+998901112233",
         })
 
     def test_weak_passwords_are_rejected(self):
@@ -288,3 +290,130 @@ class PasswordRulesTests(ApiTestCase):
 
     def test_strong_password_is_accepted(self):
         self.assertEqual(self.register("Sunny7Garden").status_code, 201)
+
+
+class ProfileAndContactsTests(ApiTestCase):
+    def setUp(self):
+        super().setUp()
+        self.family, self.mom, self.kid = self.make_family()
+        self.dad = self.make_user("dad@x.uz", "parent", self.family)
+        self.gran = self.make_user("gran@x.uz", "grandparent", self.family)
+        self.sis = self.make_user("sis@x.uz", "child", self.family)
+        people = [
+            (self.mom, "female", "1985-01-01"), (self.dad, "male", "1983-01-01"),
+            (self.gran, "female", "1960-01-01"), (self.kid, "male", "2012-01-01"),
+            (self.sis, "female", "2015-06-01"),
+        ]
+        for user, gender, born in people:
+            user.gender, user.phone_number = gender, "+998900000000"
+            user.birth_date = date.fromisoformat(born)
+            user.save()
+
+    def labels(self, user):
+        res = self.as_user(user).get("/api/v1/family/contacts/")
+        self.assertEqual(res.status_code, 200)
+        return {row["id"]: row["label"] for row in res.data}
+
+    def test_register_checks_profile_fields(self):
+        res = self.client.post("/api/v1/auth/register/", {
+            "email": "n@x.uz", "username": "n", "first_name": "N", "last_name": "A",
+            "password": PASSWORD, "password2": PASSWORD,
+            "gender": "x", "birth_date": "2999-01-01", "phone_number": "12",
+        })
+        self.assertEqual(res.status_code, 400)
+        for field in ("gender", "birth_date", "phone_number"):
+            self.assertIn(field, res.data)
+
+    def test_child_sees_family_names(self):
+        labels = self.labels(self.kid)
+        self.assertEqual(labels[str(self.mom.id)], "Мама")
+        self.assertEqual(labels[str(self.dad.id)], "Папа")
+        self.assertEqual(labels[str(self.gran.id)], "Бабушка")
+        self.assertEqual(labels[str(self.sis.id)], "Младшая сестра")
+        self.assertNotIn(str(self.kid.id), labels)
+        self.assertEqual(self.labels(self.sis)[str(self.kid.id)], "Старший брат")
+        self.assertEqual(self.labels(self.mom)[str(self.kid.id)], "Сын")
+        self.assertEqual(self.labels(self.gran)[str(self.sis.id)], "Внучка")
+
+    def test_same_names_are_numbered_and_renamed(self):
+        mom2 = self.make_user("mom2@x.uz", "parent", self.family)
+        mom2.gender = "female"
+        mom2.save()
+        labels = self.labels(self.kid)
+        self.assertEqual(labels[str(self.mom.id)], "Мама 1")
+        self.assertEqual(labels[str(mom2.id)], "Мама 2")
+
+        url = f"/api/v1/family/contacts/{mom2.id}/label/"
+        self.assertEqual(self.as_user(self.kid).put(url, {"label": "Мама Дилноза"}).status_code, 200)
+        self.assertEqual(self.labels(self.kid)[str(mom2.id)], "Мама Дилноза")
+        # Only the child who renamed sees it
+        self.assertEqual(self.labels(self.sis)[str(mom2.id)], "Мама 2")
+        # An empty label brings the automatic one back
+        self.as_user(self.kid).put(url, {"label": ""})
+        self.assertEqual(self.labels(self.kid)[str(mom2.id)], "Мама 2")
+
+    def test_no_gender_falls_back_to_name(self):
+        self.dad.gender = ""
+        self.dad.save()
+        self.assertEqual(self.labels(self.kid)[str(self.dad.id)], self.dad.get_full_name())
+
+    def test_cannot_rename_stranger(self):
+        _, stranger, _ = self.make_family("Other")
+        res = self.as_user(self.kid).put(f"/api/v1/family/contacts/{stranger.id}/label/", {"label": "x"})
+        self.assertEqual(res.status_code, 404)
+
+    def test_child_changes_only_avatar_and_device(self):
+        client = self.as_user(self.kid)
+        res = client.patch("/api/v1/auth/profile/", {"birth_date": "2010-01-01"})
+        self.assertEqual(res.status_code, 400)
+        res = client.patch("/api/v1/auth/profile/", {"location_paused": True})
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(client.patch("/api/v1/auth/profile/", {"device_name": "Pixel"}).status_code, 200)
+
+    def test_adult_pauses_location(self):
+        res = self.as_user(self.dad).patch("/api/v1/auth/profile/", {"location_paused": True})
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data["location_paused"])
+        self.assertTrue(res.data["profile_complete"])
+
+    def test_old_account_profile_incomplete(self):
+        self.dad.birth_date = None
+        self.dad.save()
+        self.assertFalse(self.as_user(self.dad).get("/api/v1/auth/profile/").data["profile_complete"])
+
+    def test_parent_edits_child(self):
+        url = f"/api/v1/family/members/{self.kid.id}/"
+        res = self.as_user(self.mom).patch(url, {"birth_date": "2012-02-02", "phone_number": "90 111 22 33"})
+        self.assertEqual(res.status_code, 200, res.data)
+        self.kid.refresh_from_db()
+        self.assertEqual(str(self.kid.birth_date), "2012-02-02")
+        self.assertEqual(self.kid.phone_number, "901112233")
+        # Not another parent, not as a child, not someone else's family
+        self.assertEqual(self.as_user(self.mom).patch(f"/api/v1/family/members/{self.dad.id}/", {}).status_code, 404)
+        self.assertEqual(self.as_user(self.kid).patch(url, {"gender": "female"}).status_code, 403)
+        _, other_parent, _ = self.make_family("Other")
+        self.assertEqual(self.as_user(other_parent).patch(url, {"gender": "female"}).status_code, 404)
+
+    def test_bad_phone_and_future_birth_date(self):
+        url = f"/api/v1/family/members/{self.kid.id}/"
+        res = self.as_user(self.mom).patch(url, {"phone_number": "abc", "birth_date": "2999-01-01"})
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("phone_number", res.data)
+        self.assertIn("birth_date", res.data)
+
+    def test_grandparent_can_log_out_but_not_manage(self):
+        refresh = str(RefreshToken.for_user(self.gran))
+        self.assertEqual(
+            self.as_user(self.gran).post("/api/v1/auth/logout/", {"refresh": refresh}).status_code, 200)
+        self.assertEqual(
+            self.as_user(self.gran).post(f"/api/v1/family/members/{self.kid.id}/unlink/").status_code, 403)
+
+    def test_positions_show_paused(self):
+        from apps.location.models import LocationRecord
+        LocationRecord.objects.create(
+            user=self.dad, latitude=41.3, longitude=69.2, recorded_at=timezone.now())
+        self.dad.location_paused = True
+        self.dad.save()
+        res = self.as_user(self.kid).get("/api/v1/location/current/")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data[0]["paused"])

@@ -7,12 +7,15 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.cache import cache
 from drf_spectacular.utils import extend_schema
-from .models import Family, MemberRequest
+from .labels import contact_labels
+from .models import ContactLabel, Family, MemberRequest
 from .permissions import IsFamilyMember, IsParent, IsParentOrReadOnly
 from .invite_model import InviteCode
 from .serializers import (
     FamilySerializer,
+    ContactLabelSerializer,
     GenerateInviteSerializer,
+    MemberEditSerializer,
     InviteCodeSerializer,
     MemberRequestSerializer,
     JoinFamilySerializer,
@@ -151,7 +154,8 @@ def join_family(request):
         role=invite.role,
         device_name=serializer.validated_data.get("device_name", ""),
     )
-    who = "Родитель" if invite.role == User.Role.PARENT else "Устройство"
+    who = {User.Role.PARENT: "Родитель", User.Role.GRANDPARENT: "Бабушка/дедушка"}.get(
+        invite.role, "Устройство")
     _notify_parents(
         join_request,
         "Заявка на вступление в семью",
@@ -301,3 +305,61 @@ def unlink_device(request, user_id):
     member.device_name = ""
     member.save(update_fields=["device_token", "device_name"])
     return Response({"message": "Device unlinked."})
+
+
+@extend_schema(tags=["family"], request=MemberEditSerializer, responses=MemberEditSerializer)
+@api_view(["PATCH"])
+@permission_classes([IsParent, IsFamilyMember])
+def edit_member(request, user_id):
+    """A parent fills in a child's or grandparent's name, gender, birth date
+    and phone (a child cannot change them itself)."""
+    member = User.objects.filter(id=user_id, family=request.user.family).exclude(
+        role=User.Role.PARENT).first()
+    if member is None:
+        return Response({"error": "Member not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = MemberEditSerializer(member, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+
+
+@extend_schema(tags=["family"])
+@api_view(["GET"])
+@permission_classes([IsFamilyMember])
+def contacts(request):
+    """The other members as the viewer names them ("Мама", "Старший брат"),
+    with phone numbers for quick dial."""
+    members = list(User.objects.filter(family=request.user.family))
+    labels = contact_labels(request.user, members)
+    data = UserPublicSerializer(
+        [m for m in members if m.id != request.user.id], many=True,
+        context={"request": request},
+    ).data
+    labels = {str(member_id): label for member_id, label in labels.items()}
+    for row in data:
+        row["label"] = labels[row["id"]]
+    order = {User.Role.PARENT: 0, User.Role.GRANDPARENT: 1, User.Role.CHILD: 2}
+    data = sorted(data, key=lambda r: (order.get(r["role"], 3), r["label"]))
+    return Response(data)
+
+
+@extend_schema(tags=["family"], request=ContactLabelSerializer)
+@api_view(["PUT"])
+@permission_classes([IsFamilyMember])
+def rename_contact(request, user_id):
+    """Rename a member in one's own contact list; an empty label restores the
+    automatic one."""
+    target = User.objects.filter(id=user_id, family=request.user.family).exclude(
+        id=request.user.id).first()
+    if target is None:
+        return Response({"error": "Member not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = ContactLabelSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    label = serializer.validated_data["label"]
+    if label:
+        ContactLabel.objects.update_or_create(
+            owner=request.user, target=target, defaults={"label": label})
+    else:
+        ContactLabel.objects.filter(owner=request.user, target=target).delete()
+    members = list(User.objects.filter(family=request.user.family))
+    return Response({"id": str(target.id), "label": contact_labels(request.user, members)[target.id]})

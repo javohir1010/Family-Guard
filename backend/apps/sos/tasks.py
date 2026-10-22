@@ -39,9 +39,10 @@ def process_sos_event(self, sos_event_id: str):
             f"Немедленно свяжитесь с ребёнком!{location_text}"
         )
 
-    # Send FCM push to all family parents
+    # Send FCM push to all family parents and grandparents
     send_push_to_family_parents.delay(
         family_id=str(family.id),
+        with_grandparents=True,
         exclude_user_id=str(child.id),
         title=title,
         body=body,

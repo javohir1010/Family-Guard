@@ -97,12 +97,13 @@ def send_push_notification(self, user_id: str, title: str, body: str, data: dict
 @shared_task(bind=True, queue="notifications", max_retries=2)
 def send_push_to_family_parents(
     self, family_id: str, title: str, body: str,
-    exclude_user_id: str = None, data: dict = None
+    exclude_user_id: str = None, data: dict = None, with_grandparents: bool = False
 ):
-    """Send FCM push to all parents in a family."""
+    """Send FCM push to all parents in a family (and grandparents, e.g. for SOS)."""
+    roles = ["parent", "grandparent"] if with_grandparents else ["parent"]
     parents = User.objects.filter(
         family__id=family_id,
-        role="parent",
+        role__in=roles,
     ).exclude(id=exclude_user_id or "")
 
     for parent in parents:
