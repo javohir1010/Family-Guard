@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import Family
+from .models import Family, MemberRequest
 from .invite_model import InviteCode
 
 User = get_user_model()
@@ -74,7 +74,7 @@ class InviteCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InviteCode
-        fields = ("code", "family_name", "created_by_name", "is_used",
+        fields = ("code", "role", "family_name", "created_by_name", "is_used",
                   "created_at", "expires_at")
         read_only_fields = fields
 
@@ -82,6 +82,31 @@ class InviteCodeSerializer(serializers.ModelSerializer):
 class JoinFamilySerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6, min_length=6)
     device_name = serializers.CharField(max_length=100, required=False)
+
+
+class GenerateInviteSerializer(serializers.Serializer):
+    role = serializers.ChoiceField(choices=User.Role.choices, default=User.Role.CHILD)
+
+
+class MemberRequestSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source="effective_status", read_only=True)
+    user = UserPublicSerializer(read_only=True)
+
+    class Meta:
+        model = MemberRequest
+        fields = ("id", "kind", "role", "status", "user", "device_name",
+                  "created_at", "decided_at")
+        read_only_fields = fields
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(trim_whitespace=False)
+
+
+class LoginVerifySerializer(serializers.Serializer):
+    challenge_id = serializers.UUIDField()
+    code = serializers.RegexField(r"^\d{6}$")
 
 
 class LogoutSerializer(serializers.Serializer):
