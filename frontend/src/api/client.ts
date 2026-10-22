@@ -67,16 +67,19 @@ export const authApi = {
   register: (data: object) => apiClient.post("/auth/register/", data),
   logout: (refresh: string) => apiClient.post("/auth/logout/", { refresh }),
   profile: () => apiClient.get("/auth/profile/"),
+  updateProfile: (data: object) => apiClient.patch("/auth/profile/", data),
 };
 
 export const familyApi = {
   create: (name: string) => apiClient.post("/family/create/", { name }),
   detail: () => apiClient.get("/family/detail/"),
   members: () => apiClient.get("/family/members/"),
-  generateInvite: (role: "child" | "parent" = "child") =>
+  generateInvite: (role: "child" | "parent" | "grandparent" = "child") =>
     apiClient.post("/family/invite/generate/", { role }),
   join: (code: string, device_name?: string) =>
     apiClient.post("/family/invite/join/", { code, device_name }),
+  editMember: (userId: string, data: object) =>
+    apiClient.patch(`/family/members/${userId}/`, data),
   unlinkDevice: (userId: string) =>
     apiClient.post(`/family/members/${userId}/unlink/`),
   removeMember: (userId: string) =>

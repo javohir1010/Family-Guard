@@ -32,6 +32,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var passwordConfirm by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("child") }
+    var person by remember { mutableStateOf(PersonData()) }
 
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) {
@@ -101,6 +102,11 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // For a child, the parent fills this in on the child's phone
+        PersonFields(person) { person = it }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         val passwordHint = passwordProblem(password)
         PasswordField(
             value = password,
@@ -132,7 +138,14 @@ fun RegisterScreen(
             RadioButton(selected = role == "child", onClick = { role = "child" })
             Text("Ребенок", modifier = Modifier.padding(end = 16.dp))
             RadioButton(selected = role == "parent", onClick = { role = "parent" })
-            Text("Родитель")
+            Text("Родитель", modifier = Modifier.padding(end = 16.dp))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(selected = role == "grandparent", onClick = { role = "grandparent" })
+            Text("Бабушка / дедушка")
         }
 
         if (uiState.error != null) {
@@ -156,6 +169,9 @@ fun RegisterScreen(
                         password = password,
                         passwordConfirm = passwordConfirm,
                         role = role,
+                        gender = person.gender,
+                        birthDate = person.birthDate,
+                        phoneNumber = person.phone,
                         deviceName = android.os.Build.MODEL
                     )
                 )
@@ -163,7 +179,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            enabled = email.isNotEmpty() && passwordProblem(password) == null && password == passwordConfirm && !uiState.isLoading
+            enabled = email.isNotEmpty() && person.isComplete && passwordProblem(password) == null && password == passwordConfirm && !uiState.isLoading
         ) {
             if (uiState.isLoading) {
                 FgLogo(Modifier.size(24.dp), animated = true, color = MaterialTheme.colorScheme.onPrimary, cut = MaterialTheme.colorScheme.primary)

@@ -21,6 +21,9 @@ interface ApiService {
     @GET("auth/profile/")
     suspend fun getProfile(): UserProfile
 
+    @PATCH("auth/profile/")
+    suspend fun updateProfile(@Body request: ProfileUpdateRequest): UserProfile
+
     @POST("auth/device-token/")
     suspend fun updateDeviceToken(@Body request: DeviceTokenRequest)
 

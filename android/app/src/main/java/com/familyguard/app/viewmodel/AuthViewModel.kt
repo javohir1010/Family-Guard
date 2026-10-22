@@ -314,11 +314,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    /**
-     * A child device logs out only after a parent approves it in the dashboard;
-     * parents (and devices without a family) leave right away. Needs the network:
-     * otherwise turning on flight mode would be a way around the approval.
-     */
     /** Only a parent (or a member without a family yet) logs out; the server refuses a child. */
     fun logout() {
         pollJob?.cancel()

@@ -12,7 +12,9 @@ data class RegisterRequest(
     val password: String,
     @SerializedName("password2") val passwordConfirm: String,
     val role: String,
-    @SerializedName("phone_number") val phoneNumber: String = "",
+    val gender: String,
+    @SerializedName("birth_date") val birthDate: String,
+    @SerializedName("phone_number") val phoneNumber: String,
     @SerializedName("device_name") val deviceName: String = ""
 )
 data class RegisterResponse(
@@ -40,7 +42,16 @@ data class UserProfile(
     val id: String, val email: String,
     @SerializedName("first_name") val firstName: String,
     @SerializedName("last_name") val lastName: String,
-    val role: String, val family: String?
+    val role: String, val family: String?,
+    // Accounts made before these became required lack them (null in older responses)
+    @SerializedName("profile_complete") val profileComplete: Boolean? = null
+)
+
+/** PATCH auth/profile/ for an adult's one-time profile completion. */
+data class ProfileUpdateRequest(
+    val gender: String,
+    @SerializedName("birth_date") val birthDate: String,
+    @SerializedName("phone_number") val phoneNumber: String
 )
 
 // Family

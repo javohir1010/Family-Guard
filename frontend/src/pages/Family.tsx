@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PersonFields, type PersonData } from "../components/PersonFields";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi, familyApi } from "../api/client";
 import { useAuthStore } from "../store/authStore";
@@ -11,6 +12,11 @@ export default function FamilyPage() {
   const [joinCode, setJoinCode] = useState("");
   const [joinRequestId, setJoinRequestId] = useState<string | null>(null);
   const [familyName, setFamilyName] = useState("");
+  // Member whose name, gender, birth date and phone are being edited
+  const [editing, setEditing] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState<PersonData & { first_name: string; last_name: string }>({
+    first_name: "", last_name: "", gender: "", birth_date: "", phone_number: "",
+  });
   const { user, setUser } = useAuthStore();
   const hasFamily = !!user?.family;
 
@@ -83,13 +89,43 @@ export default function FamilyPage() {
   });
 
   const generateInviteMutation = useMutation({
-    mutationFn: (role: "child" | "parent") => familyApi.generateInvite(role),
+    mutationFn: (role: "child" | "parent" | "grandparent") => familyApi.generateInvite(role),
     onSuccess: (res) => {
       setInvite(res.data);
       setShowInvite(true);
     },
     onError: (e: any) => toast.error(e.response?.data?.error || "Ошибка генерации кода"),
   });
+
+  const editMutation = useMutation({
+    mutationFn: () =>
+      editing.id === user?.id
+        ? authApi.updateProfile(editForm)
+        : familyApi.editMember(editing.id, editForm),
+    onSuccess: () => {
+      toast.success("Данные сохранены");
+      setEditing(null);
+      qc.invalidateQueries({ queryKey: ["family-members"] });
+    },
+    onError: (err: any) => {
+      const data = err.response?.data;
+      const text = data && typeof data === "object"
+        ? Object.values(data).flat().filter((v) => typeof v === "string").join("\n")
+        : "";
+      toast.error(text || "Не удалось сохранить");
+    },
+  });
+
+  function startEdit(m: any) {
+    setEditing(m);
+    setEditForm({
+      first_name: m.first_name || "",
+      last_name: m.last_name || "",
+      gender: m.gender || "",
+      birth_date: m.birth_date || "",
+      phone_number: m.phone_number || "",
+    });
+  }
 
   const unlinkMutation = useMutation({
     mutationFn: (id: string) => familyApi.unlinkDevice(id),
@@ -188,7 +224,8 @@ export default function FamilyPage() {
     );
   }
 
-  const parents = members.filter((m: any) => m.role === "parent");
+  // Grandparents are listed with the parents: adults without settings access
+  const parents = members.filter((m: any) => m.role === "parent" || m.role === "grandparent");
   const children = members.filter((m: any) => m.role === "child");
 
   return (
@@ -209,6 +246,13 @@ export default function FamilyPage() {
             className="btn-ghost"
           >
             + Пригласить родителя
+          </button>
+          <button
+            onClick={() => generateInviteMutation.mutate("grandparent")}
+            disabled={generateInviteMutation.isPending}
+            className="btn-ghost"
+          >
+            + Бабушку/дедушку
           </button>
           <button
             onClick={() => generateInviteMutation.mutate("child")}
@@ -234,7 +278,9 @@ export default function FamilyPage() {
                   <div className="text-gray-500">
                     {r.role === "parent"
                         ? "хочет присоединиться как родитель"
-                        : "хочет присоединиться как ребёнок"}
+                        : r.role === "grandparent"
+                          ? "хочет присоединиться как бабушка/дедушка"
+                          : "хочет присоединиться как ребёнок"}
                     {r.device_name && ` · 📱 ${r.device_name}`}
                   </div>
                 </div>
@@ -262,11 +308,17 @@ export default function FamilyPage() {
         {/* Parents */}
         <div className="card">
           <h2 className="font-semibold text-gray-800 mb-4">
-            👨 Родители ({parents.length})
+            👨 Взрослые ({parents.length})
           </h2>
           <div className="space-y-3">
             {parents.map((m: any) => (
-              <MemberCard key={m.id} member={m} canRemove={false} />
+              <MemberCard
+                key={m.id}
+                member={m}
+                canRemove={false}
+                // A parent edits themselves and grandparents, not the other parent
+                onEdit={m.id === user?.id || m.role === "grandparent" ? () => startEdit(m) : undefined}
+              />
             ))}
           </div>
         </div>
@@ -292,6 +344,7 @@ export default function FamilyPage() {
                   key={m.id}
                   member={m}
                   canRemove
+                  onEdit={() => startEdit(m)}
                   onUnlink={() => {
                     if (confirm(`Выйти из аккаунта на телефоне ${m.first_name || m.email}? Ребёнок останется в семье.`)) {
                       unlinkMutation.mutate(m.id);
@@ -309,6 +362,50 @@ export default function FamilyPage() {
         </div>
       </div>
 
+      {/* Edit member modal */}
+      {editing && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <form
+            className="card w-full max-w-md space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              editMutation.mutate();
+            }}
+          >
+            <h2 className="text-lg font-bold text-gray-900">
+              {editing.id === user?.id ? "Мои данные" : `Данные: ${editing.first_name || editing.email}`}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                required
+                placeholder="Имя"
+                value={editForm.first_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, first_name: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+              />
+              <input
+                placeholder="Фамилия"
+                value={editForm.last_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, last_name: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <PersonFields
+              value={editForm}
+              onChange={(patch) => setEditForm((f) => ({ ...f, ...patch }))}
+            />
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" className="btn-ghost" onClick={() => setEditing(null)}>
+                Отмена
+              </button>
+              <button type="submit" className="btn-primary" disabled={editMutation.isPending}>
+                Сохранить
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Invite modal */}
       {showInvite && invite && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -320,6 +417,8 @@ export default function FamilyPage() {
             <p className="text-sm text-gray-500 mb-6">
               {invite.role === "parent"
                 ? "Передайте код второму родителю: он вводит его при регистрации или на странице «Семья»."
+                : invite.role === "grandparent"
+                ? "Передайте код бабушке или дедушке: код вводится в приложении на телефоне."
                 : "Передайте код ребёнку: он вводит его в приложении на телефоне."}
               <br />
               Действует до{" "}
@@ -358,12 +457,15 @@ function MemberCard({
   canRemove,
   onRemove,
   onUnlink,
+  onEdit,
 }: {
   member: any;
   canRemove: boolean;
   onRemove?: () => void;
   onUnlink?: () => void;
+  onEdit?: () => void;
 }) {
+  const missing = !member.gender || !member.birth_date || !member.phone_number;
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
       <div
@@ -378,8 +480,14 @@ function MemberCard({
           {member.first_name} {member.last_name}
         </div>
         <div className="text-xs text-gray-400 truncate">{member.email}</div>
+        {member.role === "grandparent" && (
+          <div className="text-xs text-gray-500">бабушка/дедушка</div>
+        )}
         {member.device_name && (
           <div className="text-xs text-gray-400">📱 {member.device_name}</div>
+        )}
+        {missing && (
+          <div className="text-xs text-amber-600">Не указаны пол, дата рождения или телефон</div>
         )}
       </div>
       <div className="flex flex-col items-end gap-1">
@@ -395,6 +503,11 @@ function MemberCard({
           />
           {member.is_online ? "онлайн" : "оффлайн"}
         </div>
+        {onEdit && (
+          <button onClick={onEdit} className="text-xs text-blue-500 hover:text-blue-700">
+            Изменить данные
+          </button>
+        )}
         {onUnlink && (
           <button
             onClick={onUnlink}

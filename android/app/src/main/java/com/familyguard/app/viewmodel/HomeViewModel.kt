@@ -19,8 +19,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeUiState(
-    val role: String? = null,          // "parent" | "child"; null until known
+    val role: String? = null,          // "parent" | "grandparent" | "child"; null until known
     val firstName: String = "",
+    // An adult account made before gender/birth date/phone were required
+    val profileComplete: Boolean = true,
+    val profileSaving: Boolean = false,
+    val profileError: String? = null,
     val children: List<MemberPosition> = emptyList(),
     val events: List<AppNotification> = emptyList(),
     val isRefreshing: Boolean = false,
@@ -56,14 +60,18 @@ class HomeViewModel @Inject constructor(
                     .putString(KEY_ROLE, profile.role)
                     .putString(KEY_NAME, profile.firstName)
                     .apply()
-                _uiState.value = _uiState.value.copy(role = profile.role, firstName = profile.firstName)
+                _uiState.value = _uiState.value.copy(
+                    role = profile.role,
+                    firstName = profile.firstName,
+                    profileComplete = profile.role == ROLE_CHILD || profile.profileComplete != false
+                )
             } catch (e: Exception) {
                 // Offline: keep the cached role, SOS screen is the safe default
                 if (_uiState.value.role == null) {
                     _uiState.value = _uiState.value.copy(role = ROLE_CHILD)
                 }
             }
-            if (_uiState.value.role == ROLE_PARENT) {
+            if (_uiState.value.role != ROLE_CHILD) {
                 while (isActive) {
                     refresh()
                     delay(60_000)
@@ -98,6 +106,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun completeProfile(person: com.familyguard.app.ui.screens.PersonData) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(profileSaving = true, profileError = null)
+            try {
+                apiService.updateProfile(
+                    com.familyguard.app.data.model.ProfileUpdateRequest(person.gender, person.birthDate, person.phone)
+                )
+                _uiState.value = _uiState.value.copy(profileComplete = true, profileSaving = false)
+            } catch (e: retrofit2.HttpException) {
+                _uiState.value = _uiState.value.copy(
+                    profileSaving = false,
+                    profileError = if (e.code() == 400) "Проверьте телефон и дату рождения." else "Ошибка сервера (${e.code()})"
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(profileSaving = false, profileError = "Нет связи с сервером.")
+            }
+        }
+    }
+
     /** Logs the child's phone out; the child stays in the family. */
     fun unlinkDevice(child: MemberPosition) {
         viewModelScope.launch {
@@ -115,6 +142,7 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val ROLE_PARENT = "parent"
+        const val ROLE_GRANDPARENT = "grandparent"
         const val ROLE_CHILD = "child"
         private const val KEY_ROLE = "role"
         private const val KEY_NAME = "first_name"

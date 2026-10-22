@@ -323,6 +323,14 @@ class ProfileAndContactsTests(ApiTestCase):
         self.assertEqual(res.status_code, 400)
         for field in ("gender", "birth_date", "phone_number"):
             self.assertIn(field, res.data)
+        # Required: an account without them could not be named or called
+        res = self.client.post("/api/v1/auth/register/", {
+            "email": "n@x.uz", "username": "n", "first_name": "N", "last_name": "A",
+            "password": PASSWORD, "password2": PASSWORD,
+        })
+        self.assertEqual(res.status_code, 400)
+        for field in ("gender", "birth_date", "phone_number"):
+            self.assertIn(field, res.data)
 
     def test_child_sees_family_names(self):
         labels = self.labels(self.kid)
