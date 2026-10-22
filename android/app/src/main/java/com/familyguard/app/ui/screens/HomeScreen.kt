@@ -1,6 +1,9 @@
 package com.familyguard.app.ui.screens
 
+import android.Manifest
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyguard.app.data.model.AppNotification
 import com.familyguard.app.data.model.MemberPosition
+import com.familyguard.app.services.LocationForegroundService
 import com.familyguard.app.ui.theme.LocalFgColors
 import com.familyguard.app.viewmodel.AuthViewModel
 import com.familyguard.app.viewmodel.HomeViewModel
@@ -75,6 +79,8 @@ fun HomeScreen(
             onSos = sosViewModel::onSosPressed,
             onRefresh = homeViewModel::refresh,
             onUnlink = if (home.role == HomeViewModel.ROLE_PARENT) homeViewModel::unlinkDevice else null,
+            locationPaused = home.locationPaused,
+            onLocationPausedChange = homeViewModel::setLocationPaused,
             onLogout = authViewModel::logout
         )
         // No logout for a child: only a parent can unlink the device
@@ -167,10 +173,27 @@ private fun ParentHome(
     onSos: () -> Unit,
     onRefresh: () -> Unit,
     onUnlink: ((MemberPosition) -> Unit)?,
+    locationPaused: Boolean,
+    onLocationPausedChange: (Boolean) -> Unit,
     onLogout: () -> Unit
 ) {
     val context = LocalContext.current
     val fg = LocalFgColors.current
+
+    // Adults share their position too, so children see them on the family map
+    val locationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { LocationForegroundService.startService(context) }
+    LaunchedEffect(locationPaused) {
+        if (locationPaused) return@LaunchedEffect
+        if (LocationForegroundService.hasLocationPermission(context)) {
+            LocationForegroundService.startService(context)
+        } else {
+            locationPermission.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
+        }
+    }
     var unlinkTarget by remember { mutableStateOf<MemberPosition?>(null) }
 
     Column(
@@ -225,6 +248,19 @@ private fun ParentHome(
                         Text("Отвязать устройство", fontSize = 13.sp)
                     }
                 }
+            }
+        }
+
+        FgCard {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    CardTitle("Моё местоположение")
+                    CardHint(
+                        if (locationPaused) "На паузе: семья видит место, где вы были последний раз"
+                        else "Семья видит, где вы сейчас"
+                    )
+                }
+                Switch(checked = !locationPaused, onCheckedChange = { onLocationPausedChange(!it) })
             }
         }
 

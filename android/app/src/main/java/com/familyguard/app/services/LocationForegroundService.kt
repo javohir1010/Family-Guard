@@ -50,9 +50,23 @@ class LocationForegroundService : Service() {
             listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
 
-        /** Starts tracking if location permission is granted; otherwise does nothing. */
+        // An adult may pause sharing their position (a child cannot: the server refuses)
+        private const val PREFS = "fg_location"
+        private const val KEY_PAUSED = "paused"
+
+        fun isPaused(context: Context): Boolean =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_PAUSED, false)
+
+        /** Remembers the choice (also for BootReceiver) and stops or starts tracking. */
+        fun setPaused(context: Context, paused: Boolean) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+                .putBoolean(KEY_PAUSED, paused).apply()
+            if (paused) stopService(context) else startService(context)
+        }
+
+        /** Starts tracking if location permission is granted and sharing is not paused. */
         fun startService(context: Context) {
-            if (!hasLocationPermission(context)) return
+            if (!hasLocationPermission(context) || isPaused(context)) return
             val intent = Intent(context, LocationForegroundService::class.java)
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -191,7 +205,7 @@ class LocationForegroundService : Service() {
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("FamilyGuard активен")
-            .setContentText("Защита включена • местоположение отслеживается")
+            .setContentText("Местоположение видно вашей семье")
             .setSmallIcon(R.drawable.ic_shield)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
