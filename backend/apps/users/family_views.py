@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.cache import cache
 from drf_spectacular.utils import extend_schema
 from .models import Family, MemberRequest
-from .permissions import IsChild, IsFamilyMember, IsParent, IsParentOrReadOnly
+from .permissions import IsFamilyMember, IsParent, IsParentOrReadOnly
 from .invite_model import InviteCode
 from .serializers import (
     FamilySerializer,
@@ -186,7 +186,7 @@ def _notify_parents(member_request, title, body):
 @api_view(["GET"])
 @permission_classes([IsParent, IsFamilyMember])
 def pending_requests(request):
-    """Join and logout requests waiting for a parent's decision."""
+    """Join requests waiting for a parent's decision."""
     cutoff = timezone.now() - MemberRequest.TTL
     requests_qs = MemberRequest.objects.select_related("user").filter(
         family=request.user.family,
@@ -208,33 +208,6 @@ def request_status(request, request_id):
     if not allowed:
         return Response({"error": "Request not found."}, status=status.HTTP_404_NOT_FOUND)
     return Response(MemberRequestSerializer(member_request).data)
-
-
-@extend_schema(tags=["family"], responses=MemberRequestSerializer)
-@api_view(["POST"])
-@permission_classes([IsChild, IsFamilyMember])
-def request_logout(request):
-    """A child asks to log out; the app logs out once a parent approves."""
-    cutoff = timezone.now() - MemberRequest.TTL
-    member_request = MemberRequest.objects.filter(
-        user=request.user, family=request.user.family, kind=MemberRequest.Kind.LOGOUT,
-        status=MemberRequest.Status.PENDING, created_at__gt=cutoff,
-    ).first()
-    if member_request is None:
-        member_request = MemberRequest.objects.create(
-            family=request.user.family,
-            user=request.user,
-            kind=MemberRequest.Kind.LOGOUT,
-            role=request.user.role,
-            device_name=request.user.device_name,
-        )
-        _notify_parents(
-            member_request,
-            "Запрос на выход из аккаунта",
-            f"{_display_name(request.user, request.user.device_name)} хочет выйти "
-            f"из аккаунта. Подтвердите в разделе «Семья».",
-        )
-    return Response(MemberRequestSerializer(member_request).data, status=status.HTTP_201_CREATED)
 
 
 @extend_schema(tags=["family"], request=None, responses=MemberRequestSerializer)
@@ -301,3 +274,30 @@ def remove_member(request, user_id):
     member.family = None
     member.save(update_fields=["family"])
     return Response({"message": "Member removed."})
+
+
+@extend_schema(tags=["family"], request=None)
+@api_view(["POST"])
+@permission_classes([IsParent, IsFamilyMember])
+def unlink_device(request, user_id):
+    """Log a child's device out (the child itself cannot). The child stays
+    in the family and can log in again on any phone."""
+    from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+    from apps.notifications.tasks import send_data_push_to_token
+
+    member = User.objects.filter(
+        id=user_id, family=request.user.family, role=User.Role.CHILD
+    ).first()
+    if member is None:
+        return Response({"error": "Member not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Every refresh token dies, so the app is logged out on its next refresh
+    # even when the push below does not arrive
+    for token in OutstandingToken.objects.filter(user=member, expires_at__gt=timezone.now()):
+        BlacklistedToken.objects.get_or_create(token=token)
+    if member.device_token:
+        send_data_push_to_token.delay(member.device_token, {"type": "unlinked"})
+    member.device_token = ""
+    member.device_name = ""
+    member.save(update_fields=["device_token", "device_name"])
+    return Response({"message": "Device unlinked."})

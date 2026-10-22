@@ -31,8 +31,8 @@ interface ApiService {
     @POST("family/invite/join/")
     suspend fun joinFamily(@Body request: JoinFamilyRequest): JoinFamilyResponse
 
-    @POST("family/requests/logout/")
-    suspend fun requestLogout(): MemberRequest
+    @POST("family/members/{id}/unlink/")
+    suspend fun unlinkDevice(@Path("id") userId: String)
 
     @GET("family/requests/{id}/")
     suspend fun getMemberRequest(@Path("id") id: String): MemberRequest

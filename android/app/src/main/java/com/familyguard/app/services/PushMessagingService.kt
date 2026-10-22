@@ -16,11 +16,13 @@ import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.local.TokenStorage
 import com.familyguard.app.data.model.DeviceTokenRequest
 import com.familyguard.app.ui.MainActivity
+import com.familyguard.app.viewmodel.AuthViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -61,6 +63,13 @@ class PushMessagingService : FirebaseMessagingService() {
             }
             "rules_updated" -> {
                 AppMonitorAccessibilityService.refreshNow()
+                return
+            }
+            "unlinked" -> {
+                // A parent logged this device out: drop the session right away
+                // (an open app sees it in MainActivity and goes to login)
+                AuthViewModel.stopBackgroundWork(applicationContext)
+                runBlocking { TokenStorage(applicationContext).clear() }
                 return
             }
         }

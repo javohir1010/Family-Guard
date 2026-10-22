@@ -98,6 +98,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Logs the child's phone out; the child stays in the family. */
+    fun unlinkDevice(child: MemberPosition) {
+        viewModelScope.launch {
+            try {
+                apiService.unlinkDevice(child.userId)
+                _uiState.value = _uiState.value.copy(
+                    children = _uiState.value.children.filter { it.userId != child.userId },
+                    error = null
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Не удалось отвязать устройство. Проверьте соединение.")
+            }
+        }
+    }
+
     companion object {
         const val ROLE_PARENT = "parent"
         const val ROLE_CHILD = "child"
