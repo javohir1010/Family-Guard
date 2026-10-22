@@ -55,7 +55,8 @@ class DnsVpnService : VpnService() {
         private const val VIRTUAL_DNS = "10.111.222.2"
 
         private const val FLUSH_INTERVAL_MS = 5 * 60 * 1000L
-        private const val BLOCKLIST_REFRESH_MS = 15 * 60 * 1000L
+        // Fallback poll; changes normally arrive at once via a "blocklist_updated" push
+        private const val BLOCKLIST_REFRESH_MS = 5 * 60 * 1000L
         private const val MAX_PENDING_QUERIES = 2000   // in memory, between flushes
         private const val MAX_BUFFERED_QUERIES = 20_000 // in Room, while offline
 
@@ -79,6 +80,7 @@ class DnsVpnService : VpnService() {
 
         private const val ACTION_START = "com.familyguard.VPN_START"
         private const val ACTION_STOP = "com.familyguard.VPN_STOP"
+        private const val ACTION_REFRESH = "com.familyguard.VPN_REFRESH_BLOCKLIST"
 
         /**
          * Call [VpnService.prepare] from an Activity first and start only after
@@ -99,6 +101,18 @@ class DnsVpnService : VpnService() {
         @Volatile var isRunning = false
             private set
 
+        /** Reload the blocklist now (parent changed it). No-op if the filter is off. */
+        fun refreshBlocklist(context: Context) {
+            if (!isRunning) return
+            try {
+                context.startService(
+                    Intent(context, DnsVpnService::class.java).apply { action = ACTION_REFRESH }
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not request blocklist refresh", e)
+            }
+        }
+
         fun stopVpn(context: Context) {
             context.startService(
                 Intent(context, DnsVpnService::class.java).apply { action = ACTION_STOP }
@@ -117,6 +131,15 @@ class DnsVpnService : VpnService() {
         if (intent?.action == ACTION_STOP) {
             stopVpn()
             return START_NOT_STICKY
+        }
+        if (intent?.action == ACTION_REFRESH) {
+            // Never bring the tunnel up from a refresh request
+            if (!running) {
+                stopSelf()
+                return START_NOT_STICKY
+            }
+            serviceScope.launch { loadBlocklist() }
+            return START_STICKY
         }
         createNotificationChannel()
         try {

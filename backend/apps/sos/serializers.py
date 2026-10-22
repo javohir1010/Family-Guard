@@ -1,15 +1,12 @@
 from rest_framework import serializers
+from apps.location.fields import CoordinateField
 from .models import SosEvent
 
 
 class SosTriggerSerializer(serializers.Serializer):
     press_count = serializers.IntegerField(min_value=1)
-    latitude = serializers.DecimalField(
-        max_digits=10, decimal_places=7, required=False, allow_null=True
-    )
-    longitude = serializers.DecimalField(
-        max_digits=10, decimal_places=7, required=False, allow_null=True
-    )
+    latitude = CoordinateField(required=False, allow_null=True)
+    longitude = CoordinateField(required=False, allow_null=True)
     message = serializers.CharField(required=False, allow_blank=True, default="")
 
 

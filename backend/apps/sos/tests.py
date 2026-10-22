@@ -100,3 +100,16 @@ class SosTaskTests(ApiTestCase):
         event = SosEvent.objects.create(child=loner, press_count=3)
         process_sos_event(str(event.id))
         self.mock_send_push_to_family_parents.assert_not_called()
+
+
+class SosCoordinatesTests(ApiTestCase):
+    def test_phone_precision_coordinates_are_rounded_not_rejected(self):
+        # FusedLocation doubles carry 10-15 decimals; the model keeps 7
+        _, _, child = self.make_family()
+        res = self.as_user(child).post("/api/v1/sos/trigger/", {
+            "press_count": 3, "latitude": 41.295703456789012, "longitude": 69.218561234567891,
+        }, format="json")
+        self.assertEqual(res.status_code, 201, res.data)
+        event = SosEvent.objects.get(id=res.data["sos_id"])
+        self.assertEqual(str(event.latitude), "41.2957035")
+        self.assertEqual(str(event.longitude), "69.2185612")
