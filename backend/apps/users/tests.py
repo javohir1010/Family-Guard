@@ -254,3 +254,21 @@ class MemberRequestTests(ApiTestCase):
         refresh = str(RefreshToken.for_user(parent))
         res = self.as_user(parent).post("/api/v1/auth/logout/", {"refresh": refresh})
         self.assertEqual(res.status_code, 200)
+
+
+class PasswordRulesTests(ApiTestCase):
+    def register(self, password):
+        return self.client.post("/api/v1/auth/register/", {
+            "email": "kid@x.uz", "username": "kid", "first_name": "Ali", "last_name": "V",
+            "password": password, "password2": password, "role": "child",
+        })
+
+    def test_weak_passwords_are_rejected(self):
+        for weak in ("Ab1", "12345678", "abcdefgh", "password1", "kid@x.uz1"):
+            res = self.register(weak)
+            self.assertEqual(res.status_code, 400, weak)
+            self.assertIn("password", res.data)
+        self.assertFalse(User.objects.filter(email="kid@x.uz").exists())
+
+    def test_strong_password_is_accepted(self):
+        self.assertEqual(self.register("Sunny7Garden").status_code, 201)

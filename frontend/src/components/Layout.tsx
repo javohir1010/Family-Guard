@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { authApi } from "../api/client";
 import toast from "react-hot-toast";
+import ThemeToggle from "./ThemeToggle";
 
 const navItems = [
   { to: "/dashboard", icon: "🗺️", label: "Карта" },
@@ -61,6 +62,7 @@ export default function Layout() {
 
         {/* User */}
         <div className="p-3 border-t border-gray-100">
+          <ThemeToggle className="w-full mb-2" />
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50">
             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
               {user?.first_name?.[0] || user?.email?.[0] || "?"}

@@ -9,8 +9,31 @@ const EMPTY_RULE_FORM = {
   package_name: "",
   app_name: "",
   rule_type: "block",
-  daily_limit_minutes: 60,
+  limit_value: 1,
+  limit_unit: "hours" as "minutes" | "hours",
 };
+
+/** Limit in the most natural unit: 90 → 90 min, 120 → 2 h. */
+function splitLimit(minutes: number | null | undefined) {
+  const m = minutes || 60;
+  return m % 60 === 0
+    ? { limit_value: m / 60, limit_unit: "hours" as const }
+    : { limit_value: m, limit_unit: "minutes" as const };
+}
+
+function formatLimit(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (!h) return `${m} мин`;
+  return m ? `${h} ч ${m} мин` : `${h} ч`;
+}
+
+/** "YouTube (com.google.android.youtube)"; just the package when no real name is known. */
+function appLabel(app: { app_name?: string; package_name: string }) {
+  return app.app_name && app.app_name !== app.package_name
+    ? `${app.app_name} (${app.package_name})`
+    : app.package_name;
+}
 
 function todayIso() {
   // Local calendar date — the device reports usage per local day
@@ -85,7 +108,7 @@ export default function AppControlPage() {
       package_name: app?.package_name ?? "",
       app_name: existing?.app_name || app?.app_name || "",
       rule_type: existing?.rule_type ?? "block",
-      daily_limit_minutes: existing?.daily_limit_minutes ?? 60,
+      ...splitLimit(existing?.daily_limit_minutes),
     });
     setShowAddRule(true);
   }
@@ -165,7 +188,9 @@ export default function AppControlPage() {
               return (
                 <div key={app.id}>
                   <div className="flex justify-between text-xs text-gray-600 mb-0.5">
-                    <span className="truncate max-w-[120px]">{app.app_name}</span>
+                    <span className="truncate max-w-[160px]" title={appLabel(app)}>
+                      {app.app_name}
+                    </span>
                     <span>{formatMinutes(app.duration_seconds)}</span>
                   </div>
                   <div className="h-1.5 bg-gray-100 rounded-full">
@@ -203,10 +228,14 @@ export default function AppControlPage() {
                   return (
                     <tr key={app.id} className="hover:bg-gray-50">
                       <td className="table-cell">
-                        <div className="font-medium">{app.app_name}</div>
-                        <div className="text-xs text-gray-400 font-mono">
-                          {app.package_name}
+                        <div className="font-medium break-all">
+                          {app.app_name !== app.package_name ? app.app_name : app.package_name}
                         </div>
+                        {app.app_name !== app.package_name && (
+                          <div className="text-xs text-gray-400 font-mono break-all">
+                            ({app.package_name})
+                          </div>
+                        )}
                       </td>
                       <td className="table-cell">
                         {formatMinutes(app.duration_seconds)}
@@ -222,7 +251,7 @@ export default function AppControlPage() {
                           >
                             {rule.rule_type === "block"
                               ? "Блок"
-                              : `Лимит ${rule.daily_limit_minutes}м`}
+                              : `Лимит ${formatLimit(rule.daily_limit_minutes)}`}
                           </span>
                         ) : (
                           <span className="badge-success">Разрешено</span>
@@ -314,17 +343,34 @@ export default function AppControlPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Package Name
+                  Приложение (имя пакета)
                 </label>
                 <input
                   value={ruleForm.package_name}
                   disabled={!!editingRuleId}
-                  onChange={(e) =>
-                    setRuleForm((f) => ({ ...f, package_name: e.target.value }))
-                  }
-                  placeholder="com.example.app"
+                  list="known-apps"
+                  onChange={(e) => {
+                    const pkg = e.target.value.trim();
+                    const known = usageData.find((a: any) => a.package_name === pkg);
+                    setRuleForm((f) => ({
+                      ...f,
+                      package_name: pkg,
+                      app_name:
+                        known && known.app_name !== known.package_name
+                          ? known.app_name
+                          : f.app_name,
+                    }));
+                  }}
+                  placeholder="com.google.android.youtube"
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono"
                 />
+                <datalist id="known-apps">
+                  {usageData.map((a: any) => (
+                    <option key={a.package_name} value={a.package_name}>
+                      {appLabel(a)}
+                    </option>
+                  ))}
+                </datalist>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -351,26 +397,39 @@ export default function AppControlPage() {
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
                 >
                   <option value="block">Полная блокировка</option>
-                  <option value="limit">Дневной лимит (минуты)</option>
+                  <option value="limit">Дневной лимит времени</option>
                 </select>
               </div>
               {ruleForm.rule_type === "limit" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Лимит (минут в день)
+                    Лимит в день
                   </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={ruleForm.daily_limit_minutes}
-                    onChange={(e) =>
-                      setRuleForm((f) => ({
-                        ...f,
-                        daily_limit_minutes: Number(e.target.value),
-                      }))
-                    }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={ruleForm.limit_unit === "hours" ? 24 : 1440}
+                      value={ruleForm.limit_value}
+                      onChange={(e) =>
+                        setRuleForm((f) => ({ ...f, limit_value: Number(e.target.value) }))
+                      }
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                    />
+                    <select
+                      value={ruleForm.limit_unit}
+                      onChange={(e) =>
+                        setRuleForm((f) => ({
+                          ...f,
+                          limit_unit: e.target.value as "minutes" | "hours",
+                        }))
+                      }
+                      className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                    >
+                      <option value="minutes">минут</option>
+                      <option value="hours">часов</option>
+                    </select>
+                  </div>
                 </div>
               )}
             </div>
@@ -382,16 +441,17 @@ export default function AppControlPage() {
                 Отмена
               </button>
               <button
-                onClick={() =>
+                onClick={() => {
+                  const { limit_value, limit_unit, ...rest } = ruleForm;
                   saveRuleMutation.mutate({
-                    ...ruleForm,
+                    ...rest,
                     child: ruleForm.child || activeChild,
                     daily_limit_minutes:
                       ruleForm.rule_type === "limit"
-                        ? ruleForm.daily_limit_minutes
+                        ? Math.round(limit_value * (limit_unit === "hours" ? 60 : 1))
                         : null,
-                  })
-                }
+                  });
+                }}
                 disabled={!ruleForm.package_name || saveRuleMutation.isPending}
                 className="btn-primary flex-1"
               >

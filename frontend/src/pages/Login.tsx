@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { authApi, familyApi } from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
+import PasswordInput from "../components/PasswordInput";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -114,7 +116,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+    <div className="min-h-screen login-bg flex items-center justify-center p-4 relative">
+      <ThemeToggle className="absolute top-4 right-4" />
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -200,8 +203,7 @@ export default function LoginPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Пароль
                   </label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required
                     value={loginForm.password}
                     onChange={(e) =>
@@ -321,8 +323,7 @@ export default function LoginPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Пароль
                     </label>
-                    <input
-                      type="password"
+                    <PasswordInput
                       required
                       value={regForm.password}
                       onChange={(e) =>
@@ -336,8 +337,7 @@ export default function LoginPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Повтор
                     </label>
-                    <input
-                      type="password"
+                    <PasswordInput
                       required
                       value={regForm.password2}
                       onChange={(e) =>
@@ -348,6 +348,9 @@ export default function LoginPage() {
                     />
                   </div>
                 </div>
+                <p className="text-xs text-gray-400 -mt-2">
+                  Минимум 8 символов, буквы и цифры
+                </p>
                 <button
                   type="submit"
                   disabled={loading}

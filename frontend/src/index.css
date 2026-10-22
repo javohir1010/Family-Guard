@@ -3,19 +3,154 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #2563eb;
-  --color-danger: #dc2626;
-  --color-success: #16a34a;
+  color-scheme: light;
+  --surface: #ffffff;
+  --accent: 47 111 235;
+  --accent-hover: 37 88 201;
+
+  --gray-50: 244 246 250;
+  --gray-100: 232 238 248;
+  --gray-200: 221 227 236;
+  --gray-300: 203 211 223;
+  --gray-400: 140 150 166;
+  --gray-500: 98 108 124;
+  --gray-600: 85 96 112;
+  --gray-700: 55 65 81;
+  --gray-800: 31 41 55;
+  --gray-900: 15 23 42;
+
+  --blue-50: 239 244 255;
+  --blue-100: 219 231 254;
+  --blue-200: 191 210 254;
+  --blue-300: 147 180 253;
+  --blue-400: 96 145 250;
+  --blue-500: 59 120 246;
+  --blue-600: 47 111 235;
+  --blue-700: 37 88 201;
+  --blue-800: 30 64 175;
+  --blue-900: 30 58 138;
+
+  --red-50: 254 242 242;
+  --red-100: 251 227 228;
+  --red-200: 254 202 202;
+  --red-300: 252 165 165;
+  --red-400: 248 113 113;
+  --red-500: 239 68 68;
+  --red-600: 217 58 63;
+  --red-700: 185 28 28;
+  --red-800: 153 27 27;
+  --red-900: 127 29 29;
+
+  --green-50: 240 253 244;
+  --green-100: 221 243 231;
+  --green-200: 187 247 208;
+  --green-300: 134 239 172;
+  --green-400: 74 222 128;
+  --green-500: 34 197 94;
+  --green-600: 22 163 74;
+  --green-700: 23 121 74;
+  --green-800: 22 101 52;
+  --green-900: 20 83 45;
+
+  --yellow-50: 254 252 232;
+  --yellow-100: 253 240 220;
+  --yellow-200: 254 240 138;
+  --yellow-300: 253 224 71;
+  --yellow-400: 250 204 21;
+  --yellow-500: 234 179 8;
+  --yellow-600: 202 138 4;
+  --yellow-700: 161 98 7;
+  --yellow-800: 133 77 14;
+  --yellow-900: 113 63 18;
+}
+
+/* Тёмная тема (вариант A «Спокойствие»): светлые оттенки становятся
+   тёмными поверхностями, тёмные — светлым текстом. 600-е оттенки остаются
+   насыщенными, на них лежит белый текст кнопок. */
+.dark {
+  color-scheme: dark;
+  --surface: #151b2e;
+
+  --gray-50: 11 16 32;
+  --gray-100: 30 39 64;
+  --gray-200: 38 48 73;
+  --gray-300: 58 70 98;
+  --gray-400: 120 130 150;
+  --gray-500: 154 163 181;
+  --gray-600: 176 184 199;
+  --gray-700: 205 211 223;
+  --gray-800: 222 227 236;
+  --gray-900: 232 236 245;
+
+  --blue-50: 24 34 62;
+  --blue-100: 31 46 86;
+  --blue-200: 60 88 150;
+  --blue-300: 90 125 200;
+  --blue-400: 110 155 255;
+  --blue-500: 110 155 255;
+  --blue-700: 142 178 255;
+  --blue-800: 169 196 255;
+  --blue-900: 200 218 255;
+
+  --red-50: 58 26 32;
+  --red-100: 74 30 38;
+  --red-200: 110 40 48;
+  --red-300: 200 90 95;
+  --red-400: 255 120 125;
+  --red-500: 255 93 98;
+  --red-700: 255 140 140;
+  --red-800: 255 170 170;
+  --red-900: 255 200 200;
+
+  --green-50: 18 48 31;
+  --green-100: 22 60 39;
+  --green-200: 30 90 55;
+  --green-500: 79 208 139;
+  --green-600: 79 208 139;
+  --green-700: 111 218 163;
+  --green-800: 140 225 180;
+  --green-900: 180 240 205;
+
+  --yellow-50: 58 42 16;
+  --yellow-100: 70 50 18;
+  --yellow-200: 110 80 25;
+  --yellow-600: 245 180 81;
+  --yellow-700: 245 180 81;
+  --yellow-800: 250 200 120;
+  --yellow-900: 252 220 160;
+}
+
+.dark .bg-white {
+  background-color: var(--surface);
 }
 
 body {
   @apply bg-gray-50 text-gray-900 font-sans;
 }
 
+.login-bg {
+  @apply bg-gradient-to-br from-blue-600 to-blue-800;
+}
+
+.dark .login-bg {
+  background: rgb(var(--gray-50));
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
   border-radius: 0.75rem;
+}
+
+/* Тёмные тайлы OSM без отдельного провайдера карт */
+.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+}
+
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: var(--surface);
+  color: rgb(var(--gray-900));
 }
 
 .sidebar-item {
@@ -32,12 +167,17 @@ body {
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 
-         transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply text-white px-4 py-2 rounded-lg transition-colors font-medium
+         disabled:opacity-50 disabled:cursor-not-allowed;
+  background-color: rgb(var(--accent));
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: rgb(var(--accent-hover));
 }
 
 .btn-danger {
-  @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 
+  @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:opacity-90
          transition-colors font-medium;
 }
 

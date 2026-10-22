@@ -25,6 +25,14 @@ BUILTIN_CATEGORIES = {
 }
 
 
+def notify_blocklist_changed(family):
+    """Ask the family's child devices to reload the blocklist right away."""
+    from apps.notifications.tasks import send_data_push_to_family_children
+    send_data_push_to_family_children.delay(
+        family_id=str(family.id), data={"type": "blocklist_updated"}
+    )
+
+
 class BlockedDomainListView(generics.ListCreateAPIView):
     """List blocked domains / add a new one. Parents only."""
     serializer_class = BlockedDomainSerializer
@@ -33,6 +41,10 @@ class BlockedDomainListView(generics.ListCreateAPIView):
     @extend_schema(tags=["dns"])
     def get_queryset(self):
         return BlockedDomain.objects.filter(family=self.request.user.family)
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        notify_blocklist_changed(self.request.user.family)
 
 
 class BlockedDomainDetailView(generics.RetrieveDestroyAPIView):
@@ -43,6 +55,10 @@ class BlockedDomainDetailView(generics.RetrieveDestroyAPIView):
     @extend_schema(tags=["dns"])
     def get_queryset(self):
         return BlockedDomain.objects.filter(family=self.request.user.family)
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+        notify_blocklist_changed(self.request.user.family)
 
 
 @extend_schema(tags=["dns"])
@@ -172,4 +188,5 @@ def toggle_category(request, category_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
     cat.is_enabled = not cat.is_enabled
     cat.save(update_fields=["is_enabled"])
+    notify_blocklist_changed(request.user.family)
     return Response(DnsCategorySerializer(cat).data)
