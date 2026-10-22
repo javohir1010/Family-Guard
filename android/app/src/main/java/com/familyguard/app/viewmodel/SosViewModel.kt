@@ -45,7 +45,7 @@ class SosViewModel @Inject constructor(
     private var pendingPressCount = 0
 
     init {
-        // Location service is started by SosScreen once permission is granted.
+        // Location service is started by the child home screen once permission is granted.
         // Re-check connectivity periodically so the status badge doesn't go stale.
         viewModelScope.launch {
             while (isActive) {
