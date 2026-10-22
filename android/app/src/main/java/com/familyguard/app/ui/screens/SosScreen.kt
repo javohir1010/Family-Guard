@@ -72,6 +72,8 @@ fun SosScreen(
             Text("🚪", fontSize = 24.sp)
         }
 
+        LogoutApprovalDialog(authViewModel)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp)

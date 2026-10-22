@@ -12,6 +12,9 @@ interface ApiService {
     @POST("auth/login/")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
+    @POST("auth/login/verify/")
+    suspend fun verifyLogin(@Body request: LoginVerifyRequest): TokenPair
+
     @POST("auth/logout/")
     suspend fun logout(@Body request: LogoutRequest)
 
@@ -24,6 +27,12 @@ interface ApiService {
     // Family
     @POST("family/invite/join/")
     suspend fun joinFamily(@Body request: JoinFamilyRequest): JoinFamilyResponse
+
+    @POST("family/requests/logout/")
+    suspend fun requestLogout(): MemberRequest
+
+    @GET("family/requests/{id}/")
+    suspend fun getMemberRequest(@Path("id") id: String): MemberRequest
 
     // Location
     @POST("location/")

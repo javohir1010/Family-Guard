@@ -29,6 +29,11 @@ fun LoginScreen(
         }
     }
 
+    if (uiState.otpChallengeId != null) {
+        LoginCodeStep(viewModel)
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,6 +104,66 @@ fun LoginScreen(
             modifier = Modifier.padding(top = 8.dp)
         ) {
             Text("Нет аккаунта? Зарегистрироваться")
+        }
+    }
+}
+
+/** Parents confirm the login with the 6-digit code sent to their email. */
+@Composable
+private fun LoginCodeStep(viewModel: AuthViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    var code by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Подтверждение входа",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            text = "Мы отправили код на ${uiState.otpEmailHint ?: "вашу почту"}",
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        OutlinedTextField(
+            value = code,
+            onValueChange = { value -> code = value.filter { it.isDigit() }.take(6) },
+            label = { Text("Код из письма") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            singleLine = true
+        )
+        if (uiState.error != null) {
+            Text(
+                text = uiState.error!!,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            onClick = { viewModel.verifyLoginCode(code) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            enabled = code.length == 6 && !uiState.isLoading
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+            } else {
+                Text("Подтвердить")
+            }
+        }
+        TextButton(onClick = viewModel::cancelLoginCode, modifier = Modifier.padding(top = 8.dp)) {
+            Text("Назад")
         }
     }
 }
