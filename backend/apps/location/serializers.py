@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .fields import CoordinateField
 from .models import LocationRecord, GeoZone, GeoZoneEvent
 
 
@@ -16,6 +17,9 @@ class LocationRecordSerializer(serializers.ModelSerializer):
 
 
 class LocationCreateSerializer(serializers.ModelSerializer):
+    latitude = CoordinateField()
+    longitude = CoordinateField()
+
     class Meta:
         model = LocationRecord
         fields = ("latitude", "longitude", "accuracy", "altitude",
@@ -27,6 +31,9 @@ class LocationCreateSerializer(serializers.ModelSerializer):
 
 
 class GeoZoneSerializer(serializers.ModelSerializer):
+    center_latitude = CoordinateField()
+    center_longitude = CoordinateField()
+
     class Meta:
         model = GeoZone
         fields = (

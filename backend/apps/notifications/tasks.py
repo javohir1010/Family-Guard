@@ -114,6 +114,32 @@ def send_push_to_family_parents(
     logger.info(f"Queued push for {parents.count()} parents in family {family_id}")
 
 
+@shared_task(queue="notifications")
+def send_data_push_to_family_children(family_id: str, data: dict):
+    """
+    Silent FCM data message to every child device of the family, e.g.
+    {"type": "blocklist_updated"} so the DNS filter reloads its list now.
+    Not stored as a Notification. No-op without FCM credentials.
+    """
+    app = get_fcm_app()
+    if not app:
+        return
+    from firebase_admin import messaging
+
+    tokens = User.objects.filter(
+        family__id=family_id, role="child"
+    ).exclude(device_token="").values_list("device_token", flat=True)
+    for token in tokens:
+        try:
+            messaging.send(messaging.Message(
+                data={k: str(v) for k, v in data.items()},
+                token=token,
+                android=messaging.AndroidConfig(priority="high"),
+            ), app=app)
+        except Exception as exc:
+            logger.warning(f"Data push to a child device failed: {exc}")
+
+
 @shared_task(bind=True, queue="sos", max_retries=3, default_retry_delay=10)
 def send_emergency_sms(self, message: str, sos_event_id: str = None):
     """Send emergency SMS via Twilio."""

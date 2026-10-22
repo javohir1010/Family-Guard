@@ -84,6 +84,12 @@ class SosViewModel @Inject constructor(
                 isSending = false,
                 lastSentTime = timeStr
             )
+        } catch (e: retrofit2.HttpException) {
+            // The server answered: not a connection problem
+            _uiState.value = _uiState.value.copy(
+                isSending = false,
+                error = "Сервер отклонил сигнал (код ${e.code()}). Сообщите родителю."
+            )
         } catch (e: Exception) {
             _uiState.value = _uiState.value.copy(
                 isSending = false,
