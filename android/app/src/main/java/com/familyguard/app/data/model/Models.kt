@@ -44,8 +44,11 @@ data class UserProfile(
     @SerializedName("last_name") val lastName: String,
     val role: String, val family: String?,
     // Accounts made before these became required lack them (null in older responses)
-    @SerializedName("profile_complete") val profileComplete: Boolean? = null
+    @SerializedName("profile_complete") val profileComplete: Boolean? = null,
+    @SerializedName("location_paused") val locationPaused: Boolean? = null
 )
+
+data class LocationPauseRequest(@SerializedName("location_paused") val paused: Boolean)
 
 /** PATCH auth/profile/ for an adult's one-time profile completion. */
 data class ProfileUpdateRequest(

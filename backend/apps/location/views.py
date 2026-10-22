@@ -31,6 +31,13 @@ class LocationCreateView(generics.CreateAPIView):
     serializer_class = LocationCreateSerializer
 
     @extend_schema(tags=["location"])
+    def create(self, request, *args, **kwargs):
+        # An adult paused sharing: points sent anyway (e.g. an offline buffer
+        # flushed later) are dropped, the family keeps the last known place
+        if request.user.location_paused:
+            return Response({"detail": "Location sharing is paused."}, status=status.HTTP_202_ACCEPTED)
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         record = serializer.save()
         user = self.request.user
@@ -64,7 +71,8 @@ class LocationCreateView(generics.CreateAPIView):
 
     def _check_geofences(self, user, record):
         """Check if user entered/exited any active geofence zones."""
-        if not user.family:
+        # Zones are set up for children; adults also share their position now
+        if not user.family or not user.is_child:
             return
 
         zones = GeoZone.objects.filter(family=user.family, is_active=True)

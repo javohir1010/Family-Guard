@@ -78,3 +78,22 @@ class LocationAndGeofenceTests(ApiTestCase):
         self.assertEqual(self.post_location(41.295703456789012, 69.218561234567891).status_code, 201)
         record = LocationRecord.objects.get()
         self.assertEqual(str(record.latitude), "41.2957035")
+
+    def test_adult_location_shared_but_no_geofence_alerts(self):
+        self.make_zone()
+        res = self.as_user(self.parent).post("/api/v1/location/", {
+            "latitude": SCHOOL[0], "longitude": SCHOOL[1], "recorded_at": "2026-10-07T10:00:00Z",
+        })
+        self.assertEqual(res.status_code, 201)
+        self.assertFalse(GeoZoneEvent.objects.exists())
+        positions = self.as_user(self.child).get("/api/v1/location/current/").data
+        self.assertEqual([p["user_id"] for p in positions], [str(self.parent.id)])
+
+    def test_paused_adult_points_are_dropped(self):
+        self.parent.location_paused = True
+        self.parent.save()
+        res = self.as_user(self.parent).post("/api/v1/location/", {
+            "latitude": SCHOOL[0], "longitude": SCHOOL[1], "recorded_at": "2026-10-07T10:00:00Z",
+        })
+        self.assertEqual(res.status_code, 202)
+        self.assertFalse(LocationRecord.objects.filter(user=self.parent).exists())

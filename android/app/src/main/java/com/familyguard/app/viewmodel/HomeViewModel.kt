@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.familyguard.app.data.api.ApiService
 import com.familyguard.app.data.model.AppNotification
 import com.familyguard.app.data.model.MemberPosition
+import com.familyguard.app.services.LocationForegroundService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
@@ -25,6 +26,8 @@ data class HomeUiState(
     val profileComplete: Boolean = true,
     val profileSaving: Boolean = false,
     val profileError: String? = null,
+    // Adults: whether the family sees this phone's position
+    val locationPaused: Boolean = false,
     val children: List<MemberPosition> = emptyList(),
     val events: List<AppNotification> = emptyList(),
     val isRefreshing: Boolean = false,
@@ -39,7 +42,7 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val apiService: ApiService,
-    @ApplicationContext context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val prefs = context.getSharedPreferences("fg_ui", Context.MODE_PRIVATE)
@@ -47,7 +50,8 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         HomeUiState(
             role = prefs.getString(KEY_ROLE, null),
-            firstName = prefs.getString(KEY_NAME, "") ?: ""
+            firstName = prefs.getString(KEY_NAME, "") ?: "",
+            locationPaused = LocationForegroundService.isPaused(context)
         )
     )
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -65,6 +69,12 @@ class HomeViewModel @Inject constructor(
                     firstName = profile.firstName,
                     profileComplete = profile.role == ROLE_CHILD || profile.profileComplete != false
                 )
+                // The server is the source of truth (e.g. after reinstalling the app)
+                val paused = profile.role != ROLE_CHILD && profile.locationPaused == true
+                if (paused != LocationForegroundService.isPaused(context)) {
+                    LocationForegroundService.setPaused(context, paused)
+                }
+                _uiState.value = _uiState.value.copy(locationPaused = paused)
             } catch (e: Exception) {
                 // Offline: keep the cached role, SOS screen is the safe default
                 if (_uiState.value.role == null) {
@@ -121,6 +131,18 @@ class HomeViewModel @Inject constructor(
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(profileSaving = false, profileError = "Нет связи с сервером.")
+            }
+        }
+    }
+
+    fun setLocationPaused(paused: Boolean) {
+        viewModelScope.launch {
+            try {
+                apiService.setLocationPaused(com.familyguard.app.data.model.LocationPauseRequest(paused))
+                LocationForegroundService.setPaused(context, paused)
+                _uiState.value = _uiState.value.copy(locationPaused = paused, error = null)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Не удалось изменить настройку. Проверьте соединение.")
             }
         }
     }
