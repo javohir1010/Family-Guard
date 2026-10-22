@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fg_background">#0B1020</color>
+    <color name="fg_surface">#151B2E</color>
+    <color name="fg_text">#E8ECF5</color>
+    <color name="fg_muted">#9AA3B5</color>
+    <color name="fg_sos">#FF5D62</color>
+    <color name="fg_on_sos">#1A0506</color>
+    <color name="fg_sos_soft">#3A1A20</color>
+</resources>

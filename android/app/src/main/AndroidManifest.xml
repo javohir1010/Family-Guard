@@ -145,6 +145,19 @@
             </intent-filter>
         </receiver>
 
+        <!-- SOS home-screen widget -->
+        <receiver
+            android:name=".widget.SosWidgetProvider"
+            android:exported="true"
+            android:label="SOS">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sos_widget_info" />
+        </receiver>
+
         <!-- Device Admin Receiver -->
         <receiver
             android:name=".receivers.DeviceAdminReceiver"

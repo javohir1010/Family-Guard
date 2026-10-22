@@ -3,4 +3,5 @@
     <string name="app_name">FamilyGuard</string>
     <string name="accessibility_service_label">FamilyGuard — Защита ребёнка</string>
     <string name="accessibility_service_description">Отслеживает запуск приложений и блокирует нежелательные согласно правилам, установленным родителем. Не собирает личные данные.</string>
+    <string name="widget_sos_description">SOS: одно касание отправляет сигнал родителям</string>
 </resources>

@@ -52,4 +52,11 @@ interface ApiService {
 
     @GET("apps/schedule/device/")
     suspend fun getScreenSchedule(): List<ScreenSchedule>
+
+    // ─── Parent home ──────────────────────────────────────────────────────
+    @GET("location/current/")
+    suspend fun getCurrentPositions(): List<MemberPosition>
+
+    @GET("notifications/")
+    suspend fun getNotifications(): NotificationPage
 }
