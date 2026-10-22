@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/shield.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Тема до загрузки React, чтобы не мигал светлый фон
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem("fg-theme"); } catch (e) {}
+        var dark = t === "dark" || (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("dark");
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
     <title>FamilyGuard — Родительский контроль</title>
     <link
       rel="stylesheet"

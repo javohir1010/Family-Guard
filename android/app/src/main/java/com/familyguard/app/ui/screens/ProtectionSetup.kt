@@ -186,7 +186,7 @@ private fun SetupRow(title: String, hint: String, done: Boolean, onEnable: () ->
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
             Text(title, fontSize = 15.sp)
-            if (!done) Text(hint, fontSize = 12.sp, color = Color.Gray)
+            if (!done) Text(hint, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (done) {
             Text("✅", fontSize = 18.sp)

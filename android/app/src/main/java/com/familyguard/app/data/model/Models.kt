@@ -107,3 +107,26 @@ data class ScreenSchedule(
     @SerializedName("end_time") val endTime: String,
     @SerializedName("is_active") val isActive: Boolean
 )
+
+// Parent home
+data class MemberPosition(
+    @SerializedName("user_id") val userId: String,
+    val name: String,
+    val role: String,
+    val latitude: Double,
+    val longitude: Double,
+    @SerializedName("battery_level") val batteryLevel: Int?,
+    @SerializedName("recorded_at") val recordedAt: String,
+    @SerializedName("is_online") val isOnline: Boolean
+)
+
+data class NotificationPage(val results: List<AppNotification>)
+
+data class AppNotification(
+    val id: String,
+    @SerializedName("notification_type") val type: String,
+    val title: String,
+    val body: String,
+    @SerializedName("is_read") val isRead: Boolean,
+    @SerializedName("sent_at") val sentAt: String
+)

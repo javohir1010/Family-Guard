@@ -23,7 +23,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         position="top-right"
         toastOptions={{
           duration: 4000,
-          style: { borderRadius: "10px", fontFamily: "inherit" },
+          style: {
+            borderRadius: "10px",
+            fontFamily: "inherit",
+            background: "var(--surface)",
+            color: "rgb(var(--gray-900))",
+          },
         }}
       />
     </QueryClientProvider>
