@@ -73,3 +73,8 @@ class LocationAndGeofenceTests(ApiTestCase):
             "name": "Z", "center_latitude": 1, "center_longitude": 1,
         })
         self.assertEqual(res.status_code, 403)
+
+    def test_phone_precision_coordinates_are_accepted(self):
+        self.assertEqual(self.post_location(41.295703456789012, 69.218561234567891).status_code, 201)
+        record = LocationRecord.objects.get()
+        self.assertEqual(str(record.latitude), "41.2957035")

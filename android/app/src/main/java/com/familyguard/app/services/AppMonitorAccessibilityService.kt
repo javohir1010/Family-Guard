@@ -77,15 +77,17 @@ class AppMonitorAccessibilityService : AccessibilityService() {
             notificationTimeout = 100
         }
 
+        instance = this
         serviceScope.launch {
             refreshRules()
             refreshTodayUsage()
         }
 
-        // Periodic rule + schedule refresh every 5 min (parent changes apply quickly)
+        // Parent changes normally arrive at once via push (refreshNow);
+        // this periodic refresh is the fallback when push is unavailable.
         serviceScope.launch {
             while (isActive) {
-                delay(5 * 60 * 1000L)
+                delay(60 * 1000L)
                 refreshRules()
             }
         }
@@ -275,6 +277,20 @@ class AppMonitorAccessibilityService : AccessibilityService() {
     }
 
     companion object {
+        @Volatile private var instance: AppMonitorAccessibilityService? = null
+
+        /** Reload rules and schedules now, e.g. after a "rules_updated" push. */
+        fun refreshNow() {
+            val service = instance ?: return
+            service.serviceScope.launch {
+                service.refreshRules()
+                // Block an app that is already open when its rule arrives
+                service.getForegroundAppViaUsageStats()
+                    ?.takeIf { it != service.packageName }
+                    ?.let { service.checkAndBlock(it) }
+            }
+        }
+
         private val ALWAYS_ALLOWED = setOf(
             "com.android.systemui",
             "com.android.phone",
@@ -284,10 +300,11 @@ class AppMonitorAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
-        serviceScope.cancel()
+        // Called when feedback is interrupted; the service keeps running
     }
 
     override fun onDestroy() {
+        if (instance === this) instance = null
         serviceScope.cancel()
         super.onDestroy()
     }

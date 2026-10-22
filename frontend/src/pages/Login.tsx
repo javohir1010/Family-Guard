@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authApi, familyApi } from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
+import PasswordInput from "../components/PasswordInput";
 import ThemeToggle from "../components/ThemeToggle";
 
 export default function LoginPage() {
@@ -128,8 +129,7 @@ export default function LoginPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Пароль
                   </label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required
                     value={loginForm.password}
                     onChange={(e) =>
@@ -233,8 +233,7 @@ export default function LoginPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Пароль
                     </label>
-                    <input
-                      type="password"
+                    <PasswordInput
                       required
                       value={regForm.password}
                       onChange={(e) =>
@@ -248,8 +247,7 @@ export default function LoginPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Повтор
                     </label>
-                    <input
-                      type="password"
+                    <PasswordInput
                       required
                       value={regForm.password2}
                       onChange={(e) =>
@@ -260,6 +258,9 @@ export default function LoginPage() {
                     />
                   </div>
                 </div>
+                <p className="text-xs text-gray-400 -mt-2">
+                  Минимум 8 символов, буквы и цифры
+                </p>
                 <button
                   type="submit"
                   disabled={loading}

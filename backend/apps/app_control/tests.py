@@ -73,3 +73,24 @@ class AppControlTests(ApiTestCase):
         self.assertEqual(res.status_code, 201, res.data)
         self.assertEqual(PermissionAlert.objects.get().permission, "PRIVATE_DNS")
         self.mock_send_push_to_family_parents.assert_called_once()
+
+    def test_rule_changes_are_pushed_to_child_devices(self):
+        client = self.as_user(self.parent)
+        res = client.post("/api/v1/apps/rules/", {
+            "child": self.child.id, "package_name": "com.google.android.youtube",
+            "rule_type": "block",
+        }, format="json")
+        self.assertEqual(res.status_code, 201, res.data)
+        self.mock_send_data_push_to_family_children.assert_called_once_with(
+            family_id=str(self.family.id), data={"type": "rules_updated"}
+        )
+        client.patch(f"/api/v1/apps/rules/{res.data['id']}/detail/", {"is_active": False})
+        client.delete(f"/api/v1/apps/rules/{res.data['id']}/detail/")
+        self.assertEqual(self.mock_send_data_push_to_family_children.call_count, 3)
+
+    def test_failed_rule_create_sends_no_push(self):
+        _, _, foreign_child = self.make_family("Other")
+        self.as_user(self.parent).post("/api/v1/apps/rules/", {
+            "child": foreign_child.id, "package_name": "com.x", "rule_type": "block",
+        })
+        self.mock_send_data_push_to_family_children.assert_not_called()

@@ -57,3 +57,13 @@ class DnsFilterTests(ApiTestCase):
         self.assertEqual(
             sorted(DnsQuery.objects.values_list("domain", flat=True)), ["a.com", "b.com"]
         )
+
+    def test_blocklist_change_pings_child_devices(self):
+        client = self.as_user(self.parent)
+        res = client.post("/api/v1/dns/blocked/", {"domain": "youtube.com"})
+        self.assertEqual(res.status_code, 201, res.data)
+        self.mock_send_data_push_to_family_children.assert_called_once_with(
+            family_id=str(self.family.id), data={"type": "blocklist_updated"}
+        )
+        client.delete(f"/api/v1/dns/blocked/{res.data['id']}/")
+        self.assertEqual(self.mock_send_data_push_to_family_children.call_count, 2)

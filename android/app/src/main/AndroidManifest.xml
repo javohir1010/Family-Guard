@@ -45,6 +45,12 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.HOME" />
         </intent>
+        <!-- Launchable apps: needed on Android 11+ to read app names ("YouTube")
+             for usage stats and the block screen instead of bare package names -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 
     <application

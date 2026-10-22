@@ -37,6 +37,7 @@ class ApiTestCase(APITestCase):
         for target in (
             "apps.notifications.tasks.send_push_to_family_parents.delay",
             "apps.notifications.tasks.send_push_notification.delay",
+            "apps.notifications.tasks.send_data_push_to_family_children.delay",
             "apps.notifications.tasks.send_emergency_sms.delay",
             "apps.sos.tasks.process_sos_event.apply_async",
         ):
