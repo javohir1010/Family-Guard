@@ -136,6 +136,21 @@ fun OnboardingScreen(
                 }
             }
 
+            if (uiState.waitingApproval) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "Заявка отправлена. Ждём, когда родитель подтвердит её в дашборде…",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp
+                    )
+                }
+            } else
             // Join button
             Button(
                 onClick = viewModel::joinFamily,
@@ -164,6 +179,7 @@ fun OnboardingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            LogoutApprovalDialog(viewModel)
             TextButton(onClick = viewModel::logout) {
                 Text("Выйти из аккаунта", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

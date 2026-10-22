@@ -133,6 +133,7 @@ REST_FRAMEWORK = {
         "anon": "20/minute",
         "user": "200/minute",
         "login": "5/minute",
+        "login_verify": "10/minute",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
@@ -187,7 +188,28 @@ EMERGENCY_PHONE_NUMBER = env("EMERGENCY_PHONE_NUMBER", default="")
 FIREBASE_CREDENTIALS_FILE = env("FIREBASE_CREDENTIALS_FILE", default="")
 
 # Invite code
-INVITE_CODE_TTL = env.int("INVITE_CODE_TTL", default=86400)
+# Short-lived like an authenticator code; joining also needs a parent's approval
+INVITE_CODE_TTL = env.int("INVITE_CODE_TTL", default=900)
+
+# Email: login codes for parents. Gmail needs an app password
+# (Google account → Security → App passwords). Without EMAIL_HOST_USER the
+# code is printed to the web container log instead of being sent.
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_TIMEOUT = 10
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend" if EMAIL_HOST_USER
+    else "django.core.mail.backends.console.EmailBackend"
+)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "FamilyGuard <noreply@familyguard.local>")
+# Parents confirm every login with a code from email
+LOGIN_EMAIL_CODE = env.bool("LOGIN_EMAIL_CODE", default=True)
+LOGIN_CODE_TTL = env.int("LOGIN_CODE_TTL", default=600)
+# Dev only: send all login codes to this inbox (test accounts with made-up emails)
+LOGIN_CODE_EMAIL_OVERRIDE = env("LOGIN_CODE_EMAIL_OVERRIDE", default="")
 
 # Spectacular (Swagger)
 SPECTACULAR_SETTINGS = {

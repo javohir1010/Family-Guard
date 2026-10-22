@@ -21,7 +21,19 @@ data class RegisterResponse(
     val refresh: String,
     val user: UserProfile
 )
-data class LoginResponse(val access: String, val refresh: String)
+// Parents get otpRequired + challengeId instead of tokens and confirm with a code from email
+data class LoginResponse(
+    val access: String? = null,
+    val refresh: String? = null,
+    @SerializedName("otp_required") val otpRequired: Boolean = false,
+    @SerializedName("challenge_id") val challengeId: String? = null,
+    @SerializedName("email_hint") val emailHint: String? = null
+)
+data class LoginVerifyRequest(
+    @SerializedName("challenge_id") val challengeId: String,
+    val code: String
+)
+data class TokenPair(val access: String, val refresh: String)
 data class LogoutRequest(val refresh: String)
 data class DeviceTokenRequest(@SerializedName("device_token") val deviceToken: String)
 data class UserProfile(
@@ -36,7 +48,9 @@ data class JoinFamilyRequest(
     val code: String,
     @SerializedName("device_name") val deviceName: String?
 )
-data class JoinFamilyResponse(val message: String)
+data class JoinFamilyResponse(val message: String, val request: MemberRequest?)
+// Joining the family or logging out a child device waits for a parent's approval
+data class MemberRequest(val id: String, val kind: String, val status: String)
 
 // Location
 data class LocationRequest(

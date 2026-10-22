@@ -13,6 +13,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  // Parents confirm login with a code sent by email
+  const [challenge, setChallenge] = useState<{ id: string; hint: string } | null>(null);
+  const [loginCode, setLoginCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [regForm, setRegForm] = useState({
     email: "",
     username: "",
@@ -29,16 +33,40 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const { data } = await authApi.login(loginForm.email, loginForm.password);
-      setTokens(data.access, data.refresh);
-      const profile = await authApi.profile();
-      setUser(profile.data);
-      toast.success("Добро пожаловать!");
-      navigate("/dashboard");
+      if (data.otp_required) {
+        setChallenge({ id: data.challenge_id, hint: data.email_hint });
+        setLoginCode("");
+        toast.success(`Код отправлен на ${data.email_hint}`);
+      } else {
+        await finishLogin(data.access, data.refresh);
+      }
     } catch (err: any) {
       toast.error(err.response?.data?.detail || "Ошибка входа");
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    if (!challenge) return;
+    setLoading(true);
+    try {
+      const { data } = await authApi.verifyLogin(challenge.id, loginCode);
+      await finishLogin(data.access, data.refresh);
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || "Неверный код");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function finishLogin(access: string, refresh: string) {
+    setTokens(access, refresh);
+    const profile = await authApi.profile();
+    setUser(profile.data);
+    toast.success("Добро пожаловать!");
+    navigate("/dashboard");
   }
 
   async function handleRegister(e: React.FormEvent) {
@@ -48,6 +76,18 @@ export default function LoginPage() {
       const { data } = await authApi.register(regForm);
       setTokens(data.access, data.refresh);
       setUser(data.user);
+
+      // Invited by another parent: ask to join their family (they approve it)
+      if (inviteCode.trim()) {
+        try {
+          await familyApi.join(inviteCode.trim());
+          toast.success("Заявка отправлена — второй родитель должен её подтвердить");
+        } catch (err: any) {
+          toast.error(err.response?.data?.error || "Неверный или истёкший код приглашения");
+        }
+        navigate("/family");
+        return;
+      }
 
       // Auto-create family for parent, then reload the profile so the stored
       // user has its family id (the dashboard map and WebSocket need it)
@@ -107,7 +147,41 @@ export default function LoginPage() {
           </div>
 
           <div className="p-6">
-            {tab === "login" ? (
+            {tab === "login" && challenge ? (
+              <form onSubmit={handleVerify} className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Мы отправили 6-значный код на <b>{challenge.hint}</b>. Введите его,
+                  чтобы подтвердить вход.
+                </p>
+                <input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  autoFocus
+                  required
+                  maxLength={6}
+                  value={loginCode}
+                  onChange={(e) => setLoginCode(e.target.value.replace(/\D/g, ""))}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-3 text-center
+                             text-2xl font-mono tracking-[0.4em]
+                             focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="000000"
+                />
+                <button
+                  type="submit"
+                  disabled={loading || loginCode.length !== 6}
+                  className="btn-primary w-full py-3"
+                >
+                  {loading ? "Проверяем..." : "Подтвердить"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChallenge(null)}
+                  className="btn-ghost w-full"
+                >
+                  Назад
+                </button>
+              </form>
+            ) : tab === "login" ? (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -228,6 +302,22 @@ export default function LoginPage() {
                     <option value="child">Ребёнок</option>
                   </select>
                 </div>
+                {regForm.role === "parent" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Код приглашения от второго родителя (необязательно)
+                    </label>
+                    <input
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value.replace(/\D/g, ""))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Пусто — будет создана новая семья"
+                    />
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

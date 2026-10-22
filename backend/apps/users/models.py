@@ -69,3 +69,64 @@ class User(AbstractUser):
     @property
     def is_child(self):
         return self.role == self.Role.CHILD
+
+
+class MemberRequest(models.Model):
+    """A step that a parent of the family must approve: a new member joining
+    (child or second parent) or a child device logging out."""
+
+    class Kind(models.TextChoices):
+        JOIN = "join", "Join family"
+        LOGOUT = "logout", "Log out"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+        USED = "used", "Used"
+
+    # A request nobody answered is dropped, so an old one can't be approved by mistake
+    TTL = timedelta(minutes=30)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name="member_requests")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="member_requests")
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    role = models.CharField(max_length=10, choices=User.Role.choices, default=User.Role.CHILD)
+    device_name = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    decided_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    decided_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.kind} {self.user} → {self.family} ({self.status})"
+
+    @property
+    def is_expired(self):
+        return (
+            self.status == self.Status.PENDING
+            and timezone.now() - self.created_at > self.TTL
+        )
+
+    @property
+    def effective_status(self):
+        return "expired" if self.is_expired else self.status
+
+
+class LoginChallenge(models.Model):
+    """Second login step for parents: a one-time code sent by email."""
+
+    MAX_ATTEMPTS = 5
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="login_challenges")
+    code_hash = models.CharField(max_length=128)
+    attempts = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()

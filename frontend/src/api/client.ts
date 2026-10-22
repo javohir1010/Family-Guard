@@ -62,6 +62,8 @@ apiClient.interceptors.response.use(
 export const authApi = {
   login: (email: string, password: string) =>
     apiClient.post("/auth/login/", { email, password }),
+  verifyLogin: (challenge_id: string, code: string) =>
+    apiClient.post("/auth/login/verify/", { challenge_id, code }),
   register: (data: object) => apiClient.post("/auth/register/", data),
   logout: (refresh: string) => apiClient.post("/auth/logout/", { refresh }),
   profile: () => apiClient.get("/auth/profile/"),
@@ -71,11 +73,16 @@ export const familyApi = {
   create: (name: string) => apiClient.post("/family/create/", { name }),
   detail: () => apiClient.get("/family/detail/"),
   members: () => apiClient.get("/family/members/"),
-  generateInvite: () => apiClient.post("/family/invite/generate/"),
+  generateInvite: (role: "child" | "parent" = "child") =>
+    apiClient.post("/family/invite/generate/", { role }),
   join: (code: string, device_name?: string) =>
     apiClient.post("/family/invite/join/", { code, device_name }),
   removeMember: (userId: string) =>
     apiClient.delete(`/family/members/${userId}/remove/`),
+  requests: () => apiClient.get("/family/requests/"),
+  requestStatus: (id: string) => apiClient.get(`/family/requests/${id}/`),
+  approveRequest: (id: string) => apiClient.post(`/family/requests/${id}/approve/`),
+  rejectRequest: (id: string) => apiClient.post(`/family/requests/${id}/reject/`),
 };
 
 export const locationApi = {

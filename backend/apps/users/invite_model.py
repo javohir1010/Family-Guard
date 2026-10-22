@@ -7,6 +7,8 @@ User = get_user_model()
 
 class InviteCode(models.Model):
     code = models.CharField(max_length=6, unique=True)
+    # Role the new member gets: a child device or a second parent
+    role = models.CharField(max_length=10, choices=User.Role.choices, default=User.Role.CHILD)
     family = models.ForeignKey(
         "users.Family",
         on_delete=models.CASCADE,

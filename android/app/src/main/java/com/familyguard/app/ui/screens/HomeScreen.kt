@@ -50,6 +50,9 @@ fun HomeScreen(
         }
     }
 
+    // A child's logout waits here for a parent's approval
+    LogoutApprovalDialog(authViewModel)
+
     when (home.role) {
         null -> Box(Modifier.fillMaxSize())
         HomeViewModel.ROLE_PARENT -> ParentHome(
