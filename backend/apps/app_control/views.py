@@ -20,6 +20,31 @@ import datetime
 User = get_user_model()
 
 
+class PushRulesToDevicesMixin:
+    """
+    After a parent changes rules or schedules, ask the family's child devices
+    to reload them right away instead of waiting for the periodic refresh.
+    """
+
+    def notify_devices(self):
+        from apps.notifications.tasks import send_data_push_to_family_children
+        send_data_push_to_family_children.delay(
+            family_id=str(self.request.user.family_id), data={"type": "rules_updated"}
+        )
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        self.notify_devices()
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        self.notify_devices()
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+        self.notify_devices()
+
+
 @extend_schema(tags=["apps"], request=AppUsageBatchSerializer)
 @api_view(["POST"])
 def upload_app_usage(request):
@@ -81,7 +106,7 @@ class AppUsageListView(generics.ListAPIView):
         return qs.order_by("-duration_seconds")
 
 
-class AppRuleListView(generics.ListCreateAPIView):
+class AppRuleListView(PushRulesToDevicesMixin, generics.ListCreateAPIView):
     """List app rules / create a new rule. Parents only."""
     serializer_class = AppRuleSerializer
     permission_classes = [IsParent, IsFamilyMember]
@@ -95,7 +120,7 @@ class AppRuleListView(generics.ListCreateAPIView):
         return qs
 
 
-class AppRuleDetailView(generics.RetrieveUpdateDestroyAPIView):
+class AppRuleDetailView(PushRulesToDevicesMixin, generics.RetrieveUpdateDestroyAPIView):
     """Manage a single rule. Parents only."""
     serializer_class = AppRuleSerializer
     permission_classes = [IsParent, IsFamilyMember]
@@ -116,7 +141,7 @@ def get_active_rules_for_device(request):
     return Response(AppRuleSerializer(rules, many=True).data)
 
 
-class ScreenScheduleListView(generics.ListCreateAPIView):
+class ScreenScheduleListView(PushRulesToDevicesMixin, generics.ListCreateAPIView):
     """List/create screen schedules. Parents only."""
     serializer_class = ScreenScheduleSerializer
     permission_classes = [IsParent, IsFamilyMember]
@@ -130,7 +155,7 @@ class ScreenScheduleListView(generics.ListCreateAPIView):
         return qs
 
 
-class ScreenScheduleDetailView(generics.RetrieveUpdateDestroyAPIView):
+class ScreenScheduleDetailView(PushRulesToDevicesMixin, generics.RetrieveUpdateDestroyAPIView):
     """Manage schedule. Parents only."""
     serializer_class = ScreenScheduleSerializer
     permission_classes = [IsParent, IsFamilyMember]

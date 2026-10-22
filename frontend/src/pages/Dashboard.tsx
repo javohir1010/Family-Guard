@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useQuery } from "@tanstack/react-query";
@@ -33,6 +33,67 @@ function makeIcon(role: string, isOnline: boolean) {
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
+}
+
+function makeGroupIcon(members: any[]) {
+  const anyChildOnline = members.some((m) => m.role === "child" && m.is_online);
+  const color = anyChildOnline ? "#16a34a" : "#6b7280";
+  return L.divIcon({
+    className: "",
+    html: `<div style="position:relative;
+      background:${color};
+      border-radius:50%;
+      width:40px;height:40px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;
+      border:3px solid white;
+      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+    ">👨‍👧<span style="position:absolute;top:-6px;right:-6px;
+      background:#2563eb;color:white;border-radius:9999px;
+      min-width:20px;height:20px;padding:0 5px;
+      font:bold 12px/20px sans-serif;text-align:center;
+      border:2px solid white;">${members.length}</span></div>`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+  });
+}
+
+// Members closer than this share one marker; otherwise only the top one is clickable
+const SAME_PLACE_METERS = 30;
+
+function groupByPlace(positions: any[]): any[][] {
+  const groups: any[][] = [];
+  for (const p of positions) {
+    const here = L.latLng(p.latitude, p.longitude);
+    const group = groups.find(
+      (g) => here.distanceTo(L.latLng(g[0].latitude, g[0].longitude)) < SAME_PLACE_METERS
+    );
+    if (group) group.push(p);
+    else groups.push([p]);
+  }
+  return groups;
+}
+
+function MemberInfo({ pos }: { pos: any }) {
+  return (
+    <div className="text-sm space-y-1 min-w-[160px]">
+      <div className="font-bold text-gray-900">{pos.name}</div>
+      <div className={pos.role === "child" ? "text-green-600" : "text-blue-600"}>
+        {pos.role === "child" ? "Ребёнок" : "Родитель"}
+      </div>
+      {pos.battery_level != null && (
+        <div className="flex items-center gap-1 text-gray-600">🔋 {pos.battery_level}%</div>
+      )}
+      <div className="text-gray-400 text-xs">
+        {pos.recorded_at
+          ? formatDistanceToNow(new Date(pos.recorded_at), { addSuffix: true, locale: ru })
+          : "—"}
+      </div>
+      <div className={`text-xs font-medium ${pos.is_online ? "text-green-600" : "text-gray-400"}`}>
+        {pos.is_online ? "● Онлайн" : "○ Оффлайн"}
+      </div>
+    </div>
+  );
 }
 
 // MapContainer only reads `center` on mount; move the map once data arrives
@@ -134,50 +195,46 @@ export default function DashboardPage() {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <FitToPositions positions={positionsList} />
-            {positionsList.map((pos) => (
-              <Fragment key={pos.user_id}>
-              {pos.accuracy ? (
+            {positionsList.map((pos) =>
+              pos.accuracy ? (
                 <Circle
+                  key={`acc-${pos.user_id}`}
                   center={[pos.latitude, pos.longitude]}
                   radius={pos.accuracy}
                   pathOptions={{ color: "#2563eb", fillOpacity: 0.1 }}
                 />
-              ) : null}
-              <Marker
-                position={[pos.latitude, pos.longitude]}
-                icon={makeIcon(pos.role, pos.is_online)}
-              >
-                <Popup>
-                  <div className="text-sm space-y-1 min-w-[160px]">
-                    <div className="font-bold text-gray-900">{pos.name}</div>
-                    <div className={pos.role === "child" ? "text-green-600" : "text-blue-600"}>
-                      {pos.role === "child" ? "Ребёнок" : "Родитель"}
+              ) : null
+            )}
+            {groupByPlace(positionsList).map((group) =>
+              group.length === 1 ? (
+                <Marker
+                  key={group[0].user_id}
+                  position={[group[0].latitude, group[0].longitude]}
+                  icon={makeIcon(group[0].role, group[0].is_online)}
+                >
+                  <Popup>
+                    <MemberInfo pos={group[0]} />
+                  </Popup>
+                </Marker>
+              ) : (
+                <Marker
+                  key={group.map((p) => p.user_id).join("+")}
+                  position={[group[0].latitude, group[0].longitude]}
+                  icon={makeGroupIcon(group)}
+                >
+                  <Popup>
+                    <div className="space-y-3">
+                      <div className="text-xs text-gray-500">Рядом: {group.length}</div>
+                      {group.map((p) => (
+                        <div key={p.user_id} className="border-t border-gray-100 pt-2 first:border-0 first:pt-0">
+                          <MemberInfo pos={p} />
+                        </div>
+                      ))}
                     </div>
-                    {pos.battery_level != null && (
-                      <div className="flex items-center gap-1 text-gray-600">
-                        🔋 {pos.battery_level}%
-                      </div>
-                    )}
-                    <div className="text-gray-400 text-xs">
-                      {pos.recorded_at
-                        ? formatDistanceToNow(new Date(pos.recorded_at), {
-                            addSuffix: true,
-                            locale: ru,
-                          })
-                        : "—"}
-                    </div>
-                    <div
-                      className={`text-xs font-medium ${
-                        pos.is_online ? "text-green-600" : "text-gray-400"
-                      }`}
-                    >
-                      {pos.is_online ? "● Онлайн" : "○ Оффлайн"}
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-              </Fragment>
-            ))}
+                  </Popup>
+                </Marker>
+              )
+            )}
           </MapContainer>
         </div>
 

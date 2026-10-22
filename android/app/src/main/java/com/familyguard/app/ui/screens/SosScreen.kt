@@ -1,10 +1,12 @@
 package com.familyguard.app.ui.screens
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,11 +17,13 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyguard.app.R
 import com.familyguard.app.viewmodel.AuthViewModel
 import com.familyguard.app.viewmodel.SosViewModel
 
@@ -62,14 +66,28 @@ fun SosScreen(
             .background(Color(0xFF0A0A1A)),
         contentAlignment = Alignment.Center
     ) {
-        // Logout button in top-right
-        IconButton(
+        // Logout button in top-right: a quiet outlined pill
+        OutlinedButton(
             onClick = { authViewModel.logout() },
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
+                .height(36.dp),
+            shape = RoundedCornerShape(50),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f)),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = Color.White.copy(alpha = 0.06f),
+                contentColor = Color.White.copy(alpha = 0.75f)
+            ),
+            contentPadding = PaddingValues(horizontal = 14.dp)
         ) {
-            Text("🚪", fontSize = 24.sp)
+            Icon(
+                painter = painterResource(R.drawable.ic_logout),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(6.dp))
+            Text("Выйти", fontSize = 13.sp, fontWeight = FontWeight.Medium)
         }
 
         Column(

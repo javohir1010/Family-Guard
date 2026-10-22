@@ -101,26 +101,25 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        val passwordHint = passwordProblem(password)
+        PasswordField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Пароль") },
+            label = "Пароль",
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true
+            supportingText = passwordHint ?: "Надёжный пароль",
+            isError = password.isNotEmpty() && passwordHint != null
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        PasswordField(
             value = passwordConfirm,
             onValueChange = { passwordConfirm = it },
-            label = { Text("Повторите пароль") },
+            label = "Повторите пароль",
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true
+            supportingText = if (passwordConfirm.isNotEmpty() && passwordConfirm != password) "Пароли не совпадают" else null,
+            isError = passwordConfirm.isNotEmpty() && passwordConfirm != password
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -164,7 +163,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            enabled = email.isNotEmpty() && password.isNotEmpty() && password == passwordConfirm && !uiState.isLoading
+            enabled = email.isNotEmpty() && passwordProblem(password) == null && password == passwordConfirm && !uiState.isLoading
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))

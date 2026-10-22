@@ -12,7 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import android.content.Context
-import android.location.LocationManager
+import android.location.Location
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -35,7 +40,7 @@ class SosViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SosUiState())
     val uiState: StateFlow<SosUiState> = _uiState.asStateFlow()
 
-    // Press detection: count presses within 3 second window
+    // Press detection: presses within a short window add up to one signal
     private var pressResetJob: Job? = null
     private var pendingPressCount = 0
 
@@ -56,13 +61,16 @@ class SosViewModel @Inject constructor(
         pendingPressCount++
         _uiState.value = _uiState.value.copy(pressCount = pendingPressCount)
 
-        // Reset window: send after 3 seconds of no presses
+        // Emergency: no point waiting for more presses, send right away.
+        // Otherwise send after a short pause without presses.
         pressResetJob?.cancel()
+        val wait = if (pendingPressCount >= EMERGENCY_PRESSES) 0L else PRESS_WINDOW_MS
         pressResetJob = viewModelScope.launch {
-            delay(3_000)
-            triggerSos(pendingPressCount)
+            delay(wait)
+            val count = pendingPressCount
             pendingPressCount = 0
             _uiState.value = _uiState.value.copy(pressCount = 0)
+            triggerSos(count)
         }
     }
 
@@ -98,12 +106,24 @@ class SosViewModel @Inject constructor(
         }
     }
 
-    private fun getCurrentLocation(): android.location.Location? {
+    /**
+     * A fresh high-accuracy GPS fix. The last known location can be minutes
+     * old or come from a cell tower hundreds of metres away, so it is only a
+     * fallback when no fix arrives in time (e.g. indoors).
+     */
+    private suspend fun getCurrentLocation(): Location? {
+        val client = LocationServices.getFusedLocationProviderClient(context)
         return try {
-            val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            val request = CurrentLocationRequest.Builder()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setMaxUpdateAgeMillis(15_000)
+                .setDurationMillis(LOCATION_TIMEOUT_MS)
+                .build()
+            withTimeoutOrNull(LOCATION_TIMEOUT_MS) { client.getCurrentLocation(request, CancellationTokenSource().token).await() }
+                ?: client.lastLocation.await()
         } catch (e: SecurityException) {
+            null
+        } catch (e: Exception) {
             null
         }
     }
@@ -116,6 +136,12 @@ class SosViewModel @Inject constructor(
         } catch (e: Exception) {
             _uiState.value = _uiState.value.copy(isConnected = false)
         }
+    }
+
+    companion object {
+        private const val PRESS_WINDOW_MS = 1_500L
+        private const val EMERGENCY_PRESSES = 8 // backend marks 8+ presses as EMERGENCY
+        private const val LOCATION_TIMEOUT_MS = 6_000L
     }
 
     override fun onCleared() {

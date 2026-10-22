@@ -54,9 +54,15 @@ class PushMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         // Silent data messages from the backend
-        if (message.data["type"] == "blocklist_updated") {
-            DnsVpnService.refreshBlocklist(applicationContext)
-            return
+        when (message.data["type"]) {
+            "blocklist_updated" -> {
+                DnsVpnService.refreshBlocklist(applicationContext)
+                return
+            }
+            "rules_updated" -> {
+                AppMonitorAccessibilityService.refreshNow()
+                return
+            }
         }
         val title = message.notification?.title ?: message.data["title"] ?: return
         val body = message.notification?.body ?: message.data["body"].orEmpty()
