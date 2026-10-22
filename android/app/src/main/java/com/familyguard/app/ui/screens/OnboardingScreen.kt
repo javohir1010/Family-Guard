@@ -24,6 +24,8 @@ fun OnboardingScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isParent = uiState.role == "parent"
+    var familyName by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.hasFamily) {
         if (uiState.hasFamily) onJoinSuccess()
@@ -52,12 +54,41 @@ fun OnboardingScreen(
                 letterSpacing = 2.sp
             )
             Text(
-                text = "Введите инвайт-код от родителя",
+                text = if (isParent) "Создайте семью или присоединитесь к семье второго родителя"
+                    else "Введите инвайт-код от родителя",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp, bottom = 40.dp)
+                modifier = Modifier.padding(top = 8.dp, bottom = if (isParent) 24.dp else 40.dp)
             )
+
+            if (isParent) {
+                OutlinedTextField(
+                    value = familyName,
+                    onValueChange = { familyName = it.take(100) },
+                    label = { Text("Название семьи") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = { viewModel.createFamily(familyName) },
+                    enabled = familyName.isNotBlank() && !uiState.isLoading && !uiState.waitingApproval,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Создать семью", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                }
+                Text(
+                    text = "или введите код приглашения от второго родителя",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+                )
+            }
 
             // Invite code input
             Surface(
