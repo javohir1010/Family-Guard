@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authApi, familyApi } from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -74,7 +75,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+    <div className="min-h-screen login-bg flex items-center justify-center p-4 relative">
+      <ThemeToggle className="absolute top-4 right-4" />
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
