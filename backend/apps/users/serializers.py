@@ -64,6 +64,11 @@ class UserProfileSerializer(PersonFieldsMixin, serializers.ModelSerializer):
         read_only_fields = ("id", "username", "email", "role", "family", "family_name",
                             "is_online", "last_seen", "created_at")
 
+    def validate_avatar(self, value):
+        if value and value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("Фото слишком большое (больше 5 МБ).")
+        return value
+
     def validate(self, attrs):
         if self.instance is not None and self.instance.is_child:
             locked = sorted(set(attrs) - self.CHILD_WRITABLE)

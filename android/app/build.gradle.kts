@@ -95,6 +95,10 @@ dependencies {
     // Location
     implementation(libs.play.services.location)
 
+    // Family map (OpenStreetMap tiles, no API key) and avatars
+    implementation(libs.osmdroid)
+    implementation(libs.coil.compose)
+
     // DataStore (secure token storage)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.security.crypto)

@@ -425,3 +425,15 @@ class ProfileAndContactsTests(ApiTestCase):
         res = self.as_user(self.kid).get("/api/v1/location/current/")
         self.assertEqual(res.status_code, 200)
         self.assertTrue(res.data[0]["paused"])
+
+    def test_child_uploads_avatar(self):
+        import io
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        buf = io.BytesIO()
+        Image.new("RGB", (8, 8), "red").save(buf, "PNG")
+        upload = SimpleUploadedFile("a.png", buf.getvalue(), content_type="image/png")
+        with self.settings(MEDIA_ROOT=__import__("tempfile").mkdtemp()):
+            res = self.as_user(self.kid).patch("/api/v1/auth/profile/", {"avatar": upload}, format="multipart")
+        self.assertEqual(res.status_code, 200, res.data)
+        self.assertIn("avatars/", res.data["avatar"])

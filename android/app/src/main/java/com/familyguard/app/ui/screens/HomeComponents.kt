@@ -62,13 +62,23 @@ fun FgCard(
 }
 
 @Composable
-fun Avatar(letter: String, size: Dp = 44.dp) {
+fun Avatar(letter: String, size: Dp = 44.dp, imageUrl: String? = null) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(size)
+            .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
     ) {
+        if (imageUrl != null) {
+            coil.compose.AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+            return@Box
+        }
         Text(
             text = letter.take(1).uppercase().ifEmpty { "?" },
             color = MaterialTheme.colorScheme.onPrimaryContainer,
