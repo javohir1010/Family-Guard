@@ -4,6 +4,8 @@ kotlin = "2.0.21"
 compose-bom = "2024.12.01"
 hilt = "2.51"
 retrofit = "2.11.0"
+osmdroid = "6.1.20"
+coil = "2.7.0"
 okhttp = "4.12.0"
 room = "2.6.1"
 coroutines = "1.9.0"
@@ -34,6 +36,8 @@ hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltEx
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+osmdroid = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }

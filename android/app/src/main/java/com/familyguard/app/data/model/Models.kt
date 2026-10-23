@@ -45,7 +45,12 @@ data class UserProfile(
     val role: String, val family: String?,
     // Accounts made before these became required lack them (null in older responses)
     @SerializedName("profile_complete") val profileComplete: Boolean? = null,
-    @SerializedName("location_paused") val locationPaused: Boolean? = null
+    @SerializedName("location_paused") val locationPaused: Boolean? = null,
+    val username: String? = null,
+    val avatar: String? = null,
+    val gender: String? = null,
+    @SerializedName("birth_date") val birthDate: String? = null,
+    @SerializedName("phone_number") val phoneNumber: String? = null
 )
 
 data class LocationPauseRequest(@SerializedName("location_paused") val paused: Boolean)
@@ -139,6 +144,20 @@ data class ScreenSchedule(
     @SerializedName("is_active") val isActive: Boolean
 )
 
+// Child home: the family as this member names them ("Мама", "Старший брат")
+data class Contact(
+    val id: String,
+    val label: String,
+    @SerializedName("first_name") val firstName: String,
+    val role: String,
+    val avatar: String?,
+    @SerializedName("phone_number") val phoneNumber: String?,
+    @SerializedName("location_paused") val locationPaused: Boolean = false
+)
+
+data class ContactLabelRequest(val label: String)
+data class ContactLabelResponse(val id: String, val label: String)
+
 // Parent home
 data class MemberPosition(
     @SerializedName("user_id") val userId: String,
@@ -148,7 +167,9 @@ data class MemberPosition(
     val longitude: Double,
     @SerializedName("battery_level") val batteryLevel: Int?,
     @SerializedName("recorded_at") val recordedAt: String,
-    @SerializedName("is_online") val isOnline: Boolean
+    @SerializedName("is_online") val isOnline: Boolean,
+    // An adult stopped sharing: the point is the last known place
+    val paused: Boolean = false
 )
 
 data class NotificationPage(val results: List<AppNotification>)

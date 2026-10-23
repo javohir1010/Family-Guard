@@ -85,79 +85,8 @@ fun HomeScreen(
         )
         // No logout for a child: only a parent can unlink the device
         else -> ChildHome(
-            name = home.firstName,
             sos = sos,
             onSos = sosViewModel::onSosPressed
-        )
-    }
-}
-
-@Composable
-private fun ChildHome(
-    name: String,
-    sos: com.familyguard.app.viewmodel.SosUiState,
-    onSos: () -> Unit
-) {
-    val context = LocalContext.current
-    // Requests location/notification permissions and starts background services
-    val setup = rememberProtectionSetup()
-    var showSetup by remember { mutableStateOf(false) }
-    val fg = LocalFgColors.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        Header(
-            title = if (name.isNotBlank()) "Привет, $name" else "Привет!",
-            subtitle = "Если страшно или нужна помощь, нажми SOS",
-            letter = name
-        )
-        StatusChip(
-            text = if (sos.isConnected) "Защита активна" else "Нет соединения с сервером",
-            good = sos.isConnected
-        )
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp)
-        ) {
-            SosButton(state = sos, size = 240.dp, onPress = onSos)
-            SosStatusText(sos)
-        }
-
-        val done = setup.value.done
-        FgCard(onClick = { showSetup = true }) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                IconBadge(if (done == 4) fg.okSoft else fg.warnSoft, if (done == 4) fg.ok else fg.warn, if (done == 4) "✓" else "!")
-                Column(Modifier.weight(1f)) {
-                    CardTitle(if (done == 4) "Защита настроена" else "Настройте защиту: $done из 4")
-                    CardHint("Местоположение, статистика, блокировка, фильтр сайтов")
-                }
-            }
-        }
-
-        FgCard {
-            CardTitle("Что видят родители")
-            CardHint("Где ты находишься, какими приложениями пользуешься и сколько времени, какие сайты заблокированы и твои сигналы SOS. Переписку и фото родители не видят.")
-        }
-
-        SettingsCard(onLogout = null)
-    }
-
-    if (showSetup) {
-        ProtectionSetupDialog(
-            status = setup.value,
-            onChanged = { setup.value = readProtectionStatus(context) },
-            onDismiss = { showSetup = false }
         )
     }
 }
@@ -385,7 +314,7 @@ private fun CardHint(text: String, maxLines: Int = Int.MAX_VALUE) {
 }
 
 @Composable
-private fun IconBadge(bg: Color, fg: Color, symbol: String) {
+internal fun IconBadge(bg: Color, fg: Color, symbol: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

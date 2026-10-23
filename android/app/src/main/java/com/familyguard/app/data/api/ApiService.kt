@@ -27,6 +27,16 @@ interface ApiService {
     @PATCH("auth/profile/")
     suspend fun setLocationPaused(@Body request: LocationPauseRequest): UserProfile
 
+    @Multipart
+    @PATCH("auth/profile/")
+    suspend fun uploadAvatar(@Part avatar: okhttp3.MultipartBody.Part): UserProfile
+
+    @GET("family/contacts/")
+    suspend fun getContacts(): List<Contact>
+
+    @PUT("family/contacts/{id}/label/")
+    suspend fun renameContact(@Path("id") userId: String, @Body request: ContactLabelRequest): ContactLabelResponse
+
     @POST("auth/device-token/")
     suspend fun updateDeviceToken(@Body request: DeviceTokenRequest)
 
